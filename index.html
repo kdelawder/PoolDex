@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a2540">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hydrolab">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Hydrolab — Pool Chemistry</title>
+
+<link rel="manifest" href='data:application/manifest+json,{"name":"Hydrolab","short_name":"Hydrolab","start_url":"./","display":"standalone","background_color":"%230a2540","theme_color":"%230a2540","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 rx=%2240%22 fill=%22%230a2540%22/><path d=%22M96 40c-18 30-32 50-32 72a32 32 0 0 0 64 0c0-22-14-42-32-72z%22 fill=%22%2348cae4%22/></svg>","sizes":"192x192","type":"image/svg+xml"},{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 rx=%22108%22 fill=%22%230a2540%22/><path d=%22M256 106c-48 80-85 133-85 192a85 85 0 0 0 170 0c0-59-37-112-85-192z%22 fill=%22%2348cae4%22/></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>
+
+<link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="%230a2540"/><path d="M96 40c-18 30-32 50-32 72a32 32 0 0 0 64 0c0-22-14-42-32-72z" fill="%2348cae4"/></svg>'>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<style>
+:root {
+  --bg-deep: #061a2e;
+  --bg-mid: #0a2540;
+  --bg-surf: #0f3057;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  --aqua: #48cae4;
+  --aqua-bright: #90e0ef;
+  --aqua-deep: #0096c7;
+  --mint: #52e0c4;
+  --coral: #ff6b6b;
+  --amber: #ffc857;
+  --lavender: #b794f4;
+
+  --text: #e6f1ff;
+  --text-dim: #9db4d0;
+  --text-mute: #6581a0;
+
+  --ok: #52e0c4;
+  --warn: #ffc857;
+  --bad: #ff6b6b;
+
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Outfit', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg-deep);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(72, 202, 228, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(83, 224, 196, 0.08), transparent 60%),
+    linear-gradient(180deg, #061a2e 0%, #0a2540 50%, #061a2e 100%);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv01";
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+/* ============ HEADER ============ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-deep) 100%);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 16px rgba(72, 202, 228, 0.3);
+}
+
+.brand-mark svg { width: 18px; height: 18px; fill: var(--bg-deep); }
+
+.brand-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 72;
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.icon-btn:active { transform: scale(0.94); background: var(--bg-card-hover); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+/* ============ MAIN CONTENT ============ */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 20px 100px;
+}
+
+.view { display: none; animation: fadeIn 0.3s ease-out; }
+.view.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ POOL HEADER CARD ============ */
+.pool-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.pool-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 144;
+}
+
+.pool-title em {
+  font-style: italic;
+  color: var(--aqua);
+  font-weight: 400;
+}
+
+.pool-sub {
+  font-size: 13px;
+  color: var(--text-mute);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ STATUS ORB ============ */
+.status-orb-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+}
+
+.status-orb {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%),
+              radial-gradient(circle, var(--aqua) 0%, var(--aqua-deep) 100%);
+  box-shadow:
+    0 0 30px rgba(72, 202, 228, 0.4),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.2),
+    inset 0 4px 8px rgba(255, 255, 255, 0.2);
+  animation: orb-pulse 4s ease-in-out infinite;
+}
+
+.status-orb.good { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%), radial-gradient(circle, var(--mint) 0%, #0d9488 100%); box-shadow: 0 0 30px rgba(82, 224, 196, 0.4), inset 0 -8px 16px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.2); }
+.status-orb.warn { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%), radial-gradient(circle, var(--amber) 0%, #d97706 100%); box-shadow: 0 0 30px rgba(255, 200, 87, 0.4), inset 0 -8px 16px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.2); }
+.status-orb.bad { background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%), radial-gradient(circle, var(--coral) 0%, #dc2626 100%); box-shadow: 0 0 30px rgba(255, 107, 107, 0.4), inset 0 -8px 16px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.2); }
+
+@keyframes orb-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.status-label {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: var(--bg-deep);
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+
+/* ============ LSI CARD ============ */
+.lsi-card {
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.08), rgba(183, 148, 244, 0.05));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lsi-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(72, 202, 228, 0.15), transparent 70%);
+  pointer-events: none;
+}
+
+.lsi-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 8px;
+}
+
+.lsi-value {
+  font-family: var(--font-mono);
+  font-size: 42px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.lsi-value.good { color: var(--mint); }
+.lsi-value.warn { color: var(--amber); }
+.lsi-value.bad { color: var(--coral); }
+
+.lsi-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.lsi-scale {
+  margin-top: 14px;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #ffc857 20%, #52e0c4 40%, #52e0c4 60%, #ffc857 80%, #ff6b6b 100%);
+  position: relative;
+}
+
+.lsi-scale::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--bg-deep);
+  left: var(--lsi-pos, 50%);
+  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.lsi-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-mute);
+}
+
+/* ============ METRICS GRID ============ */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-label a {
+  font-weight: 500;
+  color: var(--aqua);
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.metric-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.metric-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.metric-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-mute);
+}
+
+.metric-dot.good { background: var(--mint); box-shadow: 0 0 8px var(--mint); }
+.metric-dot.warn { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.metric-dot.bad { background: var(--coral); box-shadow: 0 0 8px var(--coral); }
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.metric-value .unit {
+  font-size: 11px;
+  color: var(--text-mute);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+.metric-target {
+  font-size: 10px;
+  color: var(--text-mute);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
+.metric.empty .metric-value { color: var(--text-mute); }
+
+/* ============ DOSING CARDS ============ */
+.dose-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dose {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dose-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.2), rgba(72, 202, 228, 0.05));
+  border: 1px solid rgba(72, 202, 228, 0.2);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--aqua);
+}
+
+.dose-body { flex: 1; min-width: 0; }
+.dose-title { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+.dose-sub { font-size: 12px; color: var(--text-mute); }
+.dose-amount {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-align: right;
+  font-size: 15px;
+}
+.dose-amount .unit { font-size: 10px; color: var(--text-mute); display: block; margin-top: 2px; }
+
+.dose-empty {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--text-mute);
+  font-size: 13px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+}
+
+.dose-empty em {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+/* ============ FORM ============ */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.field {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  transition: border-color 0.2s;
+}
+
+.field:focus-within { border-color: var(--aqua); background: var(--bg-card-hover); }
+.field.full { grid-column: 1 / -1; }
+
+.field-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  display: flex;
+  justify-content: space-between;
+}
+
+.field-label .unit { color: var(--text-mute); font-weight: 500; }
+
+.field input, .field select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+  padding: 4px 0 0;
+  letter-spacing: -0.02em;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.field select {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239db4d0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 18px;
+  padding-right: 20px;
+}
+
+.field select option { background: var(--bg-mid); color: var(--text); }
+
+.field input::placeholder { color: var(--text-mute); opacity: 0.5; }
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-card);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--aqua) 0%, var(--aqua-deep) 100%);
+  border-color: transparent;
+  color: var(--bg-deep);
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(72, 202, 228, 0.25);
+}
+
+.btn.primary:active { box-shadow: 0 2px 8px rgba(72, 202, 228, 0.2); }
+
+.btn.danger {
+  color: var(--coral);
+  border-color: rgba(255, 107, 107, 0.2);
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ============ CHART ============ */
+.chart-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 12px 12px;
+  margin-top: 12px;
+  height: 220px;
+  position: relative;
+}
+
+.chart-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--text-mute);
+  font-size: 13px;
+}
+
+.chart-select {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 12px 0;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.chart-select::-webkit-scrollbar { display: none; }
+
+.chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.chip.active {
+  background: var(--aqua);
+  color: var(--bg-deep);
+  border-color: var(--aqua);
+  font-weight: 600;
+}
+
+/* ============ HISTORY LIST ============ */
+.log-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.log-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-mute);
+  margin-bottom: 4px;
+}
+
+.log-values {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.log-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.log-val strong { color: var(--text); font-weight: 500; }
+
+.log-lsi {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ============ BOTTOM NAV ============ */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 12px calc(8px + var(--safe-bottom));
+  background: linear-gradient(180deg, transparent 0%, var(--bg-deep) 40%);
+  display: flex;
+  justify-content: space-around;
+  gap: 4px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 10;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 4px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-mute);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+
+.nav-btn svg { width: 22px; height: 22px; }
+.nav-btn span { font-size: 10px; font-weight: 500; letter-spacing: 0.02em; }
+
+.nav-btn.active { color: var(--aqua); }
+.nav-btn:active { transform: scale(0.92); }
+
+/* ============ MODAL ============ */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 26, 46, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 100;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal.open { display: flex; animation: fadeIn 0.2s; }
+
+.modal-sheet {
+  background: var(--bg-mid);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px 20px calc(20px + var(--safe-bottom));
+  border: 1px solid var(--border);
+  border-bottom: none;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.modal-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+/* ============ TOAST ============ */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-surf);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============ EMPTY STATE ============ */
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-mute);
+}
+
+.empty-art {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 64px;
+  color: var(--aqua);
+  opacity: 0.3;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.empty-sub { font-size: 13px; line-height: 1.5; max-width: 260px; margin: 0 auto; }
+
+/* ============ SETTINGS ROWS ============ */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 8px;
+}
+
+.settings-label { font-size: 14px; }
+.settings-sub { font-size: 12px; color: var(--text-mute); margin-top: 2px; }
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--border-strong);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.toggle.on { background: var(--aqua); }
+.toggle.on::after { transform: translateX(18px); }
+
+/* ============ LOG DETAIL ============ */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--text-dim); font-size: 13px; }
+.detail-value { font-family: var(--font-mono); font-size: 14px; }
+
+/* ============ CHECKLIST ============ */
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.check-mark {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.check-mark.good { background: rgba(82, 224, 196, 0.15); color: var(--mint); }
+.check-mark.warn { background: rgba(255, 200, 87, 0.15); color: var(--amber); }
+.check-mark.bad { background: rgba(255, 107, 107, 0.15); color: var(--coral); }
+
+/* Responsive */
+@media (min-width: 600px) {
+  .main { max-width: 500px; margin: 0 auto; }
+  .nav { max-width: 500px; margin: 0 auto; left: 50%; transform: translateX(-50%); }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2c-2 4-5 7-5 11a5 5 0 0 0 10 0c0-4-3-7-5-11z"/></svg>
+      </div>
+      <div class="brand-name">Hydrolab</div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="btn-settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <section class="view active" id="view-dashboard">
+      <div class="pool-header">
+        <div>
+          <div class="pool-title" id="pool-title">My <em>Pool</em></div>
+          <div class="pool-sub" id="pool-sub">No tests logged yet</div>
+        </div>
+        <div class="status-orb-wrap">
+          <div class="status-orb" id="status-orb"></div>
+          <div class="status-label" id="status-label">New</div>
+        </div>
+      </div>
+
+      <div id="dashboard-body">
+        <div class="empty">
+          <div class="empty-art">~</div>
+          <div class="empty-title">Welcome to Hydrolab</div>
+          <div class="empty-sub">Set up your pool, then log your first water test to get dosing recommendations and saturation balance.</div>
+          <div class="btn-row" style="margin-top: 24px; max-width: 280px; margin-left: auto; margin-right: auto;">
+            <button class="btn primary" onclick="showView('settings')">Set Up Pool</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TEST INPUT VIEW ============ -->
+    <section class="view" id="view-test">
+      <div style="margin-bottom: 20px;">
+        <div class="pool-title">New <em>Test</em></div>
+        <div class="pool-sub">Enter the values you measured. Leave blank any you didn't test.</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <div class="field-label"><span>Free Chlorine</span><span class="unit">ppm</span></div>
+          <input type="number" step="0.1" id="in-fc" placeholder="0.0" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Combined Cl</span><span class="unit">ppm</span></div>
+          <input type="number" step="0.1" id="in-cc" placeholder="0.0" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>pH</span><span class="unit"></span></div>
+          <input type="number" step="0.1" id="in-ph" placeholder="7.4" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Alkalinity</span><span class="unit">ppm</span></div>
+          <input type="number" step="1" id="in-ta" placeholder="80" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Calcium</span><span class="unit">ppm</span></div>
+          <input type="number" step="5" id="in-ch" placeholder="250" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Cyanuric Acid</span><span class="unit">ppm</span></div>
+          <input type="number" step="1" id="in-cya" placeholder="40" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Salt</span><span class="unit">ppm</span></div>
+          <input type="number" step="100" id="in-salt" placeholder="3200" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Water Temp</span><span class="unit" id="temp-unit">°F</span></div>
+          <input type="number" step="1" id="in-temp" placeholder="80" inputmode="decimal">
+        </div>
+        <div class="field full">
+          <div class="field-label"><span>Borate (optional)</span><span class="unit">ppm</span></div>
+          <input type="number" step="5" id="in-borate" placeholder="0" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="showView('dashboard')">Cancel</button>
+        <button class="btn primary" onclick="saveTest()">Save Test</button>
+      </div>
+    </section>
+
+    <!-- ============ HISTORY VIEW ============ -->
+    <section class="view" id="view-history">
+      <div style="margin-bottom: 16px;">
+        <div class="pool-title">Test <em>Log</em></div>
+        <div class="pool-sub" id="history-sub">—</div>
+      </div>
+
+      <div class="chart-select" id="chart-select">
+        <div class="chip active" data-metric="fc">FC</div>
+        <div class="chip" data-metric="ph">pH</div>
+        <div class="chip" data-metric="ta">TA</div>
+        <div class="chip" data-metric="ch">CH</div>
+        <div class="chip" data-metric="cya">CYA</div>
+        <div class="chip" data-metric="salt">Salt</div>
+        <div class="chip" data-metric="lsi">LSI</div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="trend-chart"></canvas>
+        <div class="chart-empty" id="chart-empty">No data yet</div>
+      </div>
+
+      <div class="section-label" style="margin-top: 24px;">All Tests</div>
+      <div id="log-list"></div>
+    </section>
+
+    <!-- ============ SETTINGS VIEW ============ -->
+    <section class="view" id="view-settings">
+      <div style="margin-bottom: 20px;">
+        <div class="pool-title">Pool <em>Setup</em></div>
+        <div class="pool-sub">Tell the app about your pool so we can calculate doses correctly.</div>
+      </div>
+
+      <div class="section-label">Pool Details</div>
+      <div class="form-grid">
+        <div class="field full">
+          <div class="field-label"><span>Pool Name</span></div>
+          <input type="text" id="cfg-name" placeholder="Backyard Pool" style="font-family: var(--font-body); font-size: 16px;">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Volume</span><span class="unit" id="vol-unit">gal</span></div>
+          <input type="number" step="100" id="cfg-volume" placeholder="15000" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Surface</span></div>
+          <select id="cfg-surface">
+            <option value="plaster">Plaster</option>
+            <option value="vinyl">Vinyl</option>
+            <option value="fiberglass">Fiberglass</option>
+            <option value="pebble">Pebble/Quartz</option>
+            <option value="tile">Tile</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Sanitizer</span></div>
+          <select id="cfg-sanitizer">
+            <option value="liquid">Liquid Chlorine</option>
+            <option value="swg">Salt (SWG)</option>
+            <option value="tabs">Tabs (Trichlor)</option>
+            <option value="cal-hypo">Cal-Hypo</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label"><span>Climate</span></div>
+          <select id="cfg-climate">
+            <option value="outdoor">Outdoor (sunny)</option>
+            <option value="indoor">Indoor</option>
+            <option value="shaded">Shaded</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-label">Preferences</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Units</div>
+          <div class="settings-sub" id="units-desc">US (gal, °F)</div>
+        </div>
+        <div class="toggle" id="toggle-units" onclick="toggleUnits()"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="saveConfig()">Save</button>
+      </div>
+
+      <div class="section-label" style="margin-top: 32px;">Data</div>
+      <div class="settings-row" onclick="exportData()" style="cursor: pointer;">
+        <div>
+          <div class="settings-label">Export All Data</div>
+          <div class="settings-sub">Download tests and config as JSON</div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div class="settings-row" onclick="confirmReset()" style="cursor: pointer;">
+        <div>
+          <div class="settings-label" style="color: var(--coral);">Reset All Data</div>
+          <div class="settings-sub">Delete all tests and settings</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <nav class="nav">
+    <button class="nav-btn active" data-view="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Pool</span>
+    </button>
+    <button class="nav-btn" data-view="test">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6l-3 9a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-3-9V2"/><line x1="9" y1="2" x2="15" y2="2"/><line x1="7" y1="13" x2="17" y2="13"/></svg>
+      <span>Test</span>
+    </button>
+    <button class="nav-btn" data-view="history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>History</span>
+    </button>
+    <button class="nav-btn" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <span>Setup</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Test Detail Modal -->
+<div class="modal" id="detail-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Test Detail</div>
+    <div class="modal-sub" id="detail-date">—</div>
+    <div id="detail-body"></div>
+    <div class="btn-row">
+      <button class="btn danger" onclick="deleteTest()">Delete Test</button>
+      <button class="btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const LS_KEY = 'hydrolab_v1';
+
+const DEFAULT_CONFIG = {
+  name: 'My Pool',
+  volume: 15000,       // stored in gallons internally
+  surface: 'plaster',
+  sanitizer: 'liquid',
+  climate: 'outdoor',
+  units: 'us',         // 'us' or 'metric'
+};
+
+let state = loadState();
+let currentDetailId = null;
+let chart = null;
+let chartMetric = 'fc';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        config: { ...DEFAULT_CONFIG, ...(parsed.config || {}) },
+        tests: parsed.tests || [],
+      };
+    }
+  } catch (e) { console.warn('Load failed', e); }
+  return { config: { ...DEFAULT_CONFIG }, tests: [] };
+}
+
+function saveState() {
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+// ============================================================
+// UNIT CONVERSION
+// ============================================================
+function galToLiter(g) { return g * 3.78541; }
+function literToGal(l) { return l / 3.78541; }
+function fToC(f) { return (f - 32) * 5 / 9; }
+function cToF(c) { return c * 9 / 5 + 32; }
+
+function volumeDisplay(gal) {
+  if (state.config.units === 'metric') {
+    return { value: Math.round(galToLiter(gal)), unit: 'L' };
+  }
+  return { value: Math.round(gal), unit: 'gal' };
+}
+
+function tempDisplay(f) {
+  if (state.config.units === 'metric') {
+    return { value: Math.round(fToC(f) * 10) / 10, unit: '°C' };
+  }
+  return { value: Math.round(f), unit: '°F' };
+}
+
+// ============================================================
+// CHEMISTRY: TARGET RANGES
+// ============================================================
+// Based on TFP methodology with SWG and sanitizer type adjustments
+function getTargets() {
+  const c = state.config;
+  const isSWG = c.sanitizer === 'swg';
+
+  // CYA target depends on sanitizer
+  let cyaTarget = [30, 50];
+  if (isSWG) cyaTarget = [70, 80];
+  else if (c.sanitizer === 'tabs') cyaTarget = [30, 50];
+
+  // FC target depends on CYA (dynamic) — we use fallback defaults here
+  // Minimum FC = ~7.5% of CYA; Target ~11.5% of CYA for chlorine pools
+  // For SWG: minimum ~4.5%, target ~7% of CYA
+  const cyaForFC = getLatestValue('cya') || (isSWG ? 75 : 40);
+  let fcMin, fcTarget, fcMax;
+  if (isSWG) {
+    fcMin = Math.max(2, cyaForFC * 0.045);
+    fcTarget = cyaForFC * 0.07;
+    fcMax = cyaForFC * 0.10;
+  } else {
+    fcMin = Math.max(3, cyaForFC * 0.075);
+    fcTarget = cyaForFC * 0.115;
+    fcMax = cyaForFC * 0.15;
+  }
+
+  return {
+    fc: [Number(fcMin.toFixed(1)), Number(fcMax.toFixed(1))],
+    fcTarget: Number(fcTarget.toFixed(1)),
+    cc: [0, 0.5],
+    ph: [7.2, 7.8],
+    phTarget: 7.5,
+    ta: c.surface === 'plaster' || c.surface === 'pebble' ? [50, 90] : [60, 110],
+    taTarget: c.surface === 'plaster' || c.surface === 'pebble' ? 70 : 80,
+    ch: c.surface === 'vinyl' ? [150, 300] : c.surface === 'fiberglass' ? [200, 400] : [250, 450],
+    chTarget: c.surface === 'vinyl' ? 220 : c.surface === 'fiberglass' ? 300 : 350,
+    cya: cyaTarget,
+    cyaTarget: isSWG ? 75 : 40,
+    salt: isSWG ? [2800, 3400] : [0, 500],
+    saltTarget: isSWG ? 3200 : 0,
+    borate: [0, 80],
+  };
+}
+
+function getLatestValue(key) {
+  if (state.tests.length === 0) return null;
+  for (let i = state.tests.length - 1; i >= 0; i--) {
+    const v = state.tests[i][key];
+    if (v !== null && v !== undefined && v !== '') return v;
+  }
+  return null;
+}
+
+function getLatestTest() {
+  return state.tests.length ? state.tests[state.tests.length - 1] : null;
+}
+
+// ============================================================
+// CHEMISTRY: LSI (Langelier Saturation Index)
+// ============================================================
+// LSI = pH + TF + CF + AF - TDSF
+// Simplified formula used by Orenda and most pool calculators.
+function calculateLSI(t) {
+  const { ph, ta, ch } = t;
+  let temp = t.temp || 80;
+  if (!ph || !ta || !ch || !temp) return null;
+
+  // Temperature factor (°F based)
+  const TF_TABLE = [
+    [32, 0.0], [37, 0.1], [46, 0.2], [53, 0.3], [60, 0.4],
+    [66, 0.5], [76, 0.6], [84, 0.7], [94, 0.8], [105, 0.9]
+  ];
+  let TF = 0;
+  for (let i = TF_TABLE.length - 1; i >= 0; i--) {
+    if (temp >= TF_TABLE[i][0]) { TF = TF_TABLE[i][1]; break; }
+  }
+
+  // Calcium hardness factor
+  const CF = Math.log10(ch) - 0.4;
+
+  // Alkalinity factor — subtract borate contribution (~1/3 of borate ppm)
+  const borateContribution = (t.borate || 0) / 3;
+  const correctedTA = Math.max(0, ta - borateContribution);
+  const AF = Math.log10(correctedTA);
+
+  // TDS factor — approximated from salt; default TDS ~1000 gives 12.19
+  const tds = (t.salt || 0) + 1000;
+  let TDSF = 12.19;
+  if (tds > 800 && tds < 5000) TDSF = 12.27 - Math.log10(tds) * 0.1;
+
+  const lsi = ph + TF + CF + AF - TDSF;
+  return Number(lsi.toFixed(2));
+}
+
+function lsiStatus(lsi) {
+  if (lsi === null) return { cls: '', label: 'No Data', desc: 'Enter pH, TA, CH, and temperature to calculate.' };
+  if (lsi < -0.6) return { cls: 'bad', label: 'Corrosive', desc: 'Water is aggressive. Risk of etching, staining, and equipment damage.' };
+  if (lsi < -0.3) return { cls: 'warn', label: 'Under-saturated', desc: 'Slightly aggressive. Adjust pH or calcium upward.' };
+  if (lsi <= 0.3) return { cls: 'good', label: 'Balanced', desc: 'Water is in ideal saturation range. Protect your surface and equipment.' };
+  if (lsi <= 0.6) return { cls: 'warn', label: 'Over-saturated', desc: 'Scale formation possible. Lower pH or TA.' };
+  return { cls: 'bad', label: 'Scaling', desc: 'Water will deposit calcium scale on surfaces and equipment.' };
+}
+
+// ============================================================
+// CHEMISTRY: DOSING CALCULATOR
+// ============================================================
+// Doses calibrated for 10,000 gallons; scaled by actual volume.
+// Sources: TFP wiki, Orenda dosing guides.
+const DOSE_PER_10K = {
+  // Each entry: how many units of chemical raise the target by "perUnit" ppm in 10k gal
+  liquidChlorine:    { name: '12.5% Liquid Chlorine', unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 10.7 },  // 10.7 oz raises FC by 1
+  calHypo:           { name: 'Cal-Hypo (65%)',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.1 },
+  dichlor:           { name: 'Dichlor (56%)',         unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.4 },
+  muriaticAcid:      { name: '31% Muriatic Acid',     unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'pH', perUnit: 0.2,  qty: 10 },   // 10 oz lowers pH ~0.2 with 80 TA
+  sodaAsh:           { name: 'Soda Ash',              unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 6 },
+  borax:             { name: 'Borax (20 Mule)',       unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 12 },
+  bakingSoda:        { name: 'Baking Soda',           unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ta', perUnit: 10,   qty: 14 },   // 14 oz raises TA 10 ppm
+  calciumChloride:   { name: 'Calcium Chloride',      unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ch', perUnit: 10,   qty: 12.5 }, // 77%
+  cyanuricAcid:      { name: 'Cyanuric Acid',         unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'cya', perUnit: 10,  qty: 13.4 },
+  salt:              { name: 'Pool Salt',             unit: 'lb',     unitMetric: 'kg', conv: 0.453592,raise: 'salt',perUnit: 100, qty: 8.35 }, // 8.35 lb raises salt 100 ppm in 10k
+  acidForTA:         { name: '31% Muriatic Acid',     unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'ta', perUnit: 10,   qty: 25 },   // lowers TA 10 ppm
+};
+
+function scaleForVolume(qty) {
+  return qty * (state.config.volume / 10000);
+}
+
+function formatDose(qty, dose) {
+  if (state.config.units === 'metric') {
+    const metricQty = qty * dose.conv;
+    if (dose.unitMetric === 'mL' && metricQty >= 1000) {
+      return { value: (metricQty / 1000).toFixed(2), unit: 'L' };
+    }
+    if (dose.unitMetric === 'g' && metricQty >= 1000) {
+      return { value: (metricQty / 1000).toFixed(2), unit: 'kg' };
+    }
+    return { value: metricQty < 10 ? metricQty.toFixed(1) : Math.round(metricQty), unit: dose.unitMetric };
+  }
+  // Customary
+  if (dose.unit === 'fl oz' && qty >= 128) {
+    return { value: (qty / 128).toFixed(2), unit: 'gal' };
+  }
+  if (dose.unit === 'oz wt' && qty >= 16) {
+    return { value: (qty / 16).toFixed(2), unit: 'lb' };
+  }
+  return { value: qty < 10 ? qty.toFixed(1) : Math.round(qty * 10) / 10, unit: dose.unit };
+}
+
+function computeDoses(t) {
+  const targets = getTargets();
+  const doses = [];
+  const c = state.config;
+
+  // --- Chlorine (if low) ---
+  if (t.fc !== null && t.fc < targets.fcTarget - 0.5) {
+    const needed = targets.fcTarget - t.fc;
+    let key = 'liquidChlorine';
+    if (c.sanitizer === 'cal-hypo') key = 'calHypo';
+    const dose = DOSE_PER_10K[key];
+    const qty = scaleForVolume(dose.qty * needed);
+    const f = formatDose(qty, dose);
+    doses.push({
+      type: 'Cl',
+      title: `Raise FC by ${needed.toFixed(1)} ppm`,
+      sub: `Add ${dose.name} → FC to ${targets.fcTarget}`,
+      amount: f.value,
+      unit: f.unit,
+      priority: t.fc < targets.fc[0] ? 1 : 3,
+    });
+  }
+
+  // --- pH adjustments ---
+  if (t.ph !== null) {
+    if (t.ph > targets.phTarget + 0.2 && t.ph > 7.6) {
+      const drop = Math.min(t.ph - targets.phTarget, 0.6);
+      const dose = DOSE_PER_10K.muriaticAcid;
+      const qty = scaleForVolume(dose.qty * (drop / 0.2));
+      const f = formatDose(qty, dose);
+      doses.push({
+        type: 'pH↓',
+        title: `Lower pH to ${targets.phTarget.toFixed(1)}`,
+        sub: `Add ${dose.name} (add slowly)`,
+        amount: f.value,
+        unit: f.unit,
+        priority: 2,
+      });
+    } else if (t.ph < targets.phTarget - 0.2) {
+      const rise = targets.phTarget - t.ph;
+      // Prefer borax if TA is already OK, soda ash if TA low
+      const useSodaAsh = t.ta !== null && t.ta < targets.ta[0];
+      const dose = useSodaAsh ? DOSE_PER_10K.sodaAsh : DOSE_PER_10K.borax;
+      const qty = scaleForVolume(dose.qty * (rise / 0.2));
+      const f = formatDose(qty, dose);
+      doses.push({
+        type: 'pH↑',
+        title: `Raise pH to ${targets.phTarget.toFixed(1)}`,
+        sub: `Add ${dose.name}`,
+        amount: f.value,
+        unit: f.unit,
+        priority: 2,
+      });
+    }
+  }
+
+  // --- Alkalinity ---
+  if (t.ta !== null) {
+    if (t.ta < targets.ta[0]) {
+      const needed = targets.taTarget - t.ta;
+      const dose = DOSE_PER_10K.bakingSoda;
+      const qty = scaleForVolume(dose.qty * (needed / 10));
+      const f = formatDose(qty, dose);
+      doses.push({
+        type: 'TA↑',
+        title: `Raise TA by ${needed} ppm`,
+        sub: `Add ${dose.name}`,
+        amount: f.value,
+        unit: f.unit,
+        priority: 4,
+      });
+    } else if (t.ta > targets.ta[1] + 20) {
+      doses.push({
+        type: 'TA↓',
+        title: `Lower TA (${t.ta} → ${targets.taTarget})`,
+        sub: 'Aerate with low pH; add muriatic acid gradually',
+        amount: '—',
+        unit: 'gradual',
+        priority: 5,
+      });
+    }
+  }
+
+  // --- Calcium Hardness ---
+  if (t.ch !== null && t.ch < targets.ch[0]) {
+    const needed = targets.chTarget - t.ch;
+    const dose = DOSE_PER_10K.calciumChloride;
+    const qty = scaleForVolume(dose.qty * (needed / 10));
+    const f = formatDose(qty, dose);
+    doses.push({
+      type: 'CH↑',
+      title: `Raise Calcium by ${needed} ppm`,
+      sub: `Add ${dose.name}`,
+      amount: f.value,
+      unit: f.unit,
+      priority: 4,
+    });
+  }
+
+  // --- CYA ---
+  if (t.cya !== null && t.cya < targets.cya[0]) {
+    const needed = targets.cyaTarget - t.cya;
+    const dose = DOSE_PER_10K.cyanuricAcid;
+    const qty = scaleForVolume(dose.qty * (needed / 10));
+    const f = formatDose(qty, dose);
+    doses.push({
+      type: 'CYA↑',
+      title: `Raise CYA by ${needed} ppm`,
+      sub: `Add ${dose.name} (slow to dissolve)`,
+      amount: f.value,
+      unit: f.unit,
+      priority: 5,
+    });
+  } else if (t.cya !== null && t.cya > targets.cya[1] + 20) {
+    doses.push({
+      type: 'CYA↓',
+      title: `CYA too high (${t.cya})`,
+      sub: 'Only way to reduce: partial drain and refill',
+      amount: '—',
+      unit: 'drain',
+      priority: 5,
+    });
+  }
+
+  // --- Salt (for SWG) ---
+  if (c.sanitizer === 'swg' && t.salt !== null && t.salt < targets.salt[0]) {
+    const needed = targets.saltTarget - t.salt;
+    const dose = DOSE_PER_10K.salt;
+    const qty = scaleForVolume(dose.qty * (needed / 100));
+    const f = formatDose(qty, dose);
+    doses.push({
+      type: 'Salt',
+      title: `Raise Salt by ${needed} ppm`,
+      sub: `Add ${dose.name}`,
+      amount: f.value,
+      unit: f.unit,
+      priority: 4,
+    });
+  }
+
+  doses.sort((a, b) => a.priority - b.priority);
+  return doses;
+}
+
+// ============================================================
+// CHEMISTRY: OVERALL STATUS
+// ============================================================
+function evaluateStatus(t) {
+  if (!t) return { cls: '', label: 'New' };
+  const targets = getTargets();
+  const issues = [];
+
+  const check = (val, range, name, critical) => {
+    if (val === null || val === undefined) return;
+    if (val < range[0] || val > range[1]) {
+      issues.push({ name, critical: !!critical });
+    }
+  };
+
+  check(t.fc, targets.fc, 'FC', true);
+  check(t.ph, targets.ph, 'pH', true);
+  check(t.cc, targets.cc, 'CC', false);
+  check(t.ta, targets.ta, 'TA', false);
+  check(t.ch, targets.ch, 'CH', false);
+  check(t.cya, targets.cya, 'CYA', false);
+  if (state.config.sanitizer === 'swg') check(t.salt, targets.salt, 'Salt', true);
+
+  const lsi = calculateLSI(t);
+  if (lsi !== null && (lsi < -0.3 || lsi > 0.3)) {
+    issues.push({ name: 'LSI', critical: lsi < -0.6 || lsi > 0.6 });
+  }
+
+  if (issues.length === 0) return { cls: 'good', label: 'Balanced' };
+  if (issues.some(i => i.critical)) return { cls: 'bad', label: 'Needs Care' };
+  return { cls: 'warn', label: 'Adjust' };
+}
+
+// ============================================================
+// UI: DASHBOARD RENDER
+// ============================================================
+function renderDashboard() {
+  const body = document.getElementById('dashboard-body');
+  const titleEl = document.getElementById('pool-title');
+  const subEl = document.getElementById('pool-sub');
+  const orb = document.getElementById('status-orb');
+  const statusLabel = document.getElementById('status-label');
+
+  // Pool title
+  const name = state.config.name || 'My Pool';
+  const words = name.trim().split(/\s+/);
+  if (words.length > 1) {
+    titleEl.innerHTML = words.slice(0, -1).join(' ') + ' <em>' + words.slice(-1).join(' ') + '</em>';
+  } else {
+    titleEl.innerHTML = '<em>' + name + '</em>';
+  }
+
+  const latest = getLatestTest();
+  if (!latest) {
+    const vol = volumeDisplay(state.config.volume);
+    subEl.textContent = `${vol.value.toLocaleString()} ${vol.unit} · ${sanitizerName(state.config.sanitizer)}`;
+    // Keep empty state if tests haven't been logged — but still show pool info
+    body.innerHTML = `
+      <div class="empty">
+        <div class="empty-art">~</div>
+        <div class="empty-title">No tests yet</div>
+        <div class="empty-sub">Log your first water test to get dosing recommendations and saturation balance.</div>
+        <div class="btn-row" style="margin-top: 24px; max-width: 280px; margin-left: auto; margin-right: auto;">
+          <button class="btn primary" onclick="showView('test')">Log First Test</button>
+        </div>
+      </div>
+    `;
+    orb.className = 'status-orb';
+    statusLabel.textContent = 'New';
+    return;
+  }
+
+  // Update status orb
+  const status = evaluateStatus(latest);
+  orb.className = 'status-orb' + (status.cls ? ' ' + status.cls : '');
+  statusLabel.textContent = status.label;
+
+  // Subline: last tested + volume
+  const vol = volumeDisplay(state.config.volume);
+  const testDate = new Date(latest.date);
+  const ago = timeAgo(testDate);
+  subEl.textContent = `Last tested ${ago} · ${vol.value.toLocaleString()} ${vol.unit}`;
+
+  const targets = getTargets();
+  const lsi = calculateLSI(latest);
+  const lsiInfo = lsiStatus(lsi);
+
+  // LSI card position on scale: -1.5 to +1.5 maps to 0% to 100%
+  let lsiPos = 50;
+  if (lsi !== null) {
+    lsiPos = Math.max(0, Math.min(100, ((lsi + 1.5) / 3) * 100));
+  }
+
+  body.innerHTML = `
+    <div class="lsi-card">
+      <div class="lsi-label">Saturation Index (LSI)</div>
+      <div class="lsi-value ${lsiInfo.cls}">${lsi !== null ? (lsi > 0 ? '+' : '') + lsi.toFixed(2) : '—'}</div>
+      <div class="lsi-desc">${lsiInfo.desc}</div>
+      <div class="lsi-scale" style="--lsi-pos: ${lsiPos}%"></div>
+      <div class="lsi-scale-labels">
+        <span>-1.5</span><span>-0.3</span><span>0</span><span>+0.3</span><span>+1.5</span>
+      </div>
+    </div>
+
+    <div class="section-label">Current Readings</div>
+    <div class="metrics">
+      ${metricCard('FC', latest.fc, 'ppm', targets.fc, 1)}
+      ${metricCard('pH', latest.ph, '', targets.ph, 1)}
+      ${metricCard('TA', latest.ta, 'ppm', targets.ta, 0)}
+      ${metricCard('CH', latest.ch, 'ppm', targets.ch, 0)}
+      ${metricCard('CYA', latest.cya, 'ppm', targets.cya, 0)}
+      ${state.config.sanitizer === 'swg'
+        ? metricCard('Salt', latest.salt, 'ppm', targets.salt, 0)
+        : metricCard('CC', latest.cc, 'ppm', targets.cc, 1)}
+    </div>
+
+    <div class="section-label">
+      <span>Recommended Actions</span>
+      ${lsi !== null ? `<span style="color: var(--text-mute); font-size: 10px;">TFP × LSI</span>` : ''}
+    </div>
+    ${renderDoses(latest)}
+
+    ${renderChecklist(latest, targets)}
+
+    <div class="btn-row" style="margin-top: 20px;">
+      <button class="btn primary" onclick="showView('test')">Log New Test</button>
+    </div>
+  `;
+}
+
+function metricCard(name, val, unit, range, decimals) {
+  const empty = val === null || val === undefined || val === '';
+  let dotCls = '';
+  if (!empty) {
+    if (val >= range[0] && val <= range[1]) dotCls = 'good';
+    else if (val < range[0] * 0.7 || val > range[1] * 1.3) dotCls = 'bad';
+    else dotCls = 'warn';
+  }
+  const display = empty ? '—' : Number(val).toFixed(decimals);
+  const rangeText = `${range[0]}–${range[1]}${unit ? ' ' + unit : ''}`;
+  return `
+    <div class="metric ${empty ? 'empty' : ''}">
+      <div class="metric-head">
+        <div class="metric-name">${name}</div>
+        <div class="metric-dot ${dotCls}"></div>
+      </div>
+      <div class="metric-value">${display}${unit && !empty ? `<span class="unit"> ${unit}</span>` : ''}</div>
+      <div class="metric-target">${rangeText}</div>
+    </div>
+  `;
+}
+
+function renderDoses(t) {
+  const doses = computeDoses(t);
+  if (doses.length === 0) {
+    return `
+      <div class="dose-empty">
+        <em>Nothing to do.</em>
+        Your chemistry is in range. Keep testing regularly.
+      </div>
+    `;
+  }
+  return `
+    <div class="dose-list">
+      ${doses.map(d => `
+        <div class="dose">
+          <div class="dose-icon">${d.type}</div>
+          <div class="dose-body">
+            <div class="dose-title">${d.title}</div>
+            <div class="dose-sub">${d.sub}</div>
+          </div>
+          <div class="dose-amount">
+            ${d.amount}
+            <span class="unit">${d.unit}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderChecklist(t, targets) {
+  const items = [];
+
+  // FC/CYA ratio check
+  if (t.fc !== null && t.cya !== null && t.cya > 0) {
+    const ratio = t.fc / t.cya;
+    const min = state.config.sanitizer === 'swg' ? 0.045 : 0.075;
+    if (ratio < min) {
+      items.push({ cls: 'bad', text: `FC/CYA ratio is ${(ratio * 100).toFixed(1)}% — below the ${(min * 100).toFixed(1)}% minimum. Algae risk.` });
+    } else if (ratio < min * 1.5) {
+      items.push({ cls: 'warn', text: `FC/CYA ratio is ${(ratio * 100).toFixed(1)}% — above the minimum but below ideal target.` });
+    } else {
+      items.push({ cls: 'good', text: `FC/CYA ratio ${(ratio * 100).toFixed(1)}% is healthy.` });
+    }
+  }
+
+  // CC check
+  if (t.cc !== null && t.cc > 0.5) {
+    items.push({ cls: 'warn', text: `Combined chlorine at ${t.cc} ppm suggests chloramines. Consider a SLAM process if >1.0.` });
+  }
+
+  // High pH with high calcium warning
+  if (t.ph !== null && t.ch !== null && t.ph > 7.8 && t.ch > 400) {
+    items.push({ cls: 'warn', text: 'High pH + high calcium increases scaling risk.' });
+  }
+
+  // Temperature note for LSI context
+  if (t.temp !== null && t.temp > 88) {
+    items.push({ cls: 'warn', text: 'Warm water (>88°F) drives pH up faster — test more often.' });
+  }
+
+  if (items.length === 0) return '';
+  return `
+    <div class="section-label" style="margin-top: 24px;">Notes</div>
+    <div>
+      ${items.map(i => `
+        <div class="check-item">
+          <div class="check-mark ${i.cls}">${i.cls === 'good' ? '✓' : i.cls === 'warn' ? '!' : '×'}</div>
+          <div>${i.text}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function timeAgo(date) {
+  const s = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + ' min ago';
+  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+  if (s < 86400 * 7) return Math.floor(s / 86400) + 'd ago';
+  return date.toLocaleDateString();
+}
+
+function sanitizerName(s) {
+  return {
+    'liquid': 'Liquid Cl',
+    'swg': 'Salt / SWG',
+    'tabs': 'Trichlor tabs',
+    'cal-hypo': 'Cal-Hypo',
+  }[s] || s;
+}
+
+// ============================================================
+// UI: NAVIGATION
+// ============================================================
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === name);
+  });
+  document.querySelector('.main').scrollTop = 0;
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'history') renderHistory();
+  if (name === 'settings') loadConfigUI();
+  if (name === 'test') loadTestUI();
+}
+
+document.querySelectorAll('.nav-btn').forEach(b => {
+  b.addEventListener('click', () => showView(b.dataset.view));
+});
+
+document.getElementById('btn-settings').addEventListener('click', () => showView('settings'));
+
+// ============================================================
+// UI: TEST FORM
+// ============================================================
+function loadTestUI() {
+  // Update temperature unit label
+  document.getElementById('temp-unit').textContent = state.config.units === 'metric' ? '°C' : '°F';
+  // Clear form
+  ['fc','cc','ph','ta','ch','cya','salt','temp','borate'].forEach(k => {
+    document.getElementById('in-' + k).value = '';
+  });
+  // Pre-fill last known values as placeholders for convenience
+  const last = getLatestTest();
+  if (last) {
+    Object.entries({ fc: 'in-fc', cc: 'in-cc', ph: 'in-ph', ta: 'in-ta', ch: 'in-ch', cya: 'in-cya', salt: 'in-salt', temp: 'in-temp', borate: 'in-borate' }).forEach(([k, id]) => {
+      const el = document.getElementById(id);
+      if (last[k] !== null && last[k] !== undefined && last[k] !== '') {
+        let val = last[k];
+        if (k === 'temp' && state.config.units === 'metric') val = Math.round(fToC(val) * 10) / 10;
+        el.placeholder = String(val);
+      }
+    });
+  }
+}
+
+function saveTest() {
+  const parse = id => {
+    const v = document.getElementById(id).value.trim();
+    return v === '' ? null : Number(v);
+  };
+
+  let temp = parse('in-temp');
+  if (temp !== null && state.config.units === 'metric') temp = cToF(temp);
+
+  const test = {
+    id: Date.now().toString(36),
+    date: new Date().toISOString(),
+    fc: parse('in-fc'),
+    cc: parse('in-cc'),
+    ph: parse('in-ph'),
+    ta: parse('in-ta'),
+    ch: parse('in-ch'),
+    cya: parse('in-cya'),
+    salt: parse('in-salt'),
+    temp,
+    borate: parse('in-borate') || 0,
+  };
+
+  // Require at least one measurement
+  const hasAny = ['fc','ph','ta','ch','cya','salt'].some(k => test[k] !== null);
+  if (!hasAny) {
+    toast('Enter at least one measurement');
+    return;
+  }
+
+  state.tests.push(test);
+  saveState();
+  toast('Test saved');
+  showView('dashboard');
+}
+
+// ============================================================
+// UI: HISTORY & CHART
+// ============================================================
+function renderHistory() {
+  const sub = document.getElementById('history-sub');
+  const list = document.getElementById('log-list');
+  sub.textContent = state.tests.length === 0 ? 'No tests yet' : `${state.tests.length} test${state.tests.length === 1 ? '' : 's'} logged`;
+
+  if (state.tests.length === 0) {
+    list.innerHTML = '<div class="dose-empty"><em>Empty log</em>Your tests will appear here once logged.</div>';
+    document.getElementById('chart-empty').style.display = 'grid';
+    if (chart) { chart.destroy(); chart = null; }
+    return;
+  }
+
+  document.getElementById('chart-empty').style.display = 'none';
+  renderChart();
+
+  const sorted = [...state.tests].sort((a, b) => new Date(b.date) - new Date(a.date));
+  list.innerHTML = sorted.map(t => {
+    const lsi = calculateLSI(t);
+    const lsiInfo = lsiStatus(lsi);
+    const date = new Date(t.date);
+    return `
+      <div class="log-item" onclick="openDetail('${t.id}')">
+        <div>
+          <div class="log-date">${date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</div>
+          <div class="log-values">
+            ${t.fc !== null ? `<div class="log-val">FC <strong>${t.fc}</strong></div>` : ''}
+            ${t.ph !== null ? `<div class="log-val">pH <strong>${t.ph}</strong></div>` : ''}
+            ${t.ta !== null ? `<div class="log-val">TA <strong>${t.ta}</strong></div>` : ''}
+            ${t.ch !== null ? `<div class="log-val">CH <strong>${t.ch}</strong></div>` : ''}
+            ${t.cya !== null ? `<div class="log-val">CYA <strong>${t.cya}</strong></div>` : ''}
+          </div>
+        </div>
+        <div class="log-lsi ${lsiInfo.cls ? 'lsi-value ' + lsiInfo.cls : ''}" style="color: var(--${lsiInfo.cls === 'good' ? 'mint' : lsiInfo.cls === 'warn' ? 'amber' : lsiInfo.cls === 'bad' ? 'coral' : 'text-mute'});">
+          ${lsi !== null ? (lsi > 0 ? '+' : '') + lsi.toFixed(2) : '—'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.querySelectorAll('#chart-select .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#chart-select .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    chartMetric = c.dataset.metric;
+    renderChart();
+  });
+});
+
+function renderChart() {
+  const canvas = document.getElementById('trend-chart');
+  if (!canvas || state.tests.length === 0) return;
+
+  const sorted = [...state.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const data = sorted.map(t => ({
+    x: new Date(t.date),
+    y: chartMetric === 'lsi' ? calculateLSI(t) : t[chartMetric],
+  })).filter(p => p.y !== null && p.y !== undefined);
+
+  if (chart) chart.destroy();
+
+  const targets = getTargets();
+  let targetLow = null, targetHigh = null;
+  if (chartMetric !== 'lsi' && targets[chartMetric]) {
+    [targetLow, targetHigh] = targets[chartMetric];
+  } else if (chartMetric === 'lsi') {
+    [targetLow, targetHigh] = [-0.3, 0.3];
+  }
+
+  const gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, 'rgba(72, 202, 228, 0.3)');
+  gradient.addColorStop(1, 'rgba(72, 202, 228, 0)');
+
+  chart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      datasets: [{
+        data,
+        borderColor: '#48cae4',
+        backgroundColor: gradient,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 3,
+        pointBackgroundColor: '#48cae4',
+        pointBorderColor: '#0a2540',
+        pointBorderWidth: 1.5,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'nearest' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f3057',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          titleFont: { family: 'JetBrains Mono', size: 11 },
+          bodyFont: { family: 'JetBrains Mono', size: 13, weight: 500 },
+          displayColors: false,
+        },
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: { unit: 'day', displayFormats: { day: 'MMM d' } },
+          adapters: { date: {} },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6581a0', font: { family: 'JetBrains Mono', size: 10 } },
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6581a0', font: { family: 'JetBrains Mono', size: 10 } },
+        },
+      },
+    },
+  });
+}
+
+// Simple date adapter for Chart.js (avoids needing the adapter lib)
+// We format x as Date objects; Chart.js 4 needs an adapter. We'll use 'category' mode instead for simplicity.
+// Rebuild chart config with category scale to avoid adapter requirement.
+function renderChart() {
+  const canvas = document.getElementById('trend-chart');
+  if (!canvas || state.tests.length === 0) return;
+
+  const sorted = [...state.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const points = sorted.map(t => ({
+    label: new Date(t.date).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }),
+    value: chartMetric === 'lsi' ? calculateLSI(t) : t[chartMetric],
+  })).filter(p => p.value !== null && p.value !== undefined);
+
+  if (chart) chart.destroy();
+  if (points.length === 0) {
+    document.getElementById('chart-empty').style.display = 'grid';
+    document.getElementById('chart-empty').textContent = 'No data for this metric yet';
+    return;
+  }
+  document.getElementById('chart-empty').style.display = 'none';
+
+  const gradient = canvas.getContext('2d').createLinearGradient(0, 0, 0, 200);
+  gradient.addColorStop(0, 'rgba(72, 202, 228, 0.3)');
+  gradient.addColorStop(1, 'rgba(72, 202, 228, 0)');
+
+  const targets = getTargets();
+  let targetLow = null, targetHigh = null;
+  if (chartMetric !== 'lsi' && targets[chartMetric]) {
+    [targetLow, targetHigh] = targets[chartMetric];
+  } else if (chartMetric === 'lsi') {
+    [targetLow, targetHigh] = [-0.3, 0.3];
+  }
+
+  chart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: points.map(p => p.label),
+      datasets: [{
+        data: points.map(p => p.value),
+        borderColor: '#48cae4',
+        backgroundColor: gradient,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 3,
+        pointBackgroundColor: '#48cae4',
+        pointBorderColor: '#0a2540',
+        pointBorderWidth: 1.5,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'nearest' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f3057',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          padding: 10,
+          titleFont: { family: 'JetBrains Mono', size: 11 },
+          bodyFont: { family: 'JetBrains Mono', size: 13, weight: 500 },
+          displayColors: false,
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6581a0', font: { family: 'JetBrains Mono', size: 10 }, maxTicksLimit: 6 },
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6581a0', font: { family: 'JetBrains Mono', size: 10 } },
+          suggestedMin: targetLow !== null ? Math.min(...points.map(p => p.value), targetLow) : undefined,
+          suggestedMax: targetHigh !== null ? Math.max(...points.map(p => p.value), targetHigh) : undefined,
+        },
+      },
+    },
+  });
+}
+
+// ============================================================
+// UI: TEST DETAIL MODAL
+// ============================================================
+function openDetail(id) {
+  const t = state.tests.find(x => x.id === id);
+  if (!t) return;
+  currentDetailId = id;
+  document.getElementById('detail-date').textContent = new Date(t.date).toLocaleString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+  });
+  const lsi = calculateLSI(t);
+  const tempD = t.temp ? tempDisplay(t.temp) : null;
+  const rows = [
+    ['FC', t.fc, 'ppm'],
+    ['CC', t.cc, 'ppm'],
+    ['pH', t.ph, ''],
+    ['TA', t.ta, 'ppm'],
+    ['CH', t.ch, 'ppm'],
+    ['CYA', t.cya, 'ppm'],
+    ['Salt', t.salt, 'ppm'],
+    ['Temp', tempD ? tempD.value : null, tempD ? tempD.unit : ''],
+    ['Borate', t.borate, 'ppm'],
+    ['LSI', lsi, ''],
+  ].filter(r => r[1] !== null && r[1] !== undefined);
+
+  document.getElementById('detail-body').innerHTML = rows.map(r => `
+    <div class="detail-row">
+      <div class="detail-label">${r[0]}</div>
+      <div class="detail-value">${r[1]}${r[2] ? ' ' + r[2] : ''}</div>
+    </div>
+  `).join('');
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detail-modal').classList.remove('open');
+  currentDetailId = null;
+}
+
+function deleteTest() {
+  if (!currentDetailId) return;
+  if (!confirm('Delete this test?')) return;
+  state.tests = state.tests.filter(t => t.id !== currentDetailId);
+  saveState();
+  closeModal();
+  renderHistory();
+  toast('Test deleted');
+}
+
+document.getElementById('detail-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'detail-modal') closeModal();
+});
+
+// ============================================================
+// UI: SETTINGS
+// ============================================================
+function loadConfigUI() {
+  const c = state.config;
+  document.getElementById('cfg-name').value = c.name;
+  const vol = volumeDisplay(c.volume);
+  document.getElementById('cfg-volume').value = vol.value;
+  document.getElementById('vol-unit').textContent = vol.unit;
+  document.getElementById('cfg-surface').value = c.surface;
+  document.getElementById('cfg-sanitizer').value = c.sanitizer;
+  document.getElementById('cfg-climate').value = c.climate;
+  const toggle = document.getElementById('toggle-units');
+  toggle.classList.toggle('on', c.units === 'metric');
+  document.getElementById('units-desc').textContent = c.units === 'metric' ? 'Metric (L, °C)' : 'US (gal, °F)';
+}
+
+function saveConfig() {
+  const volInput = Number(document.getElementById('cfg-volume').value) || 0;
+  const volGal = state.config.units === 'metric' ? literToGal(volInput) : volInput;
+
+  state.config = {
+    ...state.config,
+    name: document.getElementById('cfg-name').value.trim() || 'My Pool',
+    volume: Math.round(volGal),
+    surface: document.getElementById('cfg-surface').value,
+    sanitizer: document.getElementById('cfg-sanitizer').value,
+    climate: document.getElementById('cfg-climate').value,
+  };
+  saveState();
+  toast('Pool settings saved');
+  showView('dashboard');
+}
+
+function toggleUnits() {
+  state.config.units = state.config.units === 'metric' ? 'us' : 'metric';
+  saveState();
+  loadConfigUI();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `hydrolab-export-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Data exported');
+}
+
+function confirmReset() {
+  if (!confirm('This will permanently delete all your tests and settings. Continue?')) return;
+  if (!confirm('Really delete everything? This cannot be undone.')) return;
+  localStorage.removeItem(LS_KEY);
+  state = { config: { ...DEFAULT_CONFIG }, tests: [] };
+  toast('All data cleared');
+  showView('dashboard');
+}
+
+// ============================================================
+// UI: TOAST
+// ============================================================
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// PWA: SERVICE WORKER (for offline caching)
+// ============================================================
+if ('serviceWorker' in navigator) {
+  // Inline service worker via blob URL — caches the page for offline use
+  const swCode = `
+    const CACHE = 'hydrolab-v1';
+    self.addEventListener('install', e => { self.skipWaiting(); });
+    self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+    self.addEventListener('fetch', e => {
+      if (e.request.method !== 'GET') return;
+      e.respondWith(
+        caches.open(CACHE).then(cache =>
+          cache.match(e.request).then(cached => {
+            const fetchPromise = fetch(e.request).then(response => {
+              if (response.ok && e.request.url.startsWith(self.location.origin)) {
+                cache.put(e.request, response.clone());
+              }
+              return response;
+            }).catch(() => cached);
+            return cached || fetchPromise;
+          })
+        )
+      );
+    });
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(() => {
+    // Silently ignore — app still works without SW
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderDashboard();
+</script>
+</body>
+</html>
