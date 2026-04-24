@@ -851,6 +851,84 @@ body {
 .toggle.on { background: var(--aqua); }
 .toggle.on::after { transform: translateX(18px); }
 
+/* ============ TARGET OVERRIDES ============ */
+.target-hint {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-bottom: 12px;
+}
+
+.target-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.target-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 1fr 1fr;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.target-row.head {
+  padding: 0 2px;
+}
+
+.target-row.head .tgt-head {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  text-align: center;
+}
+
+.target-row .tgt-label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tgt-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: border-color 0.2s;
+}
+
+.tgt-cell:focus-within { border-color: var(--aqua); }
+
+.tgt-cell input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tgt-cell input::placeholder { color: var(--text-mute); opacity: 0.5; }
+
+.tgt-cell.empty {
+  background: transparent;
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-mute);
+  font-size: 14px;
+}
+
 /* ============ LOG DETAIL ============ */
 .detail-row {
   display: flex;
@@ -1074,6 +1152,13 @@ body {
         <div class="toggle" id="toggle-units" onclick="toggleUnits()"></div>
       </div>
 
+      <div class="section-label" style="margin-top: 24px;">Target Values</div>
+      <div class="target-hint">Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.</div>
+      <div class="target-grid" id="targets-grid"></div>
+      <div class="btn-row" style="margin-bottom: 0;">
+        <button class="btn" type="button" onclick="resetTargets()">Reset targets to defaults</button>
+      </div>
+
       <div class="btn-row">
         <button class="btn primary" onclick="saveConfig()">Save</button>
       </div>
@@ -1196,7 +1281,7 @@ function tempDisplay(f) {
 // CHEMISTRY: TARGET RANGES
 // ============================================================
 // Based on TFP methodology with SWG and sanitizer type adjustments
-function getTargets() {
+function computeAutoTargets() {
   const c = state.config;
   const isSWG = c.sanitizer === 'swg';
 
@@ -1236,6 +1321,36 @@ function getTargets() {
     saltTarget: isSWG ? 3200 : 0,
     borate: [0, 80],
   };
+}
+
+// Metrics that can be overridden in Setup → Target Values
+const TARGET_METRICS = [
+  { key: 'fc',     label: 'FC',     unit: 'ppm', hasTarget: true  },
+  { key: 'cc',     label: 'CC',     unit: 'ppm', hasTarget: false },
+  { key: 'ph',     label: 'pH',     unit: '',    hasTarget: true  },
+  { key: 'ta',     label: 'TA',     unit: 'ppm', hasTarget: true  },
+  { key: 'ch',     label: 'CH',     unit: 'ppm', hasTarget: true  },
+  { key: 'cya',    label: 'CYA',    unit: 'ppm', hasTarget: true  },
+  { key: 'salt',   label: 'Salt',   unit: 'ppm', hasTarget: true  },
+  { key: 'borate', label: 'Borate', unit: 'ppm', hasTarget: false },
+];
+
+function getTargets() {
+  const auto = computeAutoTargets();
+  const o = state.config.targets || {};
+  const pick = (v, fallback) => (typeof v === 'number' && !isNaN(v)) ? v : fallback;
+  const result = {};
+  for (const m of TARGET_METRICS) {
+    const k = m.key;
+    result[k] = [
+      pick(o[k + 'Min'], auto[k][0]),
+      pick(o[k + 'Max'], auto[k][1]),
+    ];
+    if (m.hasTarget) {
+      result[k + 'Target'] = pick(o[k + 'Target'], auto[k + 'Target']);
+    }
+  }
+  return result;
 }
 
 function getLatestValue(key) {
@@ -2087,6 +2202,67 @@ function loadConfigUI() {
   const toggle = document.getElementById('toggle-units');
   toggle.classList.toggle('on', c.units === 'metric');
   document.getElementById('units-desc').textContent = c.units === 'metric' ? 'Metric (L, °C)' : 'US (gal, °F)';
+  renderTargetsUI();
+}
+
+function renderTargetsUI() {
+  const grid = document.getElementById('targets-grid');
+  if (!grid) return;
+  const auto = computeAutoTargets();
+  const o = state.config.targets || {};
+  const val = v => (typeof v === 'number' && !isNaN(v)) ? String(v) : '';
+
+  let html = `
+    <div class="target-row head">
+      <div></div>
+      <div class="tgt-head">Min</div>
+      <div class="tgt-head">Target</div>
+      <div class="tgt-head">Max</div>
+    </div>`;
+
+  for (const m of TARGET_METRICS) {
+    const k = m.key;
+    const unit = m.unit ? ` ${m.unit}` : '';
+    const targetCell = m.hasTarget
+      ? `<div class="tgt-cell"><input type="number" step="any" inputmode="decimal"
+           id="tgt-${k}-target" value="${val(o[k+'Target'])}" placeholder="${auto[k+'Target']}${unit}"></div>`
+      : `<div class="tgt-cell empty">—</div>`;
+    html += `
+      <div class="target-row">
+        <div class="tgt-label">${m.label}</div>
+        <div class="tgt-cell"><input type="number" step="any" inputmode="decimal"
+          id="tgt-${k}-min" value="${val(o[k+'Min'])}" placeholder="${auto[k][0]}${unit}"></div>
+        ${targetCell}
+        <div class="tgt-cell"><input type="number" step="any" inputmode="decimal"
+          id="tgt-${k}-max" value="${val(o[k+'Max'])}" placeholder="${auto[k][1]}${unit}"></div>
+      </div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function collectTargetOverrides() {
+  const out = {};
+  const read = id => {
+    const el = document.getElementById(id);
+    if (!el) return undefined;
+    const v = el.value.trim();
+    if (v === '') return undefined;
+    const n = Number(v);
+    return isNaN(n) ? undefined : n;
+  };
+  for (const m of TARGET_METRICS) {
+    const k = m.key;
+    const min = read(`tgt-${k}-min`);
+    const max = read(`tgt-${k}-max`);
+    if (min !== undefined) out[k + 'Min'] = min;
+    if (max !== undefined) out[k + 'Max'] = max;
+    if (m.hasTarget) {
+      const tgt = read(`tgt-${k}-target`);
+      if (tgt !== undefined) out[k + 'Target'] = tgt;
+    }
+  }
+  return out;
 }
 
 function saveConfig() {
@@ -2100,10 +2276,18 @@ function saveConfig() {
     surface: document.getElementById('cfg-surface').value,
     sanitizer: document.getElementById('cfg-sanitizer').value,
     climate: document.getElementById('cfg-climate').value,
+    targets: collectTargetOverrides(),
   };
   saveState();
   toast('Pool settings saved');
   showView('dashboard');
+}
+
+function resetTargets() {
+  state.config.targets = {};
+  saveState();
+  renderTargetsUI();
+  toast('Targets reset to defaults');
 }
 
 function toggleUnits() {
