@@ -251,10 +251,35 @@ body {
   position: absolute;
   top: -50%;
   right: -20%;
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   background: radial-gradient(circle, rgba(72, 202, 228, 0.15), transparent 70%);
   pointer-events: none;
+  transition: background 0.4s;
+}
+
+.lsi-card.good {
+  background: linear-gradient(135deg, rgba(82, 224, 196, 0.12), rgba(72, 202, 228, 0.05));
+  border-color: rgba(82, 224, 196, 0.22);
+}
+.lsi-card.good::before {
+  background: radial-gradient(circle, rgba(82, 224, 196, 0.22), transparent 70%);
+}
+
+.lsi-card.warn {
+  background: linear-gradient(135deg, rgba(255, 200, 87, 0.10), rgba(255, 107, 107, 0.04));
+  border-color: rgba(255, 200, 87, 0.22);
+}
+.lsi-card.warn::before {
+  background: radial-gradient(circle, rgba(255, 200, 87, 0.22), transparent 70%);
+}
+
+.lsi-card.bad {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.14), rgba(255, 107, 107, 0.04));
+  border-color: rgba(255, 107, 107, 0.26);
+}
+.lsi-card.bad::before {
+  background: radial-gradient(circle, rgba(255, 107, 107, 0.22), transparent 70%);
 }
 
 .lsi-label {
@@ -405,6 +430,42 @@ body {
 
 .metric.empty .metric-value { color: var(--text-mute); }
 
+/* Per-metric color accents — top stripe + subtle background tint */
+.metric::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.85;
+}
+
+.metric-fc::before  { background: linear-gradient(90deg, var(--aqua), var(--mint)); }
+.metric-ph::before  { background: linear-gradient(90deg, var(--lavender), var(--aqua)); }
+.metric-ta::before  { background: linear-gradient(90deg, var(--amber), var(--mint)); }
+.metric-ch::before  { background: linear-gradient(90deg, var(--coral), var(--amber)); }
+.metric-cya::before { background: linear-gradient(90deg, var(--mint), var(--aqua-bright)); }
+.metric-salt::before { background: linear-gradient(90deg, var(--aqua-bright), var(--aqua)); }
+.metric-cc::before  { background: linear-gradient(90deg, var(--aqua-deep), var(--aqua)); }
+
+.metric-fc  { background: linear-gradient(160deg, rgba(72, 202, 228, 0.06), rgba(255, 255, 255, 0.02)); }
+.metric-ph  { background: linear-gradient(160deg, rgba(183, 148, 244, 0.06), rgba(255, 255, 255, 0.02)); }
+.metric-ta  { background: linear-gradient(160deg, rgba(255, 200, 87, 0.05), rgba(255, 255, 255, 0.02)); }
+.metric-ch  { background: linear-gradient(160deg, rgba(255, 107, 107, 0.05), rgba(255, 255, 255, 0.02)); }
+.metric-cya { background: linear-gradient(160deg, rgba(82, 224, 196, 0.06), rgba(255, 255, 255, 0.02)); }
+.metric-salt { background: linear-gradient(160deg, rgba(144, 224, 239, 0.06), rgba(255, 255, 255, 0.02)); }
+.metric-cc  { background: linear-gradient(160deg, rgba(0, 150, 199, 0.06), rgba(255, 255, 255, 0.02)); }
+
+.metric .metric-name { color: var(--text); }
+.metric-fc  .metric-name { color: var(--aqua-bright); }
+.metric-ph  .metric-name { color: var(--lavender); }
+.metric-ta  .metric-name { color: var(--amber); }
+.metric-ch  .metric-name { color: var(--coral); }
+.metric-cya .metric-name { color: var(--mint); }
+.metric-salt .metric-name { color: var(--aqua-bright); }
+.metric-cc  .metric-name { color: var(--aqua); }
+
 /* ============ DOSING CARDS ============ */
 .dose-list {
   display: flex;
@@ -466,6 +527,57 @@ body {
   color: var(--text-dim);
   margin-bottom: 4px;
   font-weight: 500;
+}
+
+/* Dose card priority colors — left border indicates urgency */
+.dose {
+  border-left: 3px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+.dose-p1, .dose-p2 { border-left-color: var(--coral); }
+.dose-p3          { border-left-color: var(--amber); }
+.dose-p4          { border-left-color: var(--aqua); }
+.dose-p5          { border-left-color: var(--mint); }
+
+/* Dose icon color by chemical type */
+.dose[data-type^="Cl"] .dose-icon {
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.25), rgba(72, 202, 228, 0.06));
+  border-color: rgba(72, 202, 228, 0.3);
+  color: var(--aqua-bright);
+}
+.dose[data-type^="pH"] .dose-icon {
+  background: linear-gradient(135deg, rgba(183, 148, 244, 0.25), rgba(183, 148, 244, 0.06));
+  border-color: rgba(183, 148, 244, 0.3);
+  color: var(--lavender);
+}
+.dose[data-type^="TA"] .dose-icon {
+  background: linear-gradient(135deg, rgba(255, 200, 87, 0.25), rgba(255, 200, 87, 0.06));
+  border-color: rgba(255, 200, 87, 0.3);
+  color: var(--amber);
+}
+.dose[data-type^="CH"] .dose-icon {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 107, 107, 0.06));
+  border-color: rgba(255, 107, 107, 0.3);
+  color: var(--coral);
+}
+.dose[data-type^="CYA"] .dose-icon {
+  background: linear-gradient(135deg, rgba(82, 224, 196, 0.25), rgba(82, 224, 196, 0.06));
+  border-color: rgba(82, 224, 196, 0.3);
+  color: var(--mint);
+}
+.dose[data-type^="Salt"] .dose-icon {
+  background: linear-gradient(135deg, rgba(144, 224, 239, 0.25), rgba(144, 224, 239, 0.06));
+  border-color: rgba(144, 224, 239, 0.3);
+  color: var(--aqua-bright);
+}
+
+/* Empty / "Nothing to do" state — green accent */
+.dose-empty {
+  background: linear-gradient(135deg, rgba(82, 224, 196, 0.07), rgba(72, 202, 228, 0.03));
+  border-color: rgba(82, 224, 196, 0.18);
+}
+.dose-empty em {
+  color: var(--mint);
 }
 
 /* ============ FORM ============ */
@@ -717,6 +829,165 @@ body {
 }
 
 .modal.open { display: flex; animation: fadeIn 0.2s; }
+
+/* ============ PAYWALL & PRO ============ */
+.pro-badge {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--aqua) 0%, var(--mint) 100%);
+  color: var(--bg-deep);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.pro-locked {
+  position: relative;
+  padding: 28px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.08), rgba(83, 224, 196, 0.04));
+  border: 1px solid rgba(72, 202, 228, 0.18);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.pro-locked-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(72, 202, 228, 0.12);
+  display: grid;
+  place-items: center;
+  color: var(--aqua);
+  margin-bottom: 4px;
+}
+
+.pro-locked-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pro-locked-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+.pro-locked .btn {
+  margin-top: 8px;
+  min-width: 180px;
+}
+
+.upgrade-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.12), rgba(83, 224, 196, 0.06));
+  border: 1px solid rgba(72, 202, 228, 0.22);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.upgrade-card:hover { transform: translateY(-1px); border-color: rgba(72, 202, 228, 0.4); }
+
+.upgrade-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--aqua) 0%, var(--mint) 100%);
+  display: grid;
+  place-items: center;
+  color: var(--bg-deep);
+  flex-shrink: 0;
+}
+
+.upgrade-card-text { flex: 1; }
+.upgrade-card-title { font-weight: 600; color: var(--text); font-size: 15px; }
+.upgrade-card-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+.pro-status-row {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(83, 224, 196, 0.08);
+  border: 1px solid rgba(83, 224, 196, 0.2);
+  font-size: 13px;
+  color: var(--mint);
+  margin-bottom: 16px;
+}
+
+.paywall-features {
+  list-style: none;
+  margin: 18px 0;
+  padding: 0;
+  text-align: left;
+}
+
+.paywall-features li {
+  padding: 10px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text);
+  border-top: 1px solid var(--border);
+}
+
+.paywall-features li:first-child { border-top: none; }
+
+.paywall-check {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--aqua) 0%, var(--mint) 100%);
+  display: grid;
+  place-items: center;
+  color: var(--bg-deep);
+  font-weight: 700;
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+.paywall-feature-title { font-weight: 500; }
+.paywall-feature-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+.paywall-price {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 8px 0 4px;
+}
+
+.paywall-price-sub {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-bottom: 16px;
+}
+
+.paywall-fineprint {
+  font-size: 11px;
+  color: var(--text-mute);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.5;
+}
 
 .modal-sheet {
   background: var(--bg-mid);
@@ -984,6 +1255,7 @@ body {
         <svg viewBox="0 0 24 24"><path d="M12 2c-2 4-5 7-5 11a5 5 0 0 0 10 0c0-4-3-7-5-11z"/></svg>
       </div>
       <div class="brand-name">Hydrolab</div>
+      <span class="pro-badge" id="pro-badge">Pro</span>
     </div>
     <div class="header-right">
       <button class="icon-btn" id="btn-settings" aria-label="Settings">
@@ -1088,13 +1360,23 @@ body {
         <div class="chip" data-metric="lsi">LSI</div>
       </div>
 
-      <div class="chart-wrap">
+      <div class="chart-wrap" id="chart-wrap">
         <canvas id="trend-chart"></canvas>
         <div class="chart-empty" id="chart-empty">No data yet</div>
       </div>
 
+      <div class="pro-locked" id="chart-paywall" style="display: none;">
+        <div class="pro-locked-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="pro-locked-title">Trend charts are a Pro feature</div>
+        <div class="pro-locked-sub">See how every reading has changed over time. Spot patterns before they become problems.</div>
+        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+      </div>
+
       <div class="section-label" style="margin-top: 24px;">All Tests</div>
       <div id="log-list"></div>
+      <div id="log-footer"></div>
     </section>
 
     <!-- ============ SETTINGS VIEW ============ -->
@@ -1102,6 +1384,22 @@ body {
       <div style="margin-bottom: 20px;">
         <div class="pool-title">Pool <em>Setup</em></div>
         <div class="pool-sub">Tell the app about your pool so we can calculate doses correctly.</div>
+      </div>
+
+      <div class="upgrade-card" id="upgrade-row" onclick="showPaywall()">
+        <div class="upgrade-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="upgrade-card-text">
+          <div class="upgrade-card-title">Unlock Hydrolab Pro</div>
+          <div class="upgrade-card-sub">Trend charts, unlimited history, custom targets — $9.99 one-time</div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-dim);"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <div class="pro-status-row" id="pro-status-row">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <div>You're on Hydrolab Pro — thanks for the support.</div>
       </div>
 
       <div class="section-label">Pool Details</div>
@@ -1153,9 +1451,9 @@ body {
       </div>
 
       <div class="section-label" style="margin-top: 24px;">Target Values</div>
-      <div class="target-hint">Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.</div>
+      <div class="target-hint" id="targets-hint">Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.</div>
       <div class="target-grid" id="targets-grid"></div>
-      <div class="btn-row" style="margin-bottom: 0;">
+      <div class="btn-row" style="margin-bottom: 0;" id="targets-reset-row">
         <button class="btn" type="button" onclick="resetTargets()">Reset targets to defaults</button>
       </div>
 
@@ -1215,6 +1513,60 @@ body {
   </div>
 </div>
 
+<!-- Paywall Modal -->
+<div class="modal" id="paywall-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Unlock Hydrolab <em>Pro</em></div>
+    <div class="modal-sub">Get the most out of every test you log.</div>
+
+    <ul class="paywall-features">
+      <li>
+        <div class="paywall-check">+</div>
+        <div>
+          <div class="paywall-feature-title">Trend charts</div>
+          <div class="paywall-feature-sub">Visualize FC, pH, TA, CH, CYA and LSI over time.</div>
+        </div>
+      </li>
+      <li>
+        <div class="paywall-check">+</div>
+        <div>
+          <div class="paywall-feature-title">Unlimited test history</div>
+          <div class="paywall-feature-sub">Free shows the last 30 tests. Pro keeps every reading forever.</div>
+        </div>
+      </li>
+      <li>
+        <div class="paywall-check">+</div>
+        <div>
+          <div class="paywall-feature-title">Custom target ranges</div>
+          <div class="paywall-feature-sub">Override the auto-targets to match your pool's needs.</div>
+        </div>
+      </li>
+      <li>
+        <div class="paywall-check">+</div>
+        <div>
+          <div class="paywall-feature-title">Test reminders</div>
+          <div class="paywall-feature-sub">Get notified when it's time to test the water.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div style="text-align: center;">
+      <div class="paywall-price" id="paywall-price">$9.99</div>
+      <div class="paywall-price-sub">One-time purchase · No subscription</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="closePaywall()">Maybe later</button>
+      <button class="btn primary" onclick="unlockPro()">Unlock Pro</button>
+    </div>
+
+    <div class="paywall-fineprint">
+      Pro features unlock instantly on this device. Real billing arrives with the app store version.
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">Saved</div>
 
 <script>
@@ -1230,7 +1582,11 @@ const DEFAULT_CONFIG = {
   sanitizer: 'liquid',
   climate: 'outdoor',
   units: 'us',         // 'us' or 'metric'
+  isPro: false,        // unlocks: trend chart, unlimited history, custom targets
 };
+
+const FREE_HISTORY_LIMIT = 30;
+const PRO_PRICE = '$9.99';
 
 let state = loadState();
 let currentDetailId = null;
@@ -1253,6 +1609,45 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+// ============================================================
+// PRO / PAYWALL
+// ============================================================
+function isPro() { return !!state.config.isPro; }
+
+function showPaywall() {
+  document.getElementById('paywall-modal').classList.add('open');
+}
+
+function closePaywall() {
+  document.getElementById('paywall-modal').classList.remove('open');
+}
+
+// MOCK purchase — sets the flag locally. Real Google Play Billing wires in during Capacitor phase.
+function unlockPro() {
+  state.config.isPro = true;
+  saveState();
+  closePaywall();
+  toast('Welcome to Pro!');
+  renderProBadge();
+  // Re-render whichever view is active so unlocked features appear
+  const activeView = document.querySelector('.view.active');
+  if (activeView) {
+    const id = activeView.id.replace('view-', '');
+    if (id === 'history') renderHistory();
+    else if (id === 'settings') loadConfigUI();
+    else if (id === 'dashboard') renderDashboard();
+  }
+}
+
+function renderProBadge() {
+  const el = document.getElementById('pro-badge');
+  if (el) el.style.display = isPro() ? 'inline-flex' : 'none';
+  const upgradeBtn = document.getElementById('upgrade-row');
+  if (upgradeBtn) upgradeBtn.style.display = isPro() ? 'none' : 'flex';
+  const proStatus = document.getElementById('pro-status-row');
+  if (proStatus) proStatus.style.display = isPro() ? 'flex' : 'none';
 }
 
 // ============================================================
@@ -1694,8 +2089,20 @@ function renderDashboard() {
     lsiPos = Math.max(0, Math.min(100, ((lsi + 1.5) / 3) * 100));
   }
 
+  // CC is optional — only show if user actually logged a value
+  const hasCC = latest.cc !== null && latest.cc !== undefined && latest.cc !== '';
+  const extrasCard = state.config.sanitizer === 'swg'
+    ? metricCard('Salt', latest.salt, 'ppm', targets.salt, 0)
+    : (hasCC ? metricCard('CC', latest.cc, 'ppm', targets.cc, 1) : '');
+
   body.innerHTML = `
-    <div class="lsi-card">
+    <div class="section-label" style="margin-top: 0;">
+      <span>Recommended Actions</span>
+      ${lsi !== null ? `<span style="color: var(--text-mute); font-size: 10px;">TFP × LSI</span>` : ''}
+    </div>
+    ${renderDoses(latest)}
+
+    <div class="lsi-card ${lsiInfo.cls}">
       <div class="lsi-label">Saturation Index (LSI)</div>
       <div class="lsi-value ${lsiInfo.cls}">${lsi !== null ? (lsi > 0 ? '+' : '') + lsi.toFixed(2) : '—'}</div>
       <div class="lsi-desc">${lsiInfo.desc}</div>
@@ -1712,16 +2119,8 @@ function renderDashboard() {
       ${metricCard('TA', latest.ta, 'ppm', targets.ta, 0)}
       ${metricCard('CH', latest.ch, 'ppm', targets.ch, 0)}
       ${metricCard('CYA', latest.cya, 'ppm', targets.cya, 0)}
-      ${state.config.sanitizer === 'swg'
-        ? metricCard('Salt', latest.salt, 'ppm', targets.salt, 0)
-        : metricCard('CC', latest.cc, 'ppm', targets.cc, 1)}
+      ${extrasCard}
     </div>
-
-    <div class="section-label">
-      <span>Recommended Actions</span>
-      ${lsi !== null ? `<span style="color: var(--text-mute); font-size: 10px;">TFP × LSI</span>` : ''}
-    </div>
-    ${renderDoses(latest)}
 
     ${renderChecklist(latest, targets)}
 
@@ -1741,8 +2140,9 @@ function metricCard(name, val, unit, range, decimals) {
   }
   const display = empty ? '—' : Number(val).toFixed(decimals);
   const rangeText = `${range[0]}–${range[1]}${unit ? ' ' + unit : ''}`;
+  const key = name.toLowerCase();
   return `
-    <div class="metric ${empty ? 'empty' : ''}">
+    <div class="metric metric-${key} ${empty ? 'empty' : ''}">
       <div class="metric-head">
         <div class="metric-name">${name}</div>
         <div class="metric-dot ${dotCls}"></div>
@@ -1766,7 +2166,7 @@ function renderDoses(t) {
   return `
     <div class="dose-list">
       ${doses.map(d => `
-        <div class="dose">
+        <div class="dose dose-p${d.priority}" data-type="${d.type}">
           <div class="dose-icon">${d.type}</div>
           <div class="dose-body">
             <div class="dose-title">${d.title}</div>
@@ -1933,7 +2333,25 @@ function saveTest() {
 function renderHistory() {
   const sub = document.getElementById('history-sub');
   const list = document.getElementById('log-list');
+  const footer = document.getElementById('log-footer');
+  const chartWrap = document.getElementById('chart-wrap');
+  const chartSelect = document.getElementById('chart-select');
+  const chartPaywall = document.getElementById('chart-paywall');
+
   sub.textContent = state.tests.length === 0 ? 'No tests yet' : `${state.tests.length} test${state.tests.length === 1 ? '' : 's'} logged`;
+  footer.innerHTML = '';
+
+  // Gate: chart is Pro-only
+  if (!isPro()) {
+    chartWrap.style.display = 'none';
+    chartSelect.style.display = 'none';
+    chartPaywall.style.display = 'flex';
+    if (chart) { chart.destroy(); chart = null; }
+  } else {
+    chartWrap.style.display = '';
+    chartSelect.style.display = '';
+    chartPaywall.style.display = 'none';
+  }
 
   if (state.tests.length === 0) {
     list.innerHTML = '<div class="dose-empty"><em>Empty log</em>Your tests will appear here once logged.</div>';
@@ -1942,11 +2360,16 @@ function renderHistory() {
     return;
   }
 
-  document.getElementById('chart-empty').style.display = 'none';
-  renderChart();
+  if (isPro()) {
+    document.getElementById('chart-empty').style.display = 'none';
+    renderChart();
+  }
 
   const sorted = [...state.tests].sort((a, b) => new Date(b.date) - new Date(a.date));
-  list.innerHTML = sorted.map(t => {
+  const visible = isPro() ? sorted : sorted.slice(0, FREE_HISTORY_LIMIT);
+  const hidden = sorted.length - visible.length;
+
+  list.innerHTML = visible.map(t => {
     const lsi = calculateLSI(t);
     const lsiInfo = lsiStatus(lsi);
     const date = new Date(t.date);
@@ -1968,6 +2391,19 @@ function renderHistory() {
       </div>
     `;
   }).join('');
+
+  if (hidden > 0) {
+    footer.innerHTML = `
+      <div class="pro-locked" style="margin-top: 16px;">
+        <div class="pro-locked-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="pro-locked-title">${hidden} older test${hidden === 1 ? '' : 's'} hidden</div>
+        <div class="pro-locked-sub">Free shows the most recent ${FREE_HISTORY_LIMIT}. Upgrade to Pro to see your full history.</div>
+        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+      </div>
+    `;
+  }
 }
 
 document.querySelectorAll('#chart-select .chip').forEach(c => {
@@ -2187,6 +2623,10 @@ document.getElementById('detail-modal').addEventListener('click', (e) => {
   if (e.target.id === 'detail-modal') closeModal();
 });
 
+document.getElementById('paywall-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'paywall-modal') closePaywall();
+});
+
 // ============================================================
 // UI: SETTINGS
 // ============================================================
@@ -2208,6 +2648,28 @@ function loadConfigUI() {
 function renderTargetsUI() {
   const grid = document.getElementById('targets-grid');
   if (!grid) return;
+  const hint = document.getElementById('targets-hint');
+  const resetRow = document.getElementById('targets-reset-row');
+
+  if (!isPro()) {
+    if (hint) hint.style.display = 'none';
+    if (resetRow) resetRow.style.display = 'none';
+    grid.innerHTML = `
+      <div class="pro-locked">
+        <div class="pro-locked-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="pro-locked-title">Custom target ranges are a Pro feature</div>
+        <div class="pro-locked-sub">Override the auto-calculated targets to dial in your specific pool. Auto targets stay active for free.</div>
+        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+      </div>
+    `;
+    return;
+  }
+
+  if (hint) hint.style.display = '';
+  if (resetRow) resetRow.style.display = '';
+
   const auto = computeAutoTargets();
   const o = state.config.targets || {};
   const val = v => (typeof v === 'number' && !isNaN(v)) ? String(v) : '';
@@ -2276,7 +2738,9 @@ function saveConfig() {
     surface: document.getElementById('cfg-surface').value,
     sanitizer: document.getElementById('cfg-sanitizer').value,
     climate: document.getElementById('cfg-climate').value,
-    targets: collectTargetOverrides(),
+    // Only update target overrides when Pro — otherwise the inputs don't exist
+    // and we'd wipe any saved overrides
+    targets: isPro() ? collectTargetOverrides() : (state.config.targets || {}),
   };
   saveState();
   toast('Pool settings saved');
@@ -2366,6 +2830,7 @@ if ('serviceWorker' in navigator) {
 // ============================================================
 // INIT
 // ============================================================
+renderProBadge();
 renderDashboard();
 </script>
 </body>
