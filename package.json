@@ -1,0 +1,36 @@
+{
+  "name": "hydrolab",
+  "version": "1.0.0",
+  "description": "Pool Calculator for Balancing (works for SWG and Chlorine)",
+  "main": "index.js",
+  "scripts": {
+    "build:web": "node build.mjs",
+    "sync": "npm run build:web && cap sync",
+    "open:android": "cap open android",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kdelawder/HydroLab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kdelawder/HydroLab/issues"
+  },
+  "homepage": "https://github.com/kdelawder/HydroLab#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/local-notifications": "^8.0.2",
+    "@capacitor/share": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.3.1"
+  }
+}

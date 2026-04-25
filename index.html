@@ -1450,6 +1450,9 @@ body {
         <div class="toggle" id="toggle-units" onclick="toggleUnits()"></div>
       </div>
 
+      <div class="section-label" style="margin-top: 24px;">Reminders</div>
+      <div id="reminders-section"></div>
+
       <div class="section-label" style="margin-top: 24px;">Target Values</div>
       <div class="target-hint" id="targets-hint">Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.</div>
       <div class="target-grid" id="targets-grid"></div>
@@ -1506,6 +1509,9 @@ body {
     <div class="modal-title">Test Detail</div>
     <div class="modal-sub" id="detail-date">—</div>
     <div id="detail-body"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="shareTest()">Share Test</button>
+    </div>
     <div class="btn-row">
       <button class="btn danger" onclick="deleteTest()">Delete Test</button>
       <button class="btn" onclick="closeModal()">Close</button>
@@ -1582,11 +1588,14 @@ const DEFAULT_CONFIG = {
   sanitizer: 'liquid',
   climate: 'outdoor',
   units: 'us',         // 'us' or 'metric'
-  isPro: false,        // unlocks: trend chart, unlimited history, custom targets
+  isPro: false,        // unlocks: trend chart, unlimited history, custom targets, reminders
+  reminderEnabled: false,
+  reminderDays: 7,
 };
 
 const FREE_HISTORY_LIMIT = 30;
 const PRO_PRICE = '$9.99';
+const REMINDER_NOTIFICATION_ID = 1;
 
 let state = loadState();
 let currentDetailId = null;
@@ -1648,6 +1657,88 @@ function renderProBadge() {
   if (upgradeBtn) upgradeBtn.style.display = isPro() ? 'none' : 'flex';
   const proStatus = document.getElementById('pro-status-row');
   if (proStatus) proStatus.style.display = isPro() ? 'flex' : 'none';
+}
+
+// ============================================================
+// NATIVE PLATFORM BRIDGE (Capacitor)
+// All methods feature-detect and silently no-op in browsers.
+// ============================================================
+const Native = {
+  isNative() {
+    return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  },
+
+  async haptic(style = 'MEDIUM') {
+    try {
+      const H = window.Capacitor?.Plugins?.Haptics;
+      if (H) await H.impact({ style });
+    } catch (e) { /* silent */ }
+  },
+
+  async share(opts) {
+    try {
+      const S = window.Capacitor?.Plugins?.Share;
+      if (S) return await S.share(opts);
+      if (navigator.share) return await navigator.share(opts);
+    } catch (e) { /* user cancel or unsupported */ }
+  },
+
+  async setStatusBar() {
+    try {
+      const SB = window.Capacitor?.Plugins?.StatusBar;
+      if (SB) {
+        await SB.setStyle({ style: 'DARK' });
+        await SB.setBackgroundColor({ color: '#0a2540' });
+      }
+    } catch (e) { /* silent */ }
+  },
+
+  async requestNotificationPermission() {
+    try {
+      const N = window.Capacitor?.Plugins?.LocalNotifications;
+      if (!N) return false;
+      const result = await N.requestPermissions();
+      return result.display === 'granted';
+    } catch (e) { return false; }
+  },
+
+  async scheduleReminder(daysFromNow) {
+    try {
+      const N = window.Capacitor?.Plugins?.LocalNotifications;
+      if (!N) return false;
+      await N.cancel({ notifications: [{ id: REMINDER_NOTIFICATION_ID }] });
+      const at = new Date();
+      at.setDate(at.getDate() + daysFromNow);
+      at.setHours(10, 0, 0, 0);
+      await N.schedule({
+        notifications: [{
+          id: REMINDER_NOTIFICATION_ID,
+          title: 'Time to test your pool',
+          body: 'Tap to log a fresh water reading in Hydrolab.',
+          schedule: { at },
+        }],
+      });
+      return true;
+    } catch (e) { return false; }
+  },
+
+  async cancelReminder() {
+    try {
+      const N = window.Capacitor?.Plugins?.LocalNotifications;
+      if (N) await N.cancel({ notifications: [{ id: REMINDER_NOTIFICATION_ID }] });
+    } catch (e) { /* silent */ }
+  },
+};
+
+// Refresh the reminder schedule based on current state. Called after every test save
+// so the next reminder is always X days from the most recent activity.
+async function refreshReminder() {
+  if (!isPro() || !state.config.reminderEnabled) {
+    await Native.cancelReminder();
+    return;
+  }
+  const days = state.config.reminderDays || 7;
+  await Native.scheduleReminder(days);
 }
 
 // ============================================================
@@ -2323,6 +2414,8 @@ function saveTest() {
 
   state.tests.push(test);
   saveState();
+  Native.haptic('MEDIUM');
+  refreshReminder();
   toast('Test saved');
   showView('dashboard');
 }
@@ -2619,6 +2712,33 @@ function deleteTest() {
   toast('Test deleted');
 }
 
+async function shareTest() {
+  if (!currentDetailId) return;
+  const t = state.tests.find(x => x.id === currentDetailId);
+  if (!t) return;
+  const lsi = calculateLSI(t);
+  const tempD = t.temp ? tempDisplay(t.temp) : null;
+  const lines = [
+    `Hydrolab — ${state.config.name || 'Pool'} test`,
+    new Date(t.date).toLocaleString(),
+    '',
+  ];
+  if (t.fc !== null) lines.push(`FC: ${t.fc} ppm`);
+  if (t.cc !== null && t.cc !== undefined) lines.push(`CC: ${t.cc} ppm`);
+  if (t.ph !== null) lines.push(`pH: ${t.ph}`);
+  if (t.ta !== null) lines.push(`TA: ${t.ta} ppm`);
+  if (t.ch !== null) lines.push(`CH: ${t.ch} ppm`);
+  if (t.cya !== null) lines.push(`CYA: ${t.cya} ppm`);
+  if (t.salt !== null) lines.push(`Salt: ${t.salt} ppm`);
+  if (tempD) lines.push(`Temp: ${tempD.value} ${tempD.unit}`);
+  if (lsi !== null) lines.push(`LSI: ${(lsi > 0 ? '+' : '') + lsi.toFixed(2)}`);
+  await Native.share({
+    title: 'Pool Test Results',
+    text: lines.join('\n'),
+    dialogTitle: 'Share pool test',
+  });
+}
+
 document.getElementById('detail-modal').addEventListener('click', (e) => {
   if (e.target.id === 'detail-modal') closeModal();
 });
@@ -2643,6 +2763,79 @@ function loadConfigUI() {
   toggle.classList.toggle('on', c.units === 'metric');
   document.getElementById('units-desc').textContent = c.units === 'metric' ? 'Metric (L, °C)' : 'US (gal, °F)';
   renderTargetsUI();
+  renderRemindersUI();
+}
+
+function renderRemindersUI() {
+  const section = document.getElementById('reminders-section');
+  if (!section) return;
+
+  if (!isPro()) {
+    section.innerHTML = `
+      <div class="pro-locked">
+        <div class="pro-locked-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="pro-locked-title">Test reminders are a Pro feature</div>
+        <div class="pro-locked-sub">Get a friendly nudge when it's time to test the water — only fires if you go too long between tests.</div>
+        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+      </div>
+    `;
+    return;
+  }
+
+  const enabled = !!state.config.reminderEnabled;
+  const days = state.config.reminderDays || 7;
+  section.innerHTML = `
+    <div class="settings-row">
+      <div>
+        <div class="settings-label">Test Reminders</div>
+        <div class="settings-sub">Notify me ${days} days after my last test</div>
+      </div>
+      <div class="toggle ${enabled ? 'on' : ''}" id="toggle-reminders" onclick="toggleReminder()"></div>
+    </div>
+    <div class="settings-row" style="${enabled ? '' : 'display: none;'}" id="reminder-frequency-row">
+      <div>
+        <div class="settings-label">Frequency</div>
+        <div class="settings-sub">How long between reminders</div>
+      </div>
+      <select id="reminder-days" onchange="changeReminderDays(this.value)" style="background: var(--bg-card); color: var(--text); border: 1px solid var(--border-strong); border-radius: 10px; padding: 8px 12px; font-family: var(--font-body); font-size: 14px;">
+        <option value="3" ${days === 3 ? 'selected' : ''}>Every 3 days</option>
+        <option value="7" ${days === 7 ? 'selected' : ''}>Weekly</option>
+        <option value="14" ${days === 14 ? 'selected' : ''}>Every 2 weeks</option>
+      </select>
+    </div>
+  `;
+}
+
+async function toggleReminder() {
+  if (!isPro()) { showPaywall(); return; }
+  const enabling = !state.config.reminderEnabled;
+  if (enabling) {
+    if (Native.isNative()) {
+      const granted = await Native.requestNotificationPermission();
+      if (!granted) {
+        toast('Enable notifications in Settings to use reminders');
+        return;
+      }
+    }
+  }
+  state.config.reminderEnabled = enabling;
+  saveState();
+  renderRemindersUI();
+  refreshReminder();
+  toast(enabling ? 'Reminders on' : 'Reminders off');
+}
+
+function changeReminderDays(value) {
+  const n = parseInt(value, 10);
+  if (!n) return;
+  state.config.reminderDays = n;
+  saveState();
+  refreshReminder();
+  // Update sub-text
+  const sub = document.querySelector('#reminders-section .settings-sub');
+  if (sub) sub.textContent = `Notify me ${n} days after my last test`;
 }
 
 function renderTargetsUI() {
@@ -2832,6 +3025,8 @@ if ('serviceWorker' in navigator) {
 // ============================================================
 renderProBadge();
 renderDashboard();
+Native.setStatusBar();
+refreshReminder();
 </script>
 </body>
 </html>

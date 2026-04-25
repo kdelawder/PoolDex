@@ -1,0 +1,20 @@
+{
+  "appId": "com.kdelawder.hydrolab",
+  "appName": "Hydrolab",
+  "webDir": "www",
+  "backgroundColor": "#0a2540",
+  "android": {
+    "backgroundColor": "#0a2540",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "StatusBar": {
+      "backgroundColor": "#0a2540",
+      "style": "DARK",
+      "overlaysWebView": false
+    },
+    "LocalNotifications": {
+      "iconColor": "#48cae4"
+    }
+  }
+}
