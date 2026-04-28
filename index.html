@@ -1877,6 +1877,14 @@ body {
         </select>
       </div>
 
+      <div class="settings-row" id="commercial-beta-row" style="display:none;" onclick="toggleCommercialBeta()">
+        <div>
+          <div class="settings-label" data-i18n="setup.commercialBeta">Commercial features (Beta)</div>
+          <div class="settings-sub" id="commercial-beta-desc" data-i18n="setup.commercialBeta.sub">Try multi-pool routes and customer profiles. Off resets to Pro.</div>
+        </div>
+        <div class="toggle" id="toggle-commercial-beta"></div>
+      </div>
+
       <div class="section-label" style="margin-top: 24px;" data-i18n="setup.reminders">Reminders</div>
       <div id="reminders-section"></div>
 
@@ -2428,13 +2436,16 @@ function closeGlossary() {
 const LAUNCH_MODE = 'soft-launch';
 
 function currentTier() {
-  if (LAUNCH_MODE === 'soft-launch') return 'pro'; // unlock premium features for everyone
+  if (LAUNCH_MODE === 'soft-launch') {
+    // Beta: respect Commercial opt-in (Settings toggle) for testers; otherwise
+    // everyone gets Pro features for free.
+    if (state.config.tier === 'commercial') return 'commercial';
+    return 'pro';
+  }
   return state.config.tier || 'free';
 }
 function isPro() { return currentTier() === 'pro' || currentTier() === 'commercial'; }
 function isCommercial() {
-  // Commercial UI stays hidden until LAUNCH_MODE = 'commercial' AND user has unlocked it.
-  if (LAUNCH_MODE !== 'commercial') return false;
   return currentTier() === 'commercial';
 }
 
@@ -2459,6 +2470,18 @@ function unlockCommercial() {
   state.config.tier = 'commercial';
   saveState();
   afterUnlock(tr('paywall.welcomeCommercial'));
+}
+
+// Beta — toggle Commercial mode for testing during soft-launch.
+// Off resets back to Pro (the soft-launch default).
+function toggleCommercialBeta() {
+  if (LAUNCH_MODE !== 'soft-launch') return;
+  state.config.tier = isCommercial() ? 'free' : 'commercial';
+  saveState();
+  renderProBadge();
+  loadConfigUI();
+  renderDashboard();
+  toast(tr(isCommercial() ? 'toast.commercialOn' : 'toast.commercialOff'));
 }
 
 // Dev only — reset tier so testing flows can re-enter the paywall
@@ -2812,6 +2835,10 @@ const I18N = {
     'setup.devReset.label': 'Reset tier (dev)',
     'setup.devReset.sub': 'Testing only — remove before launch',
     'toast.tierReset': 'Tier reset to free',
+    'toast.commercialOn': 'Commercial features enabled',
+    'toast.commercialOff': 'Back to Pro features',
+    'setup.commercialBeta': 'Commercial features (Beta)',
+    'setup.commercialBeta.sub': 'Try multi-pool routes and customer profiles. Off resets to Pro.',
 
     // Test detail
     'detail.title': 'Test Detail',
@@ -3148,6 +3175,10 @@ const I18N = {
     'setup.devReset.label': 'Restablecer plan (dev)',
     'setup.devReset.sub': 'Solo para pruebas — quitar antes del lanzamiento',
     'toast.tierReset': 'Plan restablecido a gratis',
+    'toast.commercialOn': 'Funciones comerciales activadas',
+    'toast.commercialOff': 'Volviendo a las funciones Pro',
+    'setup.commercialBeta': 'Funciones comerciales (Beta)',
+    'setup.commercialBeta.sub': 'Prueba rutas multi-piscina y perfiles de clientes. Desactivar vuelve a Pro.',
 
     // Test detail
     'detail.title': 'Detalle de prueba',
@@ -4572,6 +4603,17 @@ function loadConfigUI() {
   if (langLabel) langLabel.textContent = tr('settings.language');
   const langDesc = document.getElementById('lang-desc');
   if (langDesc) langDesc.textContent = tr('lang.name');
+  // Commercial beta toggle — visible only during soft-launch
+  const commercialRow = document.getElementById('commercial-beta-row');
+  if (commercialRow) {
+    if (LAUNCH_MODE === 'soft-launch') {
+      commercialRow.style.display = 'flex';
+      const toggle = document.getElementById('toggle-commercial-beta');
+      if (toggle) toggle.classList.toggle('on', isCommercial());
+    } else {
+      commercialRow.style.display = 'none';
+    }
+  }
   renderTargetsUI();
   renderRemindersUI();
   renderChemPrefsUI();
