@@ -21,9 +21,10 @@ function taBufferOf(ta) {
   return Math.max(0.5, Math.min(2.0, ta / TA_REF));
 }
 
-function pHDoseFor(chemKey, drop, gallons, ta) {
+function pHDoseFor(chemKey, drop, gallons, ta, style = 'aggressive') {
   const dose = DOSE_PER_10K[chemKey];
-  return dose.qty * (drop / 0.2) * taBufferOf(ta) * (gallons / 10000);
+  const phMult = style === 'conservative' ? 0.5 : 1.0;
+  return dose.qty * (drop / 0.2) * taBufferOf(ta) * (gallons / 10000) * phMult;
 }
 
 function fcDoseFor(chemKey, ppmNeeded, gallons) {
@@ -80,6 +81,14 @@ const tests = [
   // FC raise — cal-hypo 65%
   { name: 'Cal-Hypo 65%, +1 ppm FC, 10k gal',
     fn: () => fcDoseFor('calHypo', 1, 10000), expected: 2.1, tol: 0.05, unit: 'oz wt' },
+
+  // Kevin's real-world comparison case: 30,360 gal SWG, pH 8.0 -> 7.5 (drop 0.5), TA 80, 31% muriatic
+  // Aggressive (current default) — should match Orenda within ~10%
+  { name: "Aggressive: 30,360 gal SWG, 0.5 pH drop, TA 80, 31% muriatic",
+    fn: () => pHDoseFor('muriaticAcid', 0.5, 30360, 80, 'aggressive'), expected: 60.72, tol: 0.5, unit: 'fl oz' },
+  // Conservative — should match PoolMath's "half dose" recommendation (~34 fl oz)
+  { name: "Conservative: 30,360 gal SWG, 0.5 pH drop, TA 80, 31% muriatic",
+    fn: () => pHDoseFor('muriaticAcid', 0.5, 30360, 80, 'conservative'), expected: 30.36, tol: 0.5, unit: 'fl oz' },
 
   // Concentration ratios — 6% should be ~2.08x of 12.5%
   { name: '6% bleach / 12.5% liquid ratio',

@@ -1877,6 +1877,17 @@ body {
         </select>
       </div>
 
+      <div class="settings-row">
+        <div>
+          <div class="settings-label" data-i18n="setup.dosingStyle">Dosing style</div>
+          <div class="settings-sub" id="dosing-style-desc" data-i18n="setup.dosingStyle.sub">Aggressive: full dose. Conservative: half dose for pH (retest, add more if needed).</div>
+        </div>
+        <select id="dosing-style-select" class="settings-select" onchange="setDosingStyle(this.value)">
+          <option value="aggressive" data-i18n="setup.dosingStyle.aggressive">Aggressive</option>
+          <option value="conservative" data-i18n="setup.dosingStyle.conservative">Conservative</option>
+        </select>
+      </div>
+
       <div class="settings-row" id="commercial-beta-row" style="display:none;" onclick="toggleCommercialBeta()">
         <div>
           <div class="settings-label" data-i18n="setup.commercialBeta">Commercial features (Beta)</div>
@@ -2111,12 +2122,13 @@ const LS_KEY = 'hydrolab_v1';
 
 // App-level settings (apply across all pools)
 const DEFAULT_CONFIG = {
-  units: 'us',         // 'us' or 'metric'
-  language: null,      // 'en' | 'es' — null means default 'en' on first launch
-  tier: 'free',        // 'free' | 'pro' | 'commercial'
+  units: 'us',           // 'us' or 'metric'
+  language: null,        // 'en' | 'es' — null means default 'en' on first launch
+  tier: 'free',          // 'free' | 'pro' | 'commercial'
   reminderEnabled: false,
   reminderDays: 7,
-  onboarded: false,    // first-launch wizard completion flag
+  onboarded: false,      // first-launch wizard completion flag
+  dosingStyle: 'aggressive', // 'aggressive' (full dose) | 'conservative' (half dose for pH)
 };
 
 // Per-pool fields (multi-pool ready; free/Pro tiers use one pool)
@@ -2837,8 +2849,15 @@ const I18N = {
     'toast.tierReset': 'Tier reset to free',
     'toast.commercialOn': 'Commercial features enabled',
     'toast.commercialOff': 'Back to Pro features',
+    'toast.dosingAggressive': 'Aggressive dosing — full dose',
+    'toast.dosingConservative': 'Conservative dosing — half dose for pH',
     'setup.commercialBeta': 'Commercial features (Beta)',
     'setup.commercialBeta.sub': 'Try multi-pool routes and customer profiles. Off resets to Pro.',
+    'setup.dosingStyle': 'Dosing style',
+    'setup.dosingStyle.sub': 'Aggressive: full dose. Conservative: half dose for pH (retest, add more if needed).',
+    'setup.dosingStyle.aggressive': 'Aggressive',
+    'setup.dosingStyle.conservative': 'Conservative',
+    'dose.ph.retest': 'Retest in 4–6 hrs, add more if needed',
 
     // Test detail
     'detail.title': 'Test Detail',
@@ -3177,8 +3196,15 @@ const I18N = {
     'toast.tierReset': 'Plan restablecido a gratis',
     'toast.commercialOn': 'Funciones comerciales activadas',
     'toast.commercialOff': 'Volviendo a las funciones Pro',
+    'toast.dosingAggressive': 'Dosificación agresiva — dosis completa',
+    'toast.dosingConservative': 'Dosificación conservadora — media dosis para pH',
     'setup.commercialBeta': 'Funciones comerciales (Beta)',
     'setup.commercialBeta.sub': 'Prueba rutas multi-piscina y perfiles de clientes. Desactivar vuelve a Pro.',
+    'setup.dosingStyle': 'Estilo de dosificación',
+    'setup.dosingStyle.sub': 'Agresivo: dosis completa. Conservador: media dosis para pH (reprobar, agregar más si es necesario).',
+    'setup.dosingStyle.aggressive': 'Agresivo',
+    'setup.dosingStyle.conservative': 'Conservador',
+    'dose.ph.retest': 'Volver a probar en 4–6 hrs, agregar más si es necesario',
 
     // Test detail
     'detail.title': 'Detalle de prueba',
@@ -3715,16 +3741,22 @@ function computeDoses(t) {
   const taBuffer = (t.ta && t.ta > 0)
     ? Math.max(0.5, Math.min(2.0, t.ta / TA_REF))
     : 1.0;
+  // Conservative dosing halves the pH dose so the user can iterate ("add half,
+  // retest, add more if needed") — matches PoolMath's safer recommendation
+  // pattern. Aggressive (default) gives the full theoretical dose like Orenda.
+  const conservative = state.config.dosingStyle === 'conservative';
+  const phMult = conservative ? 0.5 : 1.0;
+  const phRetestNote = conservative ? ' · ' + tr('dose.ph.retest') : '';
   if (t.ph !== null) {
     if (t.ph > targets.phTarget + 0.2 && t.ph > 7.6) {
       const drop = Math.min(t.ph - targets.phTarget, 0.6);
       const dose = DOSE_PER_10K[getChemKey('acid', 'muriaticAcid')];
-      const qty = scaleForVolume(dose.qty * (drop / 0.2) * taBuffer);
+      const qty = scaleForVolume(dose.qty * (drop / 0.2) * taBuffer * phMult);
       const f = formatDose(qty, dose);
       doses.push({
         type: 'pH↓',
         title: tr('dose.ph.down.title', targets.phTarget.toFixed(1)),
-        sub: tr('dose.ph.down.sub', tr(dose.nameKey)),
+        sub: tr('dose.ph.down.sub', tr(dose.nameKey)) + phRetestNote,
         amount: f.value,
         unit: f.unit,
         priority: 2,
@@ -3741,12 +3773,12 @@ function computeDoses(t) {
         key = (t.ta !== null && t.ta < targets.ta[0]) ? 'sodaAsh' : 'borax';
       }
       const dose = DOSE_PER_10K[key];
-      const qty = scaleForVolume(dose.qty * (rise / 0.2) * taBuffer);
+      const qty = scaleForVolume(dose.qty * (rise / 0.2) * taBuffer * phMult);
       const f = formatDose(qty, dose);
       doses.push({
         type: 'pH↑',
         title: tr('dose.ph.up.title', targets.phTarget.toFixed(1)),
-        sub: tr('dose.ph.up.sub', tr(dose.nameKey)),
+        sub: tr('dose.ph.up.sub', tr(dose.nameKey)) + phRetestNote,
         amount: f.value,
         unit: f.unit,
         priority: 2,
@@ -4603,6 +4635,10 @@ function loadConfigUI() {
   if (langLabel) langLabel.textContent = tr('settings.language');
   const langDesc = document.getElementById('lang-desc');
   if (langDesc) langDesc.textContent = tr('lang.name');
+  // Dosing style selector
+  const dsSel = document.getElementById('dosing-style-select');
+  if (dsSel) dsSel.value = c.dosingStyle || 'aggressive';
+
   // Commercial beta toggle — visible only during soft-launch
   const commercialRow = document.getElementById('commercial-beta-row');
   if (commercialRow) {
@@ -4852,6 +4888,15 @@ function toggleUnits() {
   state.config.units = state.config.units === 'metric' ? 'us' : 'metric';
   saveState();
   loadConfigUI();
+}
+
+function setDosingStyle(value) {
+  if (value !== 'aggressive' && value !== 'conservative') return;
+  state.config.dosingStyle = value;
+  saveState();
+  // Re-render the dashboard so the new dose recommendation is visible immediately.
+  renderDashboard();
+  toast(tr(value === 'conservative' ? 'toast.dosingConservative' : 'toast.dosingAggressive'));
 }
 
 function exportData() {
