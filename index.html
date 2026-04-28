@@ -3433,16 +3433,22 @@ const TARGET_METRICS = [
 function getTargets() {
   const auto = computeAutoTargets();
   const o = getActivePool().targets || {};
-  const pick = (v, fallback) => (typeof v === 'number' && !isNaN(v)) ? v : fallback;
+  const isNum = v => (typeof v === 'number' && !isNaN(v));
+  const pick = (v, fallback) => isNum(v) ? v : fallback;
   const result = {};
   for (const m of TARGET_METRICS) {
     const k = m.key;
-    result[k] = [
-      pick(o[k + 'Min'], auto[k][0]),
-      pick(o[k + 'Max'], auto[k][1]),
-    ];
+    const min = pick(o[k + 'Min'], auto[k][0]);
+    const max = pick(o[k + 'Max'], auto[k][1]);
+    result[k] = [min, max];
     if (m.hasTarget) {
-      result[k + 'Target'] = pick(o[k + 'Target'], auto[k + 'Target']);
+      // If user overrode min/max but not target, derive target from the midpoint
+      // so dosing recommendations follow the user's intended range.
+      let fallback = auto[k + 'Target'];
+      if (isNum(o[k + 'Min']) && isNum(o[k + 'Max'])) {
+        fallback = (min + max) / 2;
+      }
+      result[k + 'Target'] = pick(o[k + 'Target'], fallback);
     }
   }
   return result;
@@ -4590,7 +4596,9 @@ function renderTargetsUI() {
 
   const auto = computeAutoTargets();
   const o = getActivePool().targets || {};
-  const val = v => (typeof v === 'number' && !isNaN(v)) ? String(v) : '';
+  const isNum = v => (typeof v === 'number' && !isNaN(v));
+  const val = v => isNum(v) ? String(v) : '';
+  const fmt = n => Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2)));
 
   let html = `
     <div class="target-row head">
@@ -4603,9 +4611,15 @@ function renderTargetsUI() {
   for (const m of TARGET_METRICS) {
     const k = m.key;
     const unit = m.unit ? ` ${m.unit}` : '';
+    // If user has overridden min and max but not target, the placeholder shows
+    // the midpoint — that's what dosing math will use.
+    let targetPh = auto[k+'Target'];
+    if (isNum(o[k+'Min']) && isNum(o[k+'Max'])) {
+      targetPh = (o[k+'Min'] + o[k+'Max']) / 2;
+    }
     const targetCell = m.hasTarget
       ? `<div class="tgt-cell"><input type="number" step="any" inputmode="decimal"
-           id="tgt-${k}-target" value="${val(o[k+'Target'])}" placeholder="${auto[k+'Target']}${unit}"></div>`
+           id="tgt-${k}-target" value="${val(o[k+'Target'])}" placeholder="${fmt(targetPh)}${unit}"></div>`
       : `<div class="tgt-cell empty">—</div>`;
     html += `
       <div class="target-row">
