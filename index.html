@@ -3612,11 +3612,18 @@ function computeDoses(t) {
   }
 
   // --- pH adjustments ---
+  // TA buffering: pH moves slower at high TA, faster at low TA. Baseline doses
+  // are calibrated against TA ~100 ppm; scale linearly with the test TA, clamped
+  // to 0.5x..2x to avoid extremes when TA is missing or way out of band.
+  const TA_REF = 100;
+  const taBuffer = (t.ta && t.ta > 0)
+    ? Math.max(0.5, Math.min(2.0, t.ta / TA_REF))
+    : 1.0;
   if (t.ph !== null) {
     if (t.ph > targets.phTarget + 0.2 && t.ph > 7.6) {
       const drop = Math.min(t.ph - targets.phTarget, 0.6);
       const dose = DOSE_PER_10K.muriaticAcid;
-      const qty = scaleForVolume(dose.qty * (drop / 0.2));
+      const qty = scaleForVolume(dose.qty * (drop / 0.2) * taBuffer);
       const f = formatDose(qty, dose);
       doses.push({
         type: 'pH↓',
@@ -3631,7 +3638,7 @@ function computeDoses(t) {
       // Prefer borax if TA is already OK, soda ash if TA low
       const useSodaAsh = t.ta !== null && t.ta < targets.ta[0];
       const dose = useSodaAsh ? DOSE_PER_10K.sodaAsh : DOSE_PER_10K.borax;
-      const qty = scaleForVolume(dose.qty * (rise / 0.2));
+      const qty = scaleForVolume(dose.qty * (rise / 0.2) * taBuffer);
       const f = formatDose(qty, dose);
       doses.push({
         type: 'pH↑',
