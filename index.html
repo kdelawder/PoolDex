@@ -180,12 +180,93 @@ body {
   font-weight: 400;
 }
 
+.pool-title-switchable {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.pool-title-switchable:active { opacity: 0.7; }
+.pool-title-caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: rgba(72, 202, 228, 0.15);
+  color: var(--aqua-bright);
+  font-size: 14px;
+  vertical-align: middle;
+  font-style: normal;
+}
+
+.pool-customer {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
 .pool-sub {
   font-size: 13px;
   color: var(--text-mute);
   margin-top: 6px;
   font-variant-numeric: tabular-nums;
 }
+
+/* Pool switcher list rows (Commercial) */
+.pool-switcher-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.pool-switcher-row:hover { background: rgba(255,255,255,0.05); }
+.pool-switcher-row.active {
+  background: linear-gradient(135deg, rgba(72,202,228,0.18), rgba(0,180,216,0.08));
+  border-color: rgba(72,202,228,0.4);
+}
+.pool-switcher-row-name {
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pool-switcher-check {
+  color: var(--aqua-bright);
+  font-weight: 700;
+}
+.pool-switcher-row-meta {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+.pool-switcher-row-customer {
+  font-size: 12px;
+  color: var(--amber);
+  margin-top: 2px;
+}
+.pool-switcher-delete {
+  color: var(--coral);
+  background: transparent;
+  border: 1px solid rgba(247, 127, 0, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+.pool-switcher-delete:hover { background: rgba(247, 127, 0, 0.1); }
 
 /* ============ STATUS ORB ============ */
 .status-orb-wrap {
@@ -310,11 +391,23 @@ body {
   line-height: 1.4;
 }
 
+.lsi-action {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(72, 202, 228, 0.08);
+  border-left: 3px solid var(--aqua-bright);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--aqua-bright);
+  font-variant-numeric: tabular-nums;
+}
+
 .lsi-scale {
   margin-top: 14px;
   height: 6px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #ff6b6b 0%, #ffc857 20%, #52e0c4 40%, #52e0c4 60%, #ffc857 80%, #ff6b6b 100%);
+  background: linear-gradient(90deg, #ff6b6b 0%, #ffc857 12.5%, #52e0c4 25%, #52e0c4 75%, #ffc857 87.5%, #ff6b6b 100%);
   position: relative;
 }
 
@@ -393,6 +486,29 @@ body {
   letter-spacing: 0.05em;
   color: var(--text-dim);
   text-transform: uppercase;
+}
+
+.metric-name-clickable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+.metric-name-clickable:active { opacity: 0.6; }
+.metric-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  color: var(--text-mute);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .metric-dot {
@@ -640,6 +756,32 @@ body {
 }
 
 .field select option { background: var(--bg-mid); color: var(--text); }
+
+/* Selects inside settings-row (language, reminder frequency, etc.) */
+.settings-select {
+  background: var(--bg-mid);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 8px 32px 8px 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239db4d0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  color-scheme: dark;
+}
+
+.settings-select option {
+  background: var(--bg-mid);
+  color: var(--text);
+}
 
 .field input::placeholder { color: var(--text-mute); opacity: 0.5; }
 
@@ -989,6 +1131,214 @@ body {
   line-height: 1.5;
 }
 
+/* Two-tier paywall cards */
+.paywall-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 18px 0 8px;
+}
+
+.paywall-tier {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.paywall-tier[data-tier="pro"] {
+  border-color: rgba(72, 202, 228, 0.25);
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.06), rgba(83, 224, 196, 0.02));
+}
+
+.paywall-tier[data-tier="commercial"] {
+  border-color: rgba(255, 200, 87, 0.25);
+  background: linear-gradient(135deg, rgba(255, 200, 87, 0.06), rgba(255, 107, 107, 0.02));
+}
+
+.paywall-tier-badge {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--amber), var(--coral));
+  color: var(--bg-deep);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.paywall-tier-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+}
+
+.paywall-tier-price {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  margin: 6px 0 2px;
+  line-height: 1;
+}
+
+.paywall-tier[data-tier="pro"] .paywall-tier-price { color: var(--aqua-bright); }
+.paywall-tier[data-tier="commercial"] .paywall-tier-price { color: var(--amber); }
+
+.paywall-tier-tagline {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-bottom: 14px;
+}
+
+.paywall-tier ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+}
+
+.paywall-tier li {
+  font-size: 13px;
+  color: var(--text-dim);
+  padding: 6px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.paywall-tier li::before {
+  content: '+';
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: var(--bg-deep);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.paywall-tier[data-tier="pro"] li::before {
+  background: linear-gradient(135deg, var(--aqua), var(--mint));
+}
+
+.paywall-tier[data-tier="commercial"] li::before {
+  background: linear-gradient(135deg, var(--amber), var(--coral));
+}
+
+.paywall-tier[data-tier="commercial"] .btn.primary {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+  box-shadow: 0 4px 16px rgba(255, 200, 87, 0.25);
+}
+
+.pro-badge.badge-commercial {
+  background: linear-gradient(135deg, var(--amber) 0%, var(--coral) 100%);
+}
+
+.paywall-tier-soon {
+  opacity: 0.6;
+}
+.paywall-tier-soon .btn[disabled] {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-mute);
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Onboarding wizard */
+.wizard-sheet { padding-top: 28px; }
+.wizard-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.wizard-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: background 0.2s ease, width 0.2s ease;
+}
+.wizard-dot.active {
+  background: var(--aqua-bright);
+  width: 24px;
+  border-radius: 4px;
+}
+.wizard-step { padding: 0 4px; }
+.wizard-art {
+  font-family: var(--font-display);
+  font-size: 64px;
+  text-align: center;
+  color: var(--aqua);
+  margin: 8px 0 16px;
+  font-style: italic;
+}
+.wizard-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.wizard-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.wizard-features {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0 0;
+}
+.wizard-features li {
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: rgba(72, 202, 228, 0.06);
+  border-left: 3px solid var(--aqua-bright);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.wizard-targets-preview {
+  margin-top: 12px;
+}
+.wiz-target-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+}
+.wiz-target-name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--aqua-bright);
+  letter-spacing: 0.05em;
+}
+.wiz-target-range {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.wizard-nav { margin-top: 22px; }
+
 .modal-sheet {
   background: var(--bg-mid);
   border-radius: 24px 24px 0 0;
@@ -1244,6 +1594,42 @@ body {
   .main { max-width: 500px; margin: 0 auto; }
   .nav { max-width: 500px; margin: 0 auto; left: 50%; transform: translateX(-50%); }
 }
+
+/* Default: dashboard sections flow normally (one above the other). */
+.dash-cols { display: contents; }
+
+/* Landscape on phones: short viewport — widen forms, split the dashboard
+   into two columns so readings are visible without scrolling. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .header { padding: 6px 16px 4px; }
+  .main { max-width: 100%; padding: 0 12px 56px; }
+  .pool-title { font-size: 16px; margin-bottom: 4px; }
+  .pool-sub { display: none; }
+  .btn-row { margin-top: 8px; }
+  .btn { padding: 8px 14px; font-size: 13px; }
+  .nav { padding: 4px 8px calc(4px + var(--safe-bottom)); }
+
+  /* Test/setup forms */
+  .form-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
+  .form-grid .field.full { grid-column: auto; }
+  .field { padding: 4px 8px; border-radius: 8px; }
+  .field input, .field select { font-size: 13px; }
+  .field-label { font-size: 9px; margin-bottom: 1px; }
+
+  /* Dashboard: side-by-side actions/LSI + readings */
+  .dash-cols { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; align-items: start; }
+  .dash-left, .dash-right { min-width: 0; }
+  .section-label { font-size: 10px; margin-bottom: 6px; }
+  .lsi-card { padding: 12px 14px; margin-bottom: 8px; }
+  .lsi-value { font-size: 28px; }
+  .lsi-desc { font-size: 11px; line-height: 1.3; }
+  .lsi-action { padding: 6px 10px; font-size: 11px; margin-top: 6px; }
+  .lsi-scale { margin-top: 8px; }
+  .metrics { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .metric { padding: 8px 10px; border-radius: 10px; }
+  .metric-head { margin-bottom: 4px; }
+  .metric-value { font-size: 18px; }
+}
 </style>
 </head>
 <body>
@@ -1258,7 +1644,7 @@ body {
       <span class="pro-badge" id="pro-badge">Pro</span>
     </div>
     <div class="header-right">
-      <button class="icon-btn" id="btn-settings" aria-label="Settings">
+      <button class="icon-btn" id="btn-settings" aria-label="Settings" data-i18n-aria-label="aria.settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -1270,22 +1656,23 @@ body {
     <section class="view active" id="view-dashboard">
       <div class="pool-header">
         <div>
+          <div class="pool-customer" id="pool-customer" style="display:none;"></div>
           <div class="pool-title" id="pool-title">My <em>Pool</em></div>
           <div class="pool-sub" id="pool-sub">No tests logged yet</div>
         </div>
         <div class="status-orb-wrap">
           <div class="status-orb" id="status-orb"></div>
-          <div class="status-label" id="status-label">New</div>
+          <div class="status-label" id="status-label" data-i18n="dash.statusNew">New</div>
         </div>
       </div>
 
       <div id="dashboard-body">
         <div class="empty">
           <div class="empty-art">~</div>
-          <div class="empty-title">Welcome to Hydrolab</div>
-          <div class="empty-sub">Set up your pool, then log your first water test to get dosing recommendations and saturation balance.</div>
+          <div class="empty-title" data-i18n="dash.welcome.title">Welcome to Hydrolab</div>
+          <div class="empty-sub" data-i18n="dash.welcome.sub">Set up your pool, then log your first water test to get dosing recommendations and saturation balance.</div>
           <div class="btn-row" style="margin-top: 24px; max-width: 280px; margin-left: auto; margin-right: auto;">
-            <button class="btn primary" onclick="showView('settings')">Set Up Pool</button>
+            <button class="btn primary" onclick="showView('settings')" data-i18n="btn.setupPool">Set Up Pool</button>
           </div>
         </div>
       </div>
@@ -1294,59 +1681,59 @@ body {
     <!-- ============ TEST INPUT VIEW ============ -->
     <section class="view" id="view-test">
       <div style="margin-bottom: 20px;">
-        <div class="pool-title">New <em>Test</em></div>
-        <div class="pool-sub">Enter the values you measured. Leave blank any you didn't test.</div>
+        <div class="pool-title" data-i18n-html="test.title">New <em>Test</em></div>
+        <div class="pool-sub" data-i18n="test.sub">Enter the values you measured. Leave blank any you didn't test.</div>
       </div>
 
       <div class="form-grid">
         <div class="field">
-          <div class="field-label"><span>Free Chlorine</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('fc')"><span data-i18n="test.fc.label">Free Chlorine</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="0.1" id="in-fc" placeholder="0.0" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Combined Cl</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('cc')"><span data-i18n="test.cc.label">Combined Cl</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="0.1" id="in-cc" placeholder="0.0" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>pH</span><span class="unit"></span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('ph')"><span data-i18n="test.ph.label">pH</span><span class="metric-info">?</span></span><span class="unit"></span></div>
           <input type="number" step="0.1" id="in-ph" placeholder="7.4" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Alkalinity</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('ta')"><span data-i18n="test.ta.label">Alkalinity</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="1" id="in-ta" placeholder="80" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Calcium</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('ch')"><span data-i18n="test.ch.label">Calcium</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="5" id="in-ch" placeholder="250" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Cyanuric Acid</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('cya')"><span data-i18n="test.cya.label">Cyanuric Acid</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="1" id="in-cya" placeholder="40" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Salt</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('salt')"><span data-i18n="test.salt.label">Salt</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="100" id="in-salt" placeholder="3200" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Water Temp</span><span class="unit" id="temp-unit">°F</span></div>
+          <div class="field-label"><span data-i18n="test.temp.label">Water Temp</span><span class="unit" id="temp-unit">°F</span></div>
           <input type="number" step="1" id="in-temp" placeholder="80" inputmode="decimal">
         </div>
         <div class="field full">
-          <div class="field-label"><span>Borate (optional)</span><span class="unit">ppm</span></div>
+          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('borate')"><span data-i18n="test.borate.label">Borate (optional)</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
           <input type="number" step="5" id="in-borate" placeholder="0" inputmode="decimal">
         </div>
       </div>
 
       <div class="btn-row">
-        <button class="btn" onclick="showView('dashboard')">Cancel</button>
-        <button class="btn primary" onclick="saveTest()">Save Test</button>
+        <button class="btn" onclick="showView('dashboard')" data-i18n="btn.cancel">Cancel</button>
+        <button class="btn primary" onclick="saveTest()" data-i18n="btn.saveTest">Save Test</button>
       </div>
     </section>
 
     <!-- ============ HISTORY VIEW ============ -->
     <section class="view" id="view-history">
       <div style="margin-bottom: 16px;">
-        <div class="pool-title">Test <em>Log</em></div>
+        <div class="pool-title" data-i18n-html="history.title">Test <em>Log</em></div>
         <div class="pool-sub" id="history-sub">—</div>
       </div>
 
@@ -1369,12 +1756,12 @@ body {
         <div class="pro-locked-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
-        <div class="pro-locked-title">Trend charts are a Pro feature</div>
-        <div class="pro-locked-sub">See how every reading has changed over time. Spot patterns before they become problems.</div>
-        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+        <div class="pro-locked-title" data-i18n="history.chartLocked.title">Trend charts are a Pro feature</div>
+        <div class="pro-locked-sub" data-i18n="history.chartLocked.sub">See how every reading has changed over time. Spot patterns before they become problems.</div>
+        <button class="btn primary" onclick="showPaywall()" data-i18n="btn.unlockPro">Unlock Pro — $9.99</button>
       </div>
 
-      <div class="section-label" style="margin-top: 24px;">All Tests</div>
+      <div class="section-label" style="margin-top: 24px;" data-i18n="history.allTests">All Tests</div>
       <div id="log-list"></div>
       <div id="log-footer"></div>
     </section>
@@ -1382,8 +1769,8 @@ body {
     <!-- ============ SETTINGS VIEW ============ -->
     <section class="view" id="view-settings">
       <div style="margin-bottom: 20px;">
-        <div class="pool-title">Pool <em>Setup</em></div>
-        <div class="pool-sub">Tell the app about your pool so we can calculate doses correctly.</div>
+        <div class="pool-title" data-i18n-html="setup.title">Pool <em>Setup</em></div>
+        <div class="pool-sub" data-i18n="setup.sub">Tell the app about your pool so we can calculate doses correctly.</div>
       </div>
 
       <div class="upgrade-card" id="upgrade-row" onclick="showPaywall()">
@@ -1391,91 +1778,137 @@ body {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         </div>
         <div class="upgrade-card-text">
-          <div class="upgrade-card-title">Unlock Hydrolab Pro</div>
-          <div class="upgrade-card-sub">Trend charts, unlimited history, custom targets — $9.99 one-time</div>
+          <div class="upgrade-card-title" data-i18n="upgrade.title">Unlock Hydrolab Pro</div>
+          <div class="upgrade-card-sub" data-i18n="upgrade.sub">Trend charts, unlimited history, custom targets — $9.99 one-time</div>
         </div>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-dim);"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
 
       <div class="pro-status-row" id="pro-status-row">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <div>You're on Hydrolab Pro — thanks for the support.</div>
+        <div data-i18n="upgrade.proStatus">You're on Hydrolab Pro — thanks for the support.</div>
       </div>
 
-      <div class="section-label">Pool Details</div>
+      <div id="pools-section" style="display:none;">
+        <div class="section-label" data-i18n="pools.section">My Pools</div>
+        <div class="settings-row" onclick="openPoolSwitcher()" style="cursor: pointer;">
+          <div>
+            <div class="settings-label" data-i18n="pools.switchLabel">Switch / Manage Pools</div>
+            <div class="settings-sub" id="pools-section-sub">—</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="section-label" data-i18n="setup.poolDetails">Pool Details</div>
       <div class="form-grid">
         <div class="field full">
-          <div class="field-label"><span>Pool Name</span></div>
-          <input type="text" id="cfg-name" placeholder="Backyard Pool" style="font-family: var(--font-body); font-size: 16px;">
+          <div class="field-label"><span data-i18n="setup.poolName">Pool Name</span></div>
+          <input type="text" id="cfg-name" placeholder="Backyard Pool" data-i18n-placeholder="setup.poolNamePh" style="font-family: var(--font-body); font-size: 16px;">
         </div>
         <div class="field">
-          <div class="field-label"><span>Volume</span><span class="unit" id="vol-unit">gal</span></div>
+          <div class="field-label"><span data-i18n="setup.volume">Volume</span><span class="unit" id="vol-unit">gal</span></div>
           <input type="number" step="100" id="cfg-volume" placeholder="15000" inputmode="decimal">
         </div>
         <div class="field">
-          <div class="field-label"><span>Surface</span></div>
+          <div class="field-label"><span data-i18n="setup.surface">Surface</span></div>
           <select id="cfg-surface">
-            <option value="plaster">Plaster</option>
-            <option value="vinyl">Vinyl</option>
-            <option value="fiberglass">Fiberglass</option>
-            <option value="pebble">Pebble/Quartz</option>
-            <option value="tile">Tile</option>
+            <option value="plaster" data-i18n="setup.surface.plaster">Plaster</option>
+            <option value="vinyl" data-i18n="setup.surface.vinyl">Vinyl</option>
+            <option value="fiberglass" data-i18n="setup.surface.fiberglass">Fiberglass</option>
+            <option value="pebble" data-i18n="setup.surface.pebble">Pebble/Quartz</option>
+            <option value="tile" data-i18n="setup.surface.tile">Tile</option>
           </select>
         </div>
         <div class="field">
-          <div class="field-label"><span>Sanitizer</span></div>
+          <div class="field-label"><span data-i18n="setup.sanitizer">Sanitizer</span></div>
           <select id="cfg-sanitizer">
-            <option value="liquid">Liquid Chlorine</option>
-            <option value="swg">Salt (SWG)</option>
-            <option value="tabs">Tabs (Trichlor)</option>
-            <option value="cal-hypo">Cal-Hypo</option>
+            <option value="liquid" data-i18n="setup.sanitizer.liquid">Liquid Chlorine</option>
+            <option value="swg" data-i18n="setup.sanitizer.swg">Salt (SWG)</option>
+            <option value="tabs" data-i18n="setup.sanitizer.tabs">Tabs (Trichlor)</option>
+            <option value="cal-hypo" data-i18n="setup.sanitizer.calhypo">Cal-Hypo</option>
           </select>
         </div>
         <div class="field">
-          <div class="field-label"><span>Climate</span></div>
+          <div class="field-label"><span data-i18n="setup.climate">Climate</span></div>
           <select id="cfg-climate">
-            <option value="outdoor">Outdoor (sunny)</option>
-            <option value="indoor">Indoor</option>
-            <option value="shaded">Shaded</option>
+            <option value="outdoor" data-i18n="setup.climate.outdoor">Outdoor (sunny)</option>
+            <option value="indoor" data-i18n="setup.climate.indoor">Indoor</option>
+            <option value="shaded" data-i18n="setup.climate.shaded">Shaded</option>
           </select>
         </div>
       </div>
 
-      <div class="section-label">Preferences</div>
+      <div id="customer-section" style="display:none;">
+        <div class="section-label" data-i18n="setup.customer">Customer</div>
+        <div class="target-hint" data-i18n="setup.customerSub">Optional — for pool service techs managing multiple customers.</div>
+        <div class="form-grid">
+          <div class="field full">
+            <div class="field-label"><span data-i18n="setup.customerName">Customer Name</span></div>
+            <input type="text" id="cfg-customer-name" placeholder="Jane Smith" data-i18n-placeholder="setup.customerNamePh" style="font-family: var(--font-body); font-size: 16px;">
+          </div>
+          <div class="field full">
+            <div class="field-label"><span data-i18n="setup.customerAddress">Address</span></div>
+            <input type="text" id="cfg-customer-address" placeholder="123 Pool Lane" data-i18n-placeholder="setup.customerAddressPh" style="font-family: var(--font-body); font-size: 16px;">
+          </div>
+          <div class="field full">
+            <div class="field-label"><span data-i18n="setup.customerPhone">Phone</span></div>
+            <input type="tel" id="cfg-customer-phone" placeholder="(555) 123-4567" data-i18n-placeholder="setup.customerPhonePh" style="font-family: var(--font-body); font-size: 16px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label" data-i18n="setup.preferences">Preferences</div>
       <div class="settings-row">
         <div>
-          <div class="settings-label">Units</div>
+          <div class="settings-label" data-i18n="setup.units">Units</div>
           <div class="settings-sub" id="units-desc">US (gal, °F)</div>
         </div>
         <div class="toggle" id="toggle-units" onclick="toggleUnits()"></div>
       </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label" id="lang-label">Language</div>
+          <div class="settings-sub" id="lang-desc">English</div>
+        </div>
+        <select id="lang-select" class="settings-select" onchange="setLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
 
-      <div class="section-label" style="margin-top: 24px;">Reminders</div>
+      <div class="section-label" style="margin-top: 24px;" data-i18n="setup.reminders">Reminders</div>
       <div id="reminders-section"></div>
 
-      <div class="section-label" style="margin-top: 24px;">Target Values</div>
-      <div class="target-hint" id="targets-hint">Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.</div>
+      <div class="section-label" style="margin-top: 24px;" data-i18n="setup.targets">Target Values</div>
+      <div class="target-hint" id="targets-hint" data-i18n="setup.targetsHint">Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.</div>
       <div class="target-grid" id="targets-grid"></div>
       <div class="btn-row" style="margin-bottom: 0;" id="targets-reset-row">
-        <button class="btn" type="button" onclick="resetTargets()">Reset targets to defaults</button>
+        <button class="btn" type="button" onclick="resetTargets()" data-i18n="setup.targetsReset">Reset targets to defaults</button>
       </div>
 
       <div class="btn-row">
-        <button class="btn primary" onclick="saveConfig()">Save</button>
+        <button class="btn primary" onclick="saveConfig()" data-i18n="btn.save">Save</button>
       </div>
 
-      <div class="section-label" style="margin-top: 32px;">Data</div>
+      <div class="section-label" style="margin-top: 32px;" data-i18n="setup.data">Data</div>
       <div class="settings-row" onclick="exportData()" style="cursor: pointer;">
         <div>
-          <div class="settings-label">Export All Data</div>
-          <div class="settings-sub">Download tests and config as JSON</div>
+          <div class="settings-label" data-i18n="setup.exportAll">Export All Data</div>
+          <div class="settings-sub" data-i18n="setup.exportSub">Download tests and config as JSON</div>
         </div>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </div>
       <div class="settings-row" onclick="confirmReset()" style="cursor: pointer;">
         <div>
-          <div class="settings-label" style="color: var(--coral);">Reset All Data</div>
-          <div class="settings-sub">Delete all tests and settings</div>
+          <div class="settings-label" style="color: var(--coral);" data-i18n="setup.resetAll">Reset All Data</div>
+          <div class="settings-sub" data-i18n="setup.resetSub">Delete all tests and settings</div>
+        </div>
+      </div>
+      <div class="settings-row" id="dev-reset-tier-row" onclick="resetTier()" style="cursor: pointer; display: none;">
+        <div>
+          <div class="settings-label" style="color: var(--text-mute);" data-i18n="setup.devReset.label">Reset tier (dev)</div>
+          <div class="settings-sub" data-i18n="setup.devReset.sub">Testing only — remove before launch</div>
         </div>
       </div>
     </section>
@@ -1506,15 +1939,15 @@ body {
 <div class="modal" id="detail-modal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Test Detail</div>
+    <div class="modal-title" data-i18n="detail.title">Test Detail</div>
     <div class="modal-sub" id="detail-date">—</div>
     <div id="detail-body"></div>
     <div class="btn-row">
-      <button class="btn" onclick="shareTest()">Share Test</button>
+      <button class="btn" onclick="shareTest()" data-i18n="btn.share">Share Test</button>
     </div>
     <div class="btn-row">
-      <button class="btn danger" onclick="deleteTest()">Delete Test</button>
-      <button class="btn" onclick="closeModal()">Close</button>
+      <button class="btn danger" onclick="deleteTest()" data-i18n="btn.deleteTest">Delete Test</button>
+      <button class="btn" onclick="closeModal()" data-i18n="btn.close">Close</button>
     </div>
   </div>
 </div>
@@ -1523,52 +1956,139 @@ body {
 <div class="modal" id="paywall-modal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Unlock Hydrolab <em>Pro</em></div>
-    <div class="modal-sub">Get the most out of every test you log.</div>
+    <div class="modal-title" data-i18n-html="paywall.title">Unlock <em>Hydrolab</em></div>
+    <div class="modal-sub" data-i18n="paywall.sub">Choose the plan that fits your pool care.</div>
 
-    <ul class="paywall-features">
-      <li>
-        <div class="paywall-check">+</div>
-        <div>
-          <div class="paywall-feature-title">Trend charts</div>
-          <div class="paywall-feature-sub">Visualize FC, pH, TA, CH, CYA and LSI over time.</div>
-        </div>
-      </li>
-      <li>
-        <div class="paywall-check">+</div>
-        <div>
-          <div class="paywall-feature-title">Unlimited test history</div>
-          <div class="paywall-feature-sub">Free shows the last 30 tests. Pro keeps every reading forever.</div>
-        </div>
-      </li>
-      <li>
-        <div class="paywall-check">+</div>
-        <div>
-          <div class="paywall-feature-title">Custom target ranges</div>
-          <div class="paywall-feature-sub">Override the auto-targets to match your pool's needs.</div>
-        </div>
-      </li>
-      <li>
-        <div class="paywall-check">+</div>
-        <div>
-          <div class="paywall-feature-title">Test reminders</div>
-          <div class="paywall-feature-sub">Get notified when it's time to test the water.</div>
-        </div>
-      </li>
-    </ul>
+    <div class="paywall-tiers">
+      <div class="paywall-tier" data-tier="pro">
+        <div class="paywall-tier-name" data-i18n="paywall.tier.pro.name">Pro</div>
+        <div class="paywall-tier-price">$9.99</div>
+        <div class="paywall-tier-tagline" data-i18n="paywall.tier.pro.tagline">For personal pool owners</div>
+        <ul>
+          <li data-i18n="paywall.tier.pro.feat1">Trend charts (FC, pH, TA, CH, CYA, LSI)</li>
+          <li data-i18n="paywall.tier.pro.feat2">Unlimited test history</li>
+          <li data-i18n="paywall.tier.pro.feat3">Custom target ranges</li>
+          <li data-i18n="paywall.tier.pro.feat4">Test reminders</li>
+        </ul>
+        <button class="btn primary" onclick="unlockPro()" data-i18n="paywall.tier.pro.cta">Unlock Pro</button>
+      </div>
 
-    <div style="text-align: center;">
-      <div class="paywall-price" id="paywall-price">$9.99</div>
-      <div class="paywall-price-sub">One-time purchase · No subscription</div>
+      <div class="paywall-tier paywall-tier-soon" data-tier="commercial">
+        <div class="paywall-tier-badge" data-i18n="paywall.tier.commercial.badge">For pool pros</div>
+        <div class="paywall-tier-name" data-i18n="paywall.tier.commercial.name">Commercial</div>
+        <div class="paywall-tier-price" data-i18n="paywall.tier.commercial.priceTbd">TBD</div>
+        <div class="paywall-tier-tagline" data-i18n="paywall.tier.commercial.tagline">Manage multiple pools and customers</div>
+        <ul>
+          <li data-i18n="paywall.tier.commercial.feat1">Everything in Pro</li>
+          <li data-i18n="paywall.tier.commercial.feat2">Unlimited pools</li>
+          <li data-i18n="paywall.tier.commercial.feat3">Customer name, address, phone per pool</li>
+        </ul>
+        <button class="btn" disabled data-i18n="paywall.tier.commercial.soon">Coming soon</button>
+      </div>
     </div>
+
+    <div class="paywall-price-sub" style="text-align: center;" data-i18n="paywall.priceSub">One-time purchase · No subscription</div>
 
     <div class="btn-row">
-      <button class="btn" onclick="closePaywall()">Maybe later</button>
-      <button class="btn primary" onclick="unlockPro()">Unlock Pro</button>
+      <button class="btn" onclick="closePaywall()" data-i18n="btn.maybeLater">Maybe later</button>
     </div>
 
-    <div class="paywall-fineprint">
-      Pro features unlock instantly on this device. Real billing arrives with the app store version.
+    <div class="paywall-fineprint" data-i18n="paywall.fineprint">
+      Features unlock instantly on this device. Real billing arrives with the app store version.
+    </div>
+  </div>
+</div>
+
+<!-- Glossary Modal -->
+<div class="modal" id="glossary-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="glossary-title">—</div>
+    <div class="modal-sub" id="glossary-desc">—</div>
+    <div class="btn-row">
+      <button class="btn" onclick="closeGlossary()" data-i18n="btn.close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding Wizard Modal -->
+<div class="modal" id="wizard-modal">
+  <div class="modal-sheet wizard-sheet">
+    <div class="wizard-progress">
+      <div class="wizard-dot active" data-step="1"></div>
+      <div class="wizard-dot" data-step="2"></div>
+      <div class="wizard-dot" data-step="3"></div>
+    </div>
+
+    <div class="wizard-step" data-step="1">
+      <div class="wizard-art">~</div>
+      <div class="wizard-title" data-i18n="wizard.step1.title">Welcome to Hydrolab</div>
+      <div class="wizard-sub" data-i18n="wizard.step1.sub">Track your pool chemistry, get exact dosing recommendations, no subscription required for the basics.</div>
+      <ul class="wizard-features">
+        <li data-i18n="wizard.step1.feat1">Works offline — your data stays on your device</li>
+        <li data-i18n="wizard.step1.feat2">TFP-validated dosing for every chemical</li>
+        <li data-i18n="wizard.step1.feat3">LSI saturation balance built in</li>
+      </ul>
+    </div>
+
+    <div class="wizard-step" data-step="2" style="display:none;">
+      <div class="wizard-title" data-i18n="wizard.step2.title">Tell us about your pool</div>
+      <div class="wizard-sub" data-i18n="wizard.step2.sub">These four basics let us calculate accurate target ranges and dose amounts.</div>
+      <div class="form-grid" style="margin-top: 16px;">
+        <div class="field full">
+          <div class="field-label"><span data-i18n="setup.poolName">Pool Name</span></div>
+          <input type="text" id="wiz-name" placeholder="Backyard Pool" data-i18n-placeholder="setup.poolNamePh" style="font-family: var(--font-body); font-size: 16px;">
+        </div>
+        <div class="field">
+          <div class="field-label"><span data-i18n="setup.volume">Volume</span><span class="unit" id="wiz-vol-unit">gal</span></div>
+          <input type="number" step="100" id="wiz-volume" placeholder="15000" inputmode="decimal">
+        </div>
+        <div class="field">
+          <div class="field-label"><span data-i18n="setup.sanitizer">Sanitizer</span></div>
+          <select id="wiz-sanitizer">
+            <option value="liquid" data-i18n="setup.sanitizer.liquid">Liquid Chlorine</option>
+            <option value="swg" data-i18n="setup.sanitizer.swg">Salt (SWG)</option>
+            <option value="tabs" data-i18n="setup.sanitizer.tabs">Tabs (Trichlor)</option>
+            <option value="cal-hypo" data-i18n="setup.sanitizer.calhypo">Cal-Hypo</option>
+          </select>
+        </div>
+        <div class="field full">
+          <div class="field-label"><span data-i18n="setup.climate">Climate</span></div>
+          <select id="wiz-climate">
+            <option value="outdoor" data-i18n="setup.climate.outdoor">Outdoor (sunny)</option>
+            <option value="indoor" data-i18n="setup.climate.indoor">Indoor</option>
+            <option value="shaded" data-i18n="setup.climate.shaded">Shaded</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-step" data-step="3" style="display:none;">
+      <div class="wizard-title" data-i18n="wizard.step3.title">Your auto-calculated targets</div>
+      <div class="wizard-sub" data-i18n="wizard.step3.sub">Based on your setup, here's what we'll aim for. You can override these later in Settings.</div>
+      <div id="wiz-targets-preview" class="wizard-targets-preview"></div>
+    </div>
+
+    <div class="btn-row wizard-nav">
+      <button class="btn" id="wiz-back" onclick="wizardBack()" style="display:none;" data-i18n="wizard.back">Back</button>
+      <button class="btn" id="wiz-skip" onclick="wizardSkip()" data-i18n="wizard.skip">Skip</button>
+      <button class="btn primary" id="wiz-next" onclick="wizardNext()" data-i18n="wizard.next">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pool Switcher Modal (Commercial) -->
+<div class="modal" id="pool-switcher-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-i18n="pools.title">Pools</div>
+    <div class="modal-sub" data-i18n="pools.sub">Switch between pools or add a new one.</div>
+    <div id="pool-switcher-list"></div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="addPool()" data-i18n="pools.add">+ Add pool</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="closePoolSwitcher()" data-i18n="btn.close">Close</button>
     </div>
   </div>
 </div>
@@ -1581,20 +2101,38 @@ body {
 // ============================================================
 const LS_KEY = 'hydrolab_v1';
 
+// App-level settings (apply across all pools)
 const DEFAULT_CONFIG = {
+  units: 'us',         // 'us' or 'metric'
+  language: null,      // 'en' | 'es' — null means default 'en' on first launch
+  tier: 'free',        // 'free' | 'pro' | 'commercial'
+  reminderEnabled: false,
+  reminderDays: 7,
+  onboarded: false,    // first-launch wizard completion flag
+};
+
+// Per-pool fields (multi-pool ready; free/Pro tiers use one pool)
+const DEFAULT_POOL = {
   name: 'My Pool',
   volume: 15000,       // stored in gallons internally
   surface: 'plaster',
   sanitizer: 'liquid',
   climate: 'outdoor',
-  units: 'us',         // 'us' or 'metric'
-  isPro: false,        // unlocks: trend chart, unlimited history, custom targets, reminders
-  reminderEnabled: false,
-  reminderDays: 7,
+  targets: {},         // user-overridden target ranges
+  customer: null,      // { name, address, phone } — Commercial-only, null otherwise
 };
+
+function newPoolId() {
+  return 'pool_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function makeDefaultPool() {
+  return { id: newPoolId(), ...DEFAULT_POOL, tests: [] };
+}
 
 const FREE_HISTORY_LIMIT = 30;
 const PRO_PRICE = '$9.99';
+const COMMERCIAL_PRICE = '$29.99';
 const REMINDER_NOTIFICATION_ID = 1;
 
 let state = loadState();
@@ -1607,13 +2145,55 @@ function loadState() {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return {
-        config: { ...DEFAULT_CONFIG, ...(parsed.config || {}) },
-        tests: parsed.tests || [],
-      };
+      const parsedConfig = parsed.config || {};
+      const config = { ...DEFAULT_CONFIG, ...parsedConfig };
+      // Migrate legacy isPro flag → tier
+      if (parsedConfig.tier === undefined && parsedConfig.isPro !== undefined) {
+        config.tier = parsedConfig.isPro ? 'pro' : 'free';
+      }
+      delete config.isPro;
+
+      // Migrate single-pool shape (config.name/volume/... + state.tests) → pools[]
+      let pools, activePoolId;
+      if (Array.isArray(parsed.pools) && parsed.pools.length) {
+        pools = parsed.pools.map(p => ({
+          id: p.id || newPoolId(),
+          name: p.name ?? DEFAULT_POOL.name,
+          volume: p.volume ?? DEFAULT_POOL.volume,
+          surface: p.surface ?? DEFAULT_POOL.surface,
+          sanitizer: p.sanitizer ?? DEFAULT_POOL.sanitizer,
+          climate: p.climate ?? DEFAULT_POOL.climate,
+          targets: p.targets || {},
+          customer: p.customer || null,
+          tests: Array.isArray(p.tests) ? p.tests : [],
+        }));
+        activePoolId = parsed.activePoolId && pools.some(p => p.id === parsed.activePoolId)
+          ? parsed.activePoolId
+          : pools[0].id;
+      } else {
+        const pool = {
+          id: newPoolId(),
+          name: parsedConfig.name ?? DEFAULT_POOL.name,
+          volume: parsedConfig.volume ?? DEFAULT_POOL.volume,
+          surface: parsedConfig.surface ?? DEFAULT_POOL.surface,
+          sanitizer: parsedConfig.sanitizer ?? DEFAULT_POOL.sanitizer,
+          climate: parsedConfig.climate ?? DEFAULT_POOL.climate,
+          targets: parsedConfig.targets || {},
+          customer: null,
+          tests: Array.isArray(parsed.tests) ? parsed.tests : [],
+        };
+        pools = [pool];
+        activePoolId = pool.id;
+      }
+
+      // Strip per-pool fields from config so they don't drift
+      ['name','volume','surface','sanitizer','climate','targets'].forEach(k => delete config[k]);
+
+      return { config, pools, activePoolId };
     }
   } catch (e) { console.warn('Load failed', e); }
-  return { config: { ...DEFAULT_CONFIG }, tests: [] };
+  const pool = makeDefaultPool();
+  return { config: { ...DEFAULT_CONFIG }, pools: [pool], activePoolId: pool.id };
 }
 
 function saveState() {
@@ -1621,11 +2201,233 @@ function saveState() {
 }
 
 // ============================================================
-// PRO / PAYWALL
+// POOL ACCESSORS
 // ============================================================
-function isPro() { return !!state.config.isPro; }
+function getActivePool() {
+  if (!state.pools || !state.pools.length) {
+    const p = makeDefaultPool();
+    state.pools = [p];
+    state.activePoolId = p.id;
+  }
+  return state.pools.find(p => p.id === state.activePoolId) || state.pools[0];
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============================================================
+// POOL SWITCHER (Commercial)
+// ============================================================
+function openPoolSwitcher() {
+  if (!isCommercial()) return;
+  renderPoolSwitcherList();
+  document.getElementById('pool-switcher-modal').classList.add('open');
+}
+
+function closePoolSwitcher() {
+  document.getElementById('pool-switcher-modal').classList.remove('open');
+}
+
+function poolTestCountLabel(n) {
+  if (n === 0) return tr('pools.noTests');
+  if (n === 1) return tr('pools.oneTest');
+  return tr('pools.manyTests', n);
+}
+
+function renderPoolSwitcherList() {
+  const list = document.getElementById('pool-switcher-list');
+  if (!list) return;
+  const activeId = state.activePoolId;
+  const canDelete = state.pools.length > 1;
+  list.innerHTML = state.pools.map(p => {
+    const isActive = p.id === activeId;
+    const meta = poolTestCountLabel((p.tests || []).length);
+    const customerLine = p.customer && p.customer.name
+      ? `<div class="pool-switcher-row-customer">${escapeHtml(p.customer.name)}</div>`
+      : '';
+    const deleteBtn = canDelete
+      ? `<button class="pool-switcher-delete" onclick="event.stopPropagation(); deletePool('${p.id}')">${tr('pools.delete')}</button>`
+      : '';
+    return `
+      <div class="pool-switcher-row ${isActive ? 'active' : ''}" onclick="switchPool('${p.id}')">
+        <div style="flex:1; min-width:0;">
+          <div class="pool-switcher-row-name">
+            ${isActive ? '<span class="pool-switcher-check">✓</span>' : ''}
+            <span>${escapeHtml(p.name || 'Pool')}</span>
+          </div>
+          ${customerLine}
+          <div class="pool-switcher-row-meta">${meta}</div>
+        </div>
+        ${deleteBtn}
+      </div>
+    `;
+  }).join('');
+}
+
+function switchPool(id) {
+  if (!state.pools.some(p => p.id === id)) return;
+  state.activePoolId = id;
+  saveState();
+  closePoolSwitcher();
+  renderDashboard();
+  refreshReminder();
+}
+
+function addPool() {
+  if (!isCommercial()) return;
+  const name = (prompt(tr('pools.namePrompt'), '') || '').trim();
+  if (!name) return;
+  const pool = makeDefaultPool();
+  pool.name = name;
+  state.pools.push(pool);
+  state.activePoolId = pool.id;
+  saveState();
+  closePoolSwitcher();
+  renderDashboard();
+  toast(tr('pools.added'));
+}
+
+function deletePool(id) {
+  if (state.pools.length <= 1) return;
+  const p = state.pools.find(x => x.id === id);
+  if (!p) return;
+  if (!confirm(tr('pools.deleteConfirm', p.name || 'Pool'))) return;
+  state.pools = state.pools.filter(x => x.id !== id);
+  if (state.activePoolId === id) state.activePoolId = state.pools[0].id;
+  saveState();
+  renderPoolSwitcherList();
+  renderDashboard();
+  toast(tr('pools.deleted'));
+}
+
+// ============================================================
+// ONBOARDING WIZARD (first launch)
+// ============================================================
+let wizardStep = 1;
+
+function shouldShowOnboarding() {
+  if (state.config.onboarded) return false;
+  // Only run for genuinely fresh installs — if any pool already has tests, skip
+  return !state.pools.some(p => (p.tests || []).length > 0);
+}
+
+function startOnboarding() {
+  const pool = getActivePool();
+  // Pre-fill current values, leaving placeholders for genuine defaults
+  const isDefaultName = !pool.name || pool.name === 'My Pool';
+  document.getElementById('wiz-name').value = isDefaultName ? '' : pool.name;
+  const vol = volumeDisplay(pool.volume);
+  document.getElementById('wiz-volume').value = pool.volume === 15000 ? '' : vol.value;
+  document.getElementById('wiz-vol-unit').textContent = vol.unit;
+  document.getElementById('wiz-sanitizer').value = pool.sanitizer;
+  document.getElementById('wiz-climate').value = pool.climate;
+  wizardStep = 1;
+  wizardShowStep(1);
+  document.getElementById('wizard-modal').classList.add('open');
+}
+
+function wizardShowStep(n) {
+  wizardStep = n;
+  document.querySelectorAll('#wizard-modal .wizard-step').forEach(el => {
+    el.style.display = el.dataset.step == n ? '' : 'none';
+  });
+  document.querySelectorAll('#wizard-modal .wizard-dot').forEach(el => {
+    el.classList.toggle('active', +el.dataset.step <= n);
+  });
+  document.getElementById('wiz-back').style.display = n > 1 ? '' : 'none';
+  document.getElementById('wiz-skip').style.display = n < 3 ? '' : 'none';
+  document.getElementById('wiz-next').textContent = n === 3 ? tr('wizard.finish') : tr('wizard.next');
+  if (n === 3) wizardRenderTargetsPreview();
+}
+
+function wizardCommitStep2() {
+  const pool = getActivePool();
+  const name = document.getElementById('wiz-name').value.trim();
+  if (name) pool.name = name;
+  const volRaw = Number(document.getElementById('wiz-volume').value);
+  if (volRaw > 0) {
+    pool.volume = state.config.units === 'metric' ? Math.round(literToGal(volRaw)) : Math.round(volRaw);
+  }
+  pool.sanitizer = document.getElementById('wiz-sanitizer').value;
+  pool.climate = document.getElementById('wiz-climate').value;
+  saveState();
+}
+
+function wizardRenderTargetsPreview() {
+  // Commit step-2 inputs first so the preview reflects what they typed
+  wizardCommitStep2();
+  const targets = getTargets();
+  const out = document.getElementById('wiz-targets-preview');
+  if (!out) return;
+  const rows = [
+    ['FC', `${targets.fc[0]}–${targets.fc[1]} ppm`],
+    ['pH', `${targets.ph[0]}–${targets.ph[1]}`],
+    ['TA', `${targets.ta[0]}–${targets.ta[1]} ppm`],
+    ['CH', `${targets.ch[0]}–${targets.ch[1]} ppm`],
+    ['CYA', `${targets.cya[0]}–${targets.cya[1]} ppm`],
+  ];
+  if (getActivePool().sanitizer === 'swg') rows.push(['Salt', `${targets.salt[0]}–${targets.salt[1]} ppm`]);
+  out.innerHTML = rows.map(r => `
+    <div class="wiz-target-row">
+      <div class="wiz-target-name">${r[0]}</div>
+      <div class="wiz-target-range">${r[1]}</div>
+    </div>
+  `).join('');
+}
+
+function wizardNext() {
+  if (wizardStep === 2) wizardCommitStep2();
+  if (wizardStep < 3) {
+    wizardShowStep(wizardStep + 1);
+  } else {
+    state.config.onboarded = true;
+    saveState();
+    closeWizard();
+    renderDashboard();
+  }
+}
+
+function wizardBack() {
+  if (wizardStep > 1) wizardShowStep(wizardStep - 1);
+}
+
+function wizardSkip() {
+  state.config.onboarded = true;
+  saveState();
+  closeWizard();
+}
+
+function closeWizard() {
+  document.getElementById('wizard-modal').classList.remove('open');
+}
+
+// ============================================================
+// GLOSSARY (chemistry term explanations)
+// ============================================================
+const GLOSSARY_KEYS = ['fc','cc','ph','ta','ch','cya','salt','borate','lsi'];
+
+function openGlossary(key) {
+  if (!GLOSSARY_KEYS.includes(key)) return;
+  document.getElementById('glossary-title').textContent = tr('glossary.' + key + '.title');
+  document.getElementById('glossary-desc').textContent = tr('glossary.' + key + '.desc');
+  document.getElementById('glossary-modal').classList.add('open');
+}
+
+function closeGlossary() {
+  document.getElementById('glossary-modal').classList.remove('open');
+}
+
+// ============================================================
+// TIERS / PAYWALL
+// ============================================================
+function currentTier() { return state.config.tier || 'free'; }
+function isPro() { return currentTier() === 'pro' || currentTier() === 'commercial'; }
+function isCommercial() { return currentTier() === 'commercial'; }
 
 function showPaywall() {
+  // Pro→Commercial upgrade is gated until Commercial billing ships,
+  // so the modal is only useful for free users converting to Pro.
   document.getElementById('paywall-modal').classList.add('open');
 }
 
@@ -1633,12 +2435,37 @@ function closePaywall() {
   document.getElementById('paywall-modal').classList.remove('open');
 }
 
-// MOCK purchase — sets the flag locally. Real Google Play Billing wires in during Capacitor phase.
+// MOCK purchases — set tier locally. Real Google Play Billing wires in during Capacitor phase.
 function unlockPro() {
-  state.config.isPro = true;
+  state.config.tier = 'pro';
   saveState();
+  afterUnlock(tr('paywall.welcome'));
+}
+
+function unlockCommercial() {
+  state.config.tier = 'commercial';
+  saveState();
+  afterUnlock(tr('paywall.welcomeCommercial'));
+}
+
+// Dev only — reset tier so testing flows can re-enter the paywall
+function resetTier() {
+  state.config.tier = 'free';
+  saveState();
+  toast(tr('toast.tierReset'));
+  renderProBadge();
+  loadConfigUI();
+  const activeView = document.querySelector('.view.active');
+  if (activeView) {
+    const id = activeView.id.replace('view-', '');
+    if (id === 'history') renderHistory();
+    else if (id === 'dashboard') renderDashboard();
+  }
+}
+
+function afterUnlock(toastMsg) {
   closePaywall();
-  toast('Welcome to Pro!');
+  toast(toastMsg);
   renderProBadge();
   // Re-render whichever view is active so unlocked features appear
   const activeView = document.querySelector('.view.active');
@@ -1651,12 +2478,787 @@ function unlockPro() {
 }
 
 function renderProBadge() {
+  const tier = currentTier();
   const el = document.getElementById('pro-badge');
-  if (el) el.style.display = isPro() ? 'inline-flex' : 'none';
+  if (el) {
+    if (tier === 'commercial') {
+      el.style.display = 'inline-flex';
+      el.textContent = tr('badge.commercial');
+      el.classList.add('badge-commercial');
+    } else if (tier === 'pro') {
+      el.style.display = 'inline-flex';
+      el.textContent = tr('badge.pro');
+      el.classList.remove('badge-commercial');
+    } else {
+      el.style.display = 'none';
+    }
+  }
   const upgradeBtn = document.getElementById('upgrade-row');
-  if (upgradeBtn) upgradeBtn.style.display = isPro() ? 'none' : 'flex';
+  if (upgradeBtn) {
+    // Free → show "Unlock Hydrolab"; Pro/Commercial → hide (Pro→Commercial upgrade gated until Commercial ships)
+    if (tier !== 'free') {
+      upgradeBtn.style.display = 'none';
+    } else {
+      upgradeBtn.style.display = 'flex';
+      const titleEl = upgradeBtn.querySelector('.upgrade-card-title');
+      const subEl = upgradeBtn.querySelector('.upgrade-card-sub');
+      if (titleEl) {
+        titleEl.dataset.i18n = 'upgrade.title';
+        titleEl.textContent = tr('upgrade.title');
+      }
+      if (subEl) {
+        subEl.dataset.i18n = 'upgrade.sub';
+        subEl.textContent = tr('upgrade.sub');
+      }
+    }
+  }
   const proStatus = document.getElementById('pro-status-row');
-  if (proStatus) proStatus.style.display = isPro() ? 'flex' : 'none';
+  if (proStatus) {
+    proStatus.style.display = tier !== 'free' ? 'flex' : 'none';
+    const text = proStatus.querySelector('div[data-i18n]');
+    if (text) {
+      text.dataset.i18n = tier === 'commercial' ? 'upgrade.commercialStatus' : 'upgrade.proStatus';
+      text.textContent = tr(text.dataset.i18n);
+    }
+  }
+  const devReset = document.getElementById('dev-reset-tier-row');
+  if (devReset) {
+    devReset.style.display = tier !== 'free' ? 'flex' : 'none';
+  }
+}
+
+// ============================================================
+// I18N
+// ============================================================
+const I18N = {
+  en: {
+    // Language
+    'lang.name': 'English',
+
+    // Nav
+    'nav.pool': 'Pool',
+    'nav.test': 'Test',
+    'nav.history': 'History',
+    'nav.setup': 'Setup',
+
+    // Aria
+    'aria.settings': 'Settings',
+
+    // Buttons (common)
+    'btn.save': 'Save',
+    'btn.cancel': 'Cancel',
+    'btn.close': 'Close',
+    'btn.delete': 'Delete',
+    'btn.maybeLater': 'Maybe later',
+    'btn.share': 'Share Test',
+    'btn.deleteTest': 'Delete Test',
+    'btn.saveTest': 'Save Test',
+    'btn.logNewTest': 'Log New Test',
+    'btn.logFirstTest': 'Log First Test',
+    'btn.setupPool': 'Set Up Pool',
+    'btn.unlockPro': 'Unlock Pro — $9.99',
+
+    // Dashboard
+    'dash.lsi': 'Saturation Index (LSI)',
+    'dash.readings': 'Current Readings',
+    'dash.actions': 'Recommended Actions',
+    'dash.notes': 'Notes',
+    'dash.statusNew': 'New',
+    'dash.statusBalanced': 'Balanced',
+    'dash.statusNeedsCare': 'Needs Care',
+    'dash.statusAdjust': 'Adjust',
+    'dash.empty.title': 'No tests yet',
+    'dash.empty.sub': 'Log your first water test to get dosing recommendations and saturation balance.',
+    'dash.lastTested': 'Last tested {0} · {1} {2}',
+    'dash.subVolume': '{0} {1} · {2}',
+    'dash.doseEmpty.em': 'Nothing to do.',
+    'dash.doseEmpty.text': 'Your chemistry is in range. Keep testing regularly.',
+
+    // LSI status
+    'lsi.noData.label': 'No Data',
+    'lsi.noData.desc': 'Enter pH, TA, CH, and temperature to calculate.',
+    'lsi.corrosive.label': 'Corrosive',
+    'lsi.corrosive.desc': 'Water is aggressive. Risk of etching, staining, and equipment damage.',
+    'lsi.under.label': 'Under-saturated',
+    'lsi.under.desc': 'Slightly aggressive. Adjust pH or calcium upward.',
+    'lsi.balanced.label': 'Balanced',
+    'lsi.balanced.desc': 'Water is in ideal saturation range. Protect your surface and equipment.',
+    'lsi.over.label': 'Over-saturated',
+    'lsi.over.desc': 'Scale formation possible. Lower pH or TA.',
+    'lsi.scaling.label': 'Scaling',
+    'lsi.scaling.desc': 'Water will deposit calcium scale on surfaces and equipment.',
+    'lsi.action.raisePh': 'Quickest fix: raise pH to {0}',
+    'lsi.action.lowerPh': 'Quickest fix: lower pH to {0}',
+    'lsi.action.raiseCh': 'Quickest fix: raise calcium hardness to {0} ppm',
+
+    // Time ago
+    'time.justNow': 'just now',
+    'time.minAgo': '{0} min ago',
+    'time.hAgo': '{0}h ago',
+    'time.dAgo': '{0}d ago',
+
+    // Test form
+    'test.title': 'New <em>Test</em>',
+    'test.sub': "Enter the values you measured. Leave blank any you didn't test.",
+    'test.required': 'Enter at least one measurement',
+    'test.fc.label': 'Free Chlorine',
+    'test.cc.label': 'Combined Cl',
+    'test.ph.label': 'pH',
+    'test.ta.label': 'Alkalinity',
+    'test.ch.label': 'Calcium',
+    'test.cya.label': 'Cyanuric Acid',
+    'test.salt.label': 'Salt',
+    'test.temp.label': 'Water Temp',
+    'test.borate.label': 'Borate (optional)',
+
+    // Welcome / first-launch dashboard state
+    'dash.welcome.title': 'Welcome to Hydrolab',
+    'dash.welcome.sub': 'Set up your pool, then log your first water test to get dosing recommendations and saturation balance.',
+
+    // History
+    'history.title': 'Test <em>Log</em>',
+    'history.noTests': 'No tests yet',
+    'history.testsLogged': '{0} tests logged',
+    'history.testLogged': '1 test logged',
+    'history.allTests': 'All Tests',
+    'history.empty': 'Empty log',
+    'history.emptySub': 'Your tests will appear here once logged.',
+    'history.chartLocked.title': 'Trend charts are a Pro feature',
+    'history.chartLocked.sub': 'See how every reading has changed over time. Spot patterns before they become problems.',
+    'history.olderHidden.title': '{0} older tests hidden',
+    'history.olderHiddenOne.title': '1 older test hidden',
+    'history.olderHidden.sub': 'Free shows the most recent {0}. Upgrade to Pro to see your full history.',
+
+    // Settings
+    'setup.title': 'Pool <em>Setup</em>',
+    'setup.sub': 'Tell the app about your pool so we can calculate doses correctly.',
+    'setup.poolDetails': 'Pool Details',
+    'setup.poolName': 'Pool Name',
+    'setup.poolNamePh': 'Backyard Pool',
+    'setup.volume': 'Volume',
+    'setup.surface': 'Surface',
+    'setup.surface.plaster': 'Plaster',
+    'setup.surface.vinyl': 'Vinyl',
+    'setup.surface.fiberglass': 'Fiberglass',
+    'setup.surface.pebble': 'Pebble/Quartz',
+    'setup.surface.tile': 'Tile',
+    'setup.sanitizer': 'Sanitizer',
+    'setup.sanitizer.liquid': 'Liquid Chlorine',
+    'setup.sanitizer.swg': 'Salt (SWG)',
+    'setup.sanitizer.tabs': 'Tabs (Trichlor)',
+    'sanitizer.short.liquid': 'Liquid Cl',
+    'sanitizer.short.swg': 'Salt / SWG',
+    'sanitizer.short.tabs': 'Trichlor tabs',
+    'sanitizer.short.calHypo': 'Cal-Hypo',
+    'setup.sanitizer.calhypo': 'Cal-Hypo',
+    'setup.climate': 'Climate',
+    'setup.climate.outdoor': 'Outdoor (sunny)',
+    'setup.climate.indoor': 'Indoor',
+    'setup.climate.shaded': 'Shaded',
+    'setup.preferences': 'Preferences',
+    'setup.units': 'Units',
+    'setup.unitsUS': 'US (gal, °F)',
+    'setup.unitsMetric': 'Metric (L, °C)',
+    'setup.reminders': 'Reminders',
+    'setup.targets': 'Target Values',
+    'setup.targetsHint': 'Leave any field blank to use the automatic default (shown as placeholder). Values you enter override the auto-calculated ranges.',
+    'setup.targetsReset': 'Reset targets to defaults',
+    'setup.data': 'Data',
+    'setup.exportAll': 'Export All Data',
+    'setup.exportSub': 'Download tests and config as JSON',
+    'setup.resetAll': 'Reset All Data',
+    'setup.resetSub': 'Delete all tests and settings',
+
+    // Targets cells
+    'targets.min': 'Min',
+    'targets.target': 'Target',
+    'targets.max': 'Max',
+    'targets.locked.title': 'Custom target ranges are a Pro feature',
+    'targets.locked.sub': 'Override the auto-calculated targets to dial in your specific pool. Auto targets stay active for free.',
+
+    // Reminders
+    'reminders.locked.title': 'Test reminders are a Pro feature',
+    'reminders.locked.sub': "Get a friendly nudge when it's time to test the water — only fires if you go too long between tests.",
+    'reminders.label': 'Test Reminders',
+    'reminders.sub': 'Notify me {0} days after my last test',
+    'reminders.frequency': 'Frequency',
+    'reminders.frequencySub': 'How long between reminders',
+    'reminders.every3': 'Every 3 days',
+    'reminders.weekly': 'Weekly',
+    'reminders.every2w': 'Every 2 weeks',
+    'reminders.permissionDenied': 'Enable notifications in Settings to use reminders',
+    'reminders.on': 'Reminders on',
+    'reminders.off': 'Reminders off',
+
+    // Paywall
+    'paywall.title': 'Unlock <em>Hydrolab</em>',
+    'paywall.sub': 'Choose the plan that fits your pool care.',
+    'paywall.tier.pro.name': 'Pro',
+    'paywall.tier.pro.tagline': 'For personal pool owners',
+    'paywall.tier.pro.feat1': 'Trend charts (FC, pH, TA, CH, CYA, LSI)',
+    'paywall.tier.pro.feat2': 'Unlimited test history',
+    'paywall.tier.pro.feat3': 'Custom target ranges',
+    'paywall.tier.pro.feat4': 'Test reminders',
+    'paywall.tier.pro.cta': 'Unlock Pro',
+    'paywall.tier.commercial.name': 'Commercial',
+    'paywall.tier.commercial.badge': 'For pool pros',
+    'paywall.tier.commercial.tagline': 'Manage multiple pools and customers',
+    'paywall.tier.proCurrent': 'Your current plan',
+    'paywall.tier.commercial.feat1': 'Everything in Pro',
+    'paywall.tier.commercial.feat2': 'Unlimited pools',
+    'paywall.tier.commercial.feat3': 'Customer name, address, phone per pool',
+    'paywall.tier.commercial.cta': 'Unlock Commercial',
+    'paywall.tier.commercial.soon': 'Coming soon',
+    'paywall.tier.commercial.priceTbd': 'TBD / mo',
+
+    // Onboarding wizard
+    'wizard.skip': 'Skip',
+    'wizard.back': 'Back',
+    'wizard.next': 'Next',
+    'wizard.finish': 'Get Started',
+    'wizard.step1.title': 'Welcome to Hydrolab',
+    'wizard.step1.sub': 'Track your pool chemistry, get exact dosing recommendations, no subscription required for the basics.',
+    'wizard.step1.feat1': 'Works offline — your data stays on your device',
+    'wizard.step1.feat2': 'TFP-validated dosing for every chemical',
+    'wizard.step1.feat3': 'LSI saturation balance built in',
+    'wizard.step2.title': 'Tell us about your pool',
+    'wizard.step2.sub': 'These four basics let us calculate accurate target ranges and dose amounts.',
+    'wizard.step3.title': 'Your auto-calculated targets',
+    'wizard.step3.sub': "Based on your setup, here's what we'll aim for. You can override these later in Settings.",
+
+    // Glossary
+    'glossary.fc.title': 'Free Chlorine (FC)',
+    'glossary.fc.desc': 'The active sanitizer killing bacteria and algae. Target FC depends on your CYA — keep the FC/CYA ratio above 7.5%.',
+    'glossary.cc.title': 'Combined Chlorine (CC)',
+    'glossary.cc.desc': 'Used-up chlorine bound to contaminants. Anything above 0.5 ppm signals chloramines — consider a SLAM process.',
+    'glossary.ph.title': 'pH',
+    'glossary.ph.desc': 'Acidity balance, ideal 7.4–7.8. High pH reduces chlorine effectiveness and grows scale; low pH corrodes plaster and equipment.',
+    'glossary.ta.title': 'Total Alkalinity (TA)',
+    'glossary.ta.desc': 'pH buffer. Stable TA keeps pH from drifting. Too high makes pH constantly want to climb; too low makes pH unstable.',
+    'glossary.ch.title': 'Calcium Hardness (CH)',
+    'glossary.ch.desc': 'Calcium concentration. Too low = corrosive water that strips plaster; too high = scaling on tile and equipment.',
+    'glossary.cya.title': 'Cyanuric Acid (CYA)',
+    'glossary.cya.desc': 'Chlorine stabilizer that protects FC from sun. Higher CYA needs higher FC. Only way to lower CYA is partial drain and refill.',
+    'glossary.salt.title': 'Salt',
+    'glossary.salt.desc': 'Sodium chloride that your salt cell electrolyzes into chlorine. Most cells run best around 3000–3400 ppm.',
+    'glossary.borate.title': 'Borate',
+    'glossary.borate.desc': 'Optional additive (typically 30–50 ppm) that buffers pH, reduces chlorine demand, and gives water a softer feel. Added once with borax + acid; lasts until significant water replacement.',
+    'glossary.lsi.title': 'Saturation Index (LSI)',
+    'glossary.lsi.desc': 'Combined balance score from pH, TA, CH, and temperature. Between -0.3 and +0.3 is balanced. Negative = corrosive water; positive = scaling.',
+
+    // Pool switcher (Commercial)
+    'pools.title': 'Pools',
+    'pools.sub': 'Switch between pools or add a new one.',
+    'pools.add': '+ Add pool',
+    'pools.delete': 'Delete',
+    'pools.deleteConfirm': 'Delete "{0}" and all its tests? This cannot be undone.',
+    'pools.deleted': 'Pool deleted',
+    'pools.added': 'Pool added',
+    'pools.namePrompt': 'Pool name:',
+    'pools.noTests': 'No tests yet',
+    'pools.oneTest': '1 test',
+    'pools.manyTests': '{0} tests',
+    'pools.section': 'My Pools',
+    'pools.switchLabel': 'Switch / Manage Pools',
+    'pools.summary': '{0} pools · "{1}" active',
+    'pools.summaryOne': '1 pool · "{0}"',
+
+    // Customer (Commercial)
+    'setup.customer': 'Customer',
+    'setup.customerSub': 'Optional — for pool service techs managing multiple customers.',
+    'setup.customerName': 'Customer Name',
+    'setup.customerNamePh': 'Jane Smith',
+    'setup.customerAddress': 'Address',
+    'setup.customerAddressPh': '123 Pool Lane',
+    'setup.customerPhone': 'Phone',
+    'setup.customerPhonePh': '(555) 123-4567',
+    'paywall.priceSub': 'Pro: one-time purchase · Commercial: subscription',
+    'paywall.fineprint': 'Features unlock instantly on this device. Real billing arrives with the app store version.',
+    'paywall.welcome': 'Welcome to Pro!',
+    'paywall.welcomeCommercial': 'Welcome to Commercial!',
+
+    // Upgrade card / status
+    'upgrade.title': 'Unlock Hydrolab',
+    'upgrade.sub': 'Pro or Commercial — from $9.99 one-time',
+    'upgrade.titlePro': 'Upgrade to Commercial',
+    'upgrade.subPro': 'Add multi-pool + customer info — $20 upgrade',
+    'upgrade.proStatus': "You're on Hydrolab Pro — thanks for the support.",
+    'upgrade.commercialStatus': "You're on Hydrolab Commercial — thanks for the support.",
+    'badge.pro': 'Pro',
+    'badge.commercial': 'Commercial',
+
+    // Paywall when already Pro (upgrading to Commercial)
+    'paywall.title.pro': 'Upgrade to <em>Commercial</em>',
+    'paywall.sub.pro': "You're on Pro. Add multi-pool and customer management.",
+    'paywall.tier.commercial.upgradePrice': '+$20 upgrade',
+
+    // Dev / testing
+    'setup.devReset.label': 'Reset tier (dev)',
+    'setup.devReset.sub': 'Testing only — remove before launch',
+    'toast.tierReset': 'Tier reset to free',
+
+    // Test detail
+    'detail.title': 'Test Detail',
+
+    // Toasts
+    'toast.testSaved': 'Test saved',
+    'toast.testDeleted': 'Test deleted',
+    'toast.settingsSaved': 'Pool settings saved',
+    'toast.allCleared': 'All data cleared',
+    'toast.targetsReset': 'Targets reset to defaults',
+    'toast.exported': 'Data exported',
+
+    // Confirms
+    'confirm.deleteTest': 'Delete this test?',
+    'confirm.resetAll1': 'This will permanently delete all your tests and settings. Continue?',
+    'confirm.resetAll2': 'Really delete everything? This cannot be undone.',
+
+    // Chemical names
+    'chem.liquidChlorine': '12.5% Liquid Chlorine',
+    'chem.calHypo': 'Cal-Hypo (65%)',
+    'chem.dichlor': 'Dichlor (56%)',
+    'chem.muriaticAcid': '31% Muriatic Acid',
+    'chem.sodaAsh': 'Soda Ash',
+    'chem.borax': 'Borax (20 Mule)',
+    'chem.bakingSoda': 'Baking Soda',
+    'chem.calciumChloride': 'Calcium Chloride',
+    'chem.cyanuricAcid': 'Cyanuric Acid',
+    'chem.salt': 'Pool Salt',
+
+    // Dose recommendation titles & subs
+    'dose.fc.up.title': 'Raise FC by {0} ppm',
+    'dose.fc.up.sub': 'Add {0} → FC to {1}',
+    'dose.ph.down.title': 'Lower pH to {0}',
+    'dose.ph.down.sub': 'Add {0} (add slowly)',
+    'dose.ph.up.title': 'Raise pH to {0}',
+    'dose.ph.up.sub': 'Add {0}',
+    'dose.ta.up.title': 'Raise TA by {0} ppm',
+    'dose.ta.up.sub': 'Add {0}',
+    'dose.ta.down.title': 'Lower TA ({0} → {1})',
+    'dose.ta.down.sub': 'Aerate with low pH; add muriatic acid gradually',
+    'dose.ch.up.title': 'Raise Calcium by {0} ppm',
+    'dose.ch.up.sub': 'Add {0}',
+    'dose.cya.up.title': 'Raise CYA by {0} ppm',
+    'dose.cya.up.sub': 'Add {0} (slow to dissolve)',
+    'dose.cya.down.title': 'CYA too high ({0})',
+    'dose.cya.down.sub': 'Only way to reduce: partial drain and refill',
+    'dose.salt.up.title': 'Raise Salt by {0} ppm',
+    'dose.salt.up.sub': 'Add {0}',
+    'dose.unit.gradual': 'gradual',
+    'dose.unit.drain': 'drain',
+
+    // Checklist notes
+    'check.fcCyaRatio.bad': 'FC/CYA ratio is {0}% — below the {1}% minimum. Algae risk.',
+    'check.fcCyaRatio.warn': 'FC/CYA ratio is {0}% — above the minimum but below ideal target.',
+    'check.fcCyaRatio.good': 'FC/CYA ratio {0}% is healthy.',
+    'check.combinedChlorine': 'Combined chlorine at {0} ppm suggests chloramines. Consider a SLAM process if >1.0.',
+    'check.highPhCalcium': 'High pH + high calcium increases scaling risk.',
+    'check.warmWater': 'Warm water (>88°F) drives pH up faster — test more often.',
+
+    // Settings labels
+    'settings.language': 'Language',
+  },
+
+  es: {
+    // Language
+    'lang.name': 'Español',
+
+    // Nav
+    'nav.pool': 'Piscina',
+    'nav.test': 'Prueba',
+    'nav.history': 'Historial',
+    'nav.setup': 'Ajustes',
+
+    // Aria
+    'aria.settings': 'Ajustes',
+
+    // Buttons
+    'btn.save': 'Guardar',
+    'btn.cancel': 'Cancelar',
+    'btn.close': 'Cerrar',
+    'btn.delete': 'Eliminar',
+    'btn.maybeLater': 'Quizás luego',
+    'btn.share': 'Compartir prueba',
+    'btn.deleteTest': 'Eliminar prueba',
+    'btn.saveTest': 'Guardar prueba',
+    'btn.logNewTest': 'Registrar nueva prueba',
+    'btn.logFirstTest': 'Registrar primera prueba',
+    'btn.setupPool': 'Configurar piscina',
+    'btn.unlockPro': 'Desbloquear Pro — $9.99',
+
+    // Dashboard
+    'dash.lsi': 'Índice de Saturación (LSI)',
+    'dash.readings': 'Lecturas actuales',
+    'dash.actions': 'Acciones recomendadas',
+    'dash.notes': 'Notas',
+    'dash.statusNew': 'Nueva',
+    'dash.statusBalanced': 'Equilibrada',
+    'dash.statusNeedsCare': 'Necesita atención',
+    'dash.statusAdjust': 'Ajustar',
+    'dash.empty.title': 'Aún no hay pruebas',
+    'dash.empty.sub': 'Registra tu primera prueba para obtener recomendaciones de dosis y balance de saturación.',
+    'dash.lastTested': 'Última prueba {0} · {1} {2}',
+    'dash.subVolume': '{0} {1} · {2}',
+    'dash.doseEmpty.em': 'Nada que hacer.',
+    'dash.doseEmpty.text': 'La química está en rango. Sigue probando regularmente.',
+
+    // LSI status
+    'lsi.noData.label': 'Sin datos',
+    'lsi.noData.desc': 'Ingresa pH, TA, CH y temperatura para calcular.',
+    'lsi.corrosive.label': 'Corrosivo',
+    'lsi.corrosive.desc': 'El agua es agresiva. Riesgo de erosión, manchas y daño al equipo.',
+    'lsi.under.label': 'Subsaturado',
+    'lsi.under.desc': 'Ligeramente agresiva. Sube el pH o el calcio.',
+    'lsi.balanced.label': 'Equilibrado',
+    'lsi.balanced.desc': 'El agua está en el rango ideal. Protege tu superficie y equipo.',
+    'lsi.over.label': 'Sobresaturado',
+    'lsi.over.desc': 'Posible formación de incrustaciones. Baja el pH o la TA.',
+    'lsi.scaling.label': 'Incrustaciones',
+    'lsi.scaling.desc': 'El agua dejará depósitos de calcio en superficies y equipo.',
+    'lsi.action.raisePh': 'Acción más rápida: subir pH a {0}',
+    'lsi.action.lowerPh': 'Acción más rápida: bajar pH a {0}',
+    'lsi.action.raiseCh': 'Acción más rápida: subir dureza de calcio a {0} ppm',
+
+    // Time ago
+    'time.justNow': 'ahora mismo',
+    'time.minAgo': 'hace {0} min',
+    'time.hAgo': 'hace {0} h',
+    'time.dAgo': 'hace {0} d',
+
+    // Test form
+    'test.title': 'Nueva <em>Prueba</em>',
+    'test.sub': 'Ingresa los valores que mediste. Deja en blanco los que no probaste.',
+    'test.required': 'Ingresa al menos una medida',
+    'test.fc.label': 'Cloro libre',
+    'test.cc.label': 'Cloro combinado',
+    'test.ph.label': 'pH',
+    'test.ta.label': 'Alcalinidad',
+    'test.ch.label': 'Calcio',
+    'test.cya.label': 'Ácido cianúrico',
+    'test.salt.label': 'Sal',
+    'test.temp.label': 'Temp. del agua',
+    'test.borate.label': 'Boratos (opcional)',
+
+    // Welcome / first-launch dashboard state
+    'dash.welcome.title': 'Bienvenido a Hydrolab',
+    'dash.welcome.sub': 'Configura tu piscina, luego registra tu primera prueba para obtener recomendaciones de dosis y balance de saturación.',
+
+    // History
+    'history.title': 'Registro de <em>Pruebas</em>',
+    'history.noTests': 'Aún no hay pruebas',
+    'history.testsLogged': '{0} pruebas registradas',
+    'history.testLogged': '1 prueba registrada',
+    'history.allTests': 'Todas las pruebas',
+    'history.empty': 'Registro vacío',
+    'history.emptySub': 'Tus pruebas aparecerán aquí una vez registradas.',
+    'history.chartLocked.title': 'Las gráficas son función Pro',
+    'history.chartLocked.sub': 'Ve cómo ha cambiado cada lectura con el tiempo. Detecta patrones antes de que sean problemas.',
+    'history.olderHidden.title': '{0} pruebas antiguas ocultas',
+    'history.olderHiddenOne.title': '1 prueba antigua oculta',
+    'history.olderHidden.sub': 'Gratis muestra las últimas {0}. Mejora a Pro para ver tu historial completo.',
+
+    // Settings
+    'setup.title': 'Configurar <em>Piscina</em>',
+    'setup.sub': 'Cuéntanos sobre tu piscina para calcular las dosis correctamente.',
+    'setup.poolDetails': 'Datos de la piscina',
+    'setup.poolName': 'Nombre',
+    'setup.poolNamePh': 'Mi piscina',
+    'setup.volume': 'Volumen',
+    'setup.surface': 'Superficie',
+    'setup.surface.plaster': 'Yeso',
+    'setup.surface.vinyl': 'Vinilo',
+    'setup.surface.fiberglass': 'Fibra de vidrio',
+    'setup.surface.pebble': 'Piedra/Cuarzo',
+    'setup.surface.tile': 'Azulejo',
+    'setup.sanitizer': 'Desinfectante',
+    'setup.sanitizer.liquid': 'Cloro líquido',
+    'setup.sanitizer.swg': 'Sal (SWG)',
+    'setup.sanitizer.tabs': 'Pastillas (Triclor)',
+    'sanitizer.short.liquid': 'Cloro líquido',
+    'sanitizer.short.swg': 'Sal / SWG',
+    'sanitizer.short.tabs': 'Pastillas Triclor',
+    'sanitizer.short.calHypo': 'Cal-Hipo',
+    'setup.sanitizer.calhypo': 'Cal-Hipo',
+    'setup.climate': 'Clima',
+    'setup.climate.outdoor': 'Exterior (soleado)',
+    'setup.climate.indoor': 'Interior',
+    'setup.climate.shaded': 'Sombra',
+    'setup.preferences': 'Preferencias',
+    'setup.units': 'Unidades',
+    'setup.unitsUS': 'EE. UU. (gal, °F)',
+    'setup.unitsMetric': 'Métrico (L, °C)',
+    'setup.reminders': 'Recordatorios',
+    'setup.targets': 'Valores objetivo',
+    'setup.targetsHint': 'Deja cualquier campo en blanco para usar el valor automático (mostrado como marcador). Los valores que ingreses anulan los rangos calculados.',
+    'setup.targetsReset': 'Restablecer valores predeterminados',
+    'setup.data': 'Datos',
+    'setup.exportAll': 'Exportar todos los datos',
+    'setup.exportSub': 'Descargar pruebas y configuración como JSON',
+    'setup.resetAll': 'Restablecer todos los datos',
+    'setup.resetSub': 'Eliminar todas las pruebas y ajustes',
+
+    // Targets
+    'targets.min': 'Mín',
+    'targets.target': 'Objetivo',
+    'targets.max': 'Máx',
+    'targets.locked.title': 'Los rangos personalizados son función Pro',
+    'targets.locked.sub': 'Ajusta los objetivos automáticos para tu piscina específica. Los objetivos automáticos siguen activos en gratis.',
+
+    // Reminders
+    'reminders.locked.title': 'Los recordatorios son función Pro',
+    'reminders.locked.sub': 'Recibe un aviso amistoso cuando sea hora de probar el agua — solo aparece si pasas demasiado tiempo entre pruebas.',
+    'reminders.label': 'Recordatorios de prueba',
+    'reminders.sub': 'Avísame {0} días después de mi última prueba',
+    'reminders.frequency': 'Frecuencia',
+    'reminders.frequencySub': 'Cuánto tiempo entre recordatorios',
+    'reminders.every3': 'Cada 3 días',
+    'reminders.weekly': 'Semanal',
+    'reminders.every2w': 'Cada 2 semanas',
+    'reminders.permissionDenied': 'Activa las notificaciones en Ajustes para usar recordatorios',
+    'reminders.on': 'Recordatorios activados',
+    'reminders.off': 'Recordatorios desactivados',
+
+    // Paywall
+    'paywall.title': 'Desbloquea <em>Hydrolab</em>',
+    'paywall.sub': 'Elige el plan que se adapta a tu cuidado de piscina.',
+    'paywall.tier.pro.name': 'Pro',
+    'paywall.tier.pro.tagline': 'Para dueños de piscina personal',
+    'paywall.tier.pro.feat1': 'Gráficas de tendencia (FC, pH, TA, CH, CYA, LSI)',
+    'paywall.tier.pro.feat2': 'Historial ilimitado',
+    'paywall.tier.pro.feat3': 'Rangos personalizados',
+    'paywall.tier.pro.feat4': 'Recordatorios de prueba',
+    'paywall.tier.pro.cta': 'Desbloquear Pro',
+    'paywall.tier.commercial.name': 'Comercial',
+    'paywall.tier.commercial.badge': 'Para profesionales',
+    'paywall.tier.commercial.tagline': 'Gestiona varias piscinas y clientes',
+    'paywall.tier.proCurrent': 'Tu plan actual',
+    'paywall.tier.commercial.feat1': 'Todo lo de Pro',
+    'paywall.tier.commercial.feat2': 'Piscinas ilimitadas',
+    'paywall.tier.commercial.feat3': 'Nombre, dirección y teléfono del cliente por piscina',
+    'paywall.tier.commercial.cta': 'Desbloquear Commercial',
+    'paywall.tier.commercial.soon': 'Próximamente',
+    'paywall.tier.commercial.priceTbd': 'A definir / mes',
+
+    // Onboarding wizard
+    'wizard.skip': 'Saltar',
+    'wizard.back': 'Atrás',
+    'wizard.next': 'Siguiente',
+    'wizard.finish': 'Comenzar',
+    'wizard.step1.title': 'Bienvenido a Hydrolab',
+    'wizard.step1.sub': 'Controla la química de tu piscina y obtén dosis exactas. Sin suscripción para lo básico.',
+    'wizard.step1.feat1': 'Funciona sin conexión — tus datos quedan en tu dispositivo',
+    'wizard.step1.feat2': 'Dosis validadas por TFP para cada químico',
+    'wizard.step1.feat3': 'Balance de saturación LSI integrado',
+    'wizard.step2.title': 'Cuéntanos sobre tu piscina',
+    'wizard.step2.sub': 'Estos cuatro datos nos permiten calcular rangos y dosis precisas.',
+    'wizard.step3.title': 'Tus objetivos calculados',
+    'wizard.step3.sub': 'Según tu configuración, esto es a lo que apuntaremos. Puedes ajustarlos después en Configuración.',
+
+    // Glossary
+    'glossary.fc.title': 'Cloro libre (FC)',
+    'glossary.fc.desc': 'El sanitizante activo que mata bacterias y algas. El FC objetivo depende de tu CYA — mantén la relación FC/CYA por encima del 7.5%.',
+    'glossary.cc.title': 'Cloro combinado (CC)',
+    'glossary.cc.desc': 'Cloro consumido que se ha unido a contaminantes. Más de 0.5 ppm indica cloraminas — considera un proceso SLAM.',
+    'glossary.ph.title': 'pH',
+    'glossary.ph.desc': 'Balance de acidez, ideal 7.4–7.8. pH alto reduce la efectividad del cloro y forma incrustaciones; pH bajo corroe el yeso y el equipo.',
+    'glossary.ta.title': 'Alcalinidad total (TA)',
+    'glossary.ta.desc': 'Amortiguador del pH. Una TA estable evita que el pH se desvíe. Demasiado alta hace que el pH suba constantemente; demasiado baja lo hace inestable.',
+    'glossary.ch.title': 'Dureza de calcio (CH)',
+    'glossary.ch.desc': 'Concentración de calcio. Demasiado baja = agua corrosiva que daña el yeso; demasiado alta = incrustaciones en losas y equipo.',
+    'glossary.cya.title': 'Ácido cianúrico (CYA)',
+    'glossary.cya.desc': 'Estabilizador de cloro que protege el FC del sol. Más CYA requiere más FC. La única forma de bajar el CYA es vaciado parcial y rellenado.',
+    'glossary.salt.title': 'Sal',
+    'glossary.salt.desc': 'Cloruro de sodio que tu celda de sal convierte en cloro. La mayoría funciona mejor entre 3000–3400 ppm.',
+    'glossary.borate.title': 'Borato',
+    'glossary.borate.desc': 'Aditivo opcional (típicamente 30–50 ppm) que estabiliza el pH, reduce la demanda de cloro y suaviza el agua. Se agrega una vez con bórax + ácido; dura hasta que se reemplace una parte significativa del agua.',
+    'glossary.lsi.title': 'Índice de saturación (LSI)',
+    'glossary.lsi.desc': 'Puntuación combinada de pH, TA, CH y temperatura. Entre -0.3 y +0.3 está equilibrada. Negativo = agua corrosiva; positivo = incrustaciones.',
+
+    // Pool switcher (Commercial)
+    'pools.title': 'Piscinas',
+    'pools.sub': 'Cambia de piscina o añade una nueva.',
+    'pools.add': '+ Añadir piscina',
+    'pools.delete': 'Eliminar',
+    'pools.deleteConfirm': '¿Eliminar "{0}" y todas sus pruebas? No se puede deshacer.',
+    'pools.deleted': 'Piscina eliminada',
+    'pools.added': 'Piscina añadida',
+    'pools.namePrompt': 'Nombre de la piscina:',
+    'pools.noTests': 'Sin pruebas',
+    'pools.oneTest': '1 prueba',
+    'pools.manyTests': '{0} pruebas',
+    'pools.section': 'Mis piscinas',
+    'pools.switchLabel': 'Cambiar / gestionar piscinas',
+    'pools.summary': '{0} piscinas · "{1}" activa',
+    'pools.summaryOne': '1 piscina · "{0}"',
+
+    // Customer (Commercial)
+    'setup.customer': 'Cliente',
+    'setup.customerSub': 'Opcional — para técnicos que gestionan varios clientes.',
+    'setup.customerName': 'Nombre del cliente',
+    'setup.customerNamePh': 'Jane Smith',
+    'setup.customerAddress': 'Dirección',
+    'setup.customerAddressPh': 'Calle Piscina 123',
+    'setup.customerPhone': 'Teléfono',
+    'setup.customerPhonePh': '(555) 123-4567',
+    'paywall.priceSub': 'Pro: compra única · Comercial: suscripción',
+    'paywall.fineprint': 'Las funciones se desbloquean al instante en este dispositivo. La facturación real llegará con la versión de la tienda de aplicaciones.',
+    'paywall.welcome': '¡Bienvenido a Pro!',
+    'paywall.welcomeCommercial': '¡Bienvenido a Commercial!',
+
+    // Upgrade card / status
+    'upgrade.title': 'Desbloquea Hydrolab',
+    'upgrade.sub': 'Pro o Comercial — desde $9.99 pago único',
+    'upgrade.titlePro': 'Mejorar a Comercial',
+    'upgrade.subPro': 'Multi-piscina + datos de clientes — mejora $20',
+    'upgrade.proStatus': 'Estás en Hydrolab Pro — gracias por el apoyo.',
+    'upgrade.commercialStatus': 'Estás en Hydrolab Comercial — gracias por el apoyo.',
+    'badge.pro': 'Pro',
+    'badge.commercial': 'Comercial',
+
+    // Paywall when already Pro (upgrading to Commercial)
+    'paywall.title.pro': 'Mejorar a <em>Comercial</em>',
+    'paywall.sub.pro': 'Estás en Pro. Añade multi-piscina y gestión de clientes.',
+    'paywall.tier.commercial.upgradePrice': '+$20 mejora',
+
+    // Dev / testing
+    'setup.devReset.label': 'Restablecer plan (dev)',
+    'setup.devReset.sub': 'Solo para pruebas — quitar antes del lanzamiento',
+    'toast.tierReset': 'Plan restablecido a gratis',
+
+    // Test detail
+    'detail.title': 'Detalle de prueba',
+
+    // Toasts
+    'toast.testSaved': 'Prueba guardada',
+    'toast.testDeleted': 'Prueba eliminada',
+    'toast.settingsSaved': 'Ajustes guardados',
+    'toast.allCleared': 'Datos eliminados',
+    'toast.targetsReset': 'Objetivos restablecidos',
+    'toast.exported': 'Datos exportados',
+
+    // Confirms
+    'confirm.deleteTest': '¿Eliminar esta prueba?',
+    'confirm.resetAll1': 'Esto eliminará permanentemente todas tus pruebas y ajustes. ¿Continuar?',
+    'confirm.resetAll2': '¿Eliminar realmente todo? Esto no se puede deshacer.',
+
+    // Chemical names
+    'chem.liquidChlorine': 'Cloro líquido 12.5%',
+    'chem.calHypo': 'Cal-Hipo (65%)',
+    'chem.dichlor': 'Diclor (56%)',
+    'chem.muriaticAcid': 'Ácido muriático 31%',
+    'chem.sodaAsh': 'Carbonato de sodio',
+    'chem.borax': 'Bórax (20 Mule)',
+    'chem.bakingSoda': 'Bicarbonato de sodio',
+    'chem.calciumChloride': 'Cloruro de calcio',
+    'chem.cyanuricAcid': 'Ácido cianúrico',
+    'chem.salt': 'Sal para piscina',
+
+    // Dose recommendation titles & subs
+    'dose.fc.up.title': 'Subir FC en {0} ppm',
+    'dose.fc.up.sub': 'Añade {0} → FC a {1}',
+    'dose.ph.down.title': 'Bajar pH a {0}',
+    'dose.ph.down.sub': 'Añade {0} (despacio)',
+    'dose.ph.up.title': 'Subir pH a {0}',
+    'dose.ph.up.sub': 'Añade {0}',
+    'dose.ta.up.title': 'Subir TA en {0} ppm',
+    'dose.ta.up.sub': 'Añade {0}',
+    'dose.ta.down.title': 'Bajar TA ({0} → {1})',
+    'dose.ta.down.sub': 'Airea con pH bajo; añade ácido muriático poco a poco',
+    'dose.ch.up.title': 'Subir Calcio en {0} ppm',
+    'dose.ch.up.sub': 'Añade {0}',
+    'dose.cya.up.title': 'Subir CYA en {0} ppm',
+    'dose.cya.up.sub': 'Añade {0} (se disuelve lentamente)',
+    'dose.cya.down.title': 'CYA muy alto ({0})',
+    'dose.cya.down.sub': 'La única forma de bajarlo: vaciado parcial y rellenado',
+    'dose.salt.up.title': 'Subir Sal en {0} ppm',
+    'dose.salt.up.sub': 'Añade {0}',
+    'dose.unit.gradual': 'gradual',
+    'dose.unit.drain': 'vaciar',
+
+    // Checklist notes
+    'check.fcCyaRatio.bad': 'Relación FC/CYA es {0}% — por debajo del mínimo {1}%. Riesgo de algas.',
+    'check.fcCyaRatio.warn': 'Relación FC/CYA es {0}% — por encima del mínimo pero por debajo del objetivo ideal.',
+    'check.fcCyaRatio.good': 'Relación FC/CYA {0}% es saludable.',
+    'check.combinedChlorine': 'Cloro combinado a {0} ppm sugiere cloraminas. Considera un proceso SLAM si >1.0.',
+    'check.highPhCalcium': 'pH alto + calcio alto aumenta el riesgo de incrustaciones.',
+    'check.warmWater': 'Agua caliente (>88°F) sube el pH más rápido — prueba más seguido.',
+
+    // Settings labels
+    'settings.language': 'Idioma',
+  },
+};
+
+function detectLanguage() {
+  const lang = (navigator.language || 'en').toLowerCase();
+  return lang.startsWith('es') ? 'es' : 'en';
+}
+
+function currentLang() {
+  return state.config.language || 'en';
+}
+
+function tr(key, ...args) {
+  const lang = currentLang();
+  const dict = I18N[lang] || I18N.en;
+  let str = dict[key] !== undefined ? dict[key] : (I18N.en[key] !== undefined ? I18N.en[key] : key);
+  args.forEach((arg, i) => {
+    str = str.split('{' + i + '}').join(String(arg));
+  });
+  return str;
+}
+
+function setLanguage(lang) {
+  if (lang !== 'en' && lang !== 'es') lang = 'en';
+  state.config.language = lang;
+  saveState();
+  applyLanguage();
+}
+
+// Refresh visible UI strings to match current language.
+function applyLanguage() {
+  // Bottom nav (no data-i18n on the spans themselves, handled here for clarity)
+  const navMap = { dashboard: 'pool', test: 'test', history: 'history', settings: 'setup' };
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const span = btn.querySelector('span');
+    const view = btn.dataset.view;
+    if (span && navMap[view]) span.textContent = tr('nav.' + navMap[view]);
+  });
+
+  // Static elements — text content (safe, no markup)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (key) el.textContent = tr(key);
+  });
+
+  // Static elements — innerHTML (for keys that contain markup like <em>)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if (key) el.innerHTML = tr(key);
+  });
+
+  // Placeholder attribute
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (key) el.placeholder = tr(key);
+  });
+
+  // Aria-label
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+    const key = el.dataset.i18nAriaLabel;
+    if (key) el.setAttribute('aria-label', tr(key));
+  });
+
+  // Refresh tier-aware UI so badge text and upgrade card copy follow the new language
+  renderProBadge();
+
+  // Re-render whichever view is active so dynamically-built strings update too
+  const activeView = document.querySelector('.view.active');
+  if (activeView) {
+    const id = activeView.id.replace('view-', '');
+    if (id === 'history') renderHistory();
+    else if (id === 'settings') loadConfigUI();
+    else if (id === 'dashboard') renderDashboard();
+  }
 }
 
 // ============================================================
@@ -1768,7 +3370,7 @@ function tempDisplay(f) {
 // ============================================================
 // Based on TFP methodology with SWG and sanitizer type adjustments
 function computeAutoTargets() {
-  const c = state.config;
+  const c = getActivePool();
   const isSWG = c.sanitizer === 'swg';
 
   // CYA target depends on sanitizer
@@ -1823,7 +3425,7 @@ const TARGET_METRICS = [
 
 function getTargets() {
   const auto = computeAutoTargets();
-  const o = state.config.targets || {};
+  const o = getActivePool().targets || {};
   const pick = (v, fallback) => (typeof v === 'number' && !isNaN(v)) ? v : fallback;
   const result = {};
   for (const m of TARGET_METRICS) {
@@ -1840,16 +3442,18 @@ function getTargets() {
 }
 
 function getLatestValue(key) {
-  if (state.tests.length === 0) return null;
-  for (let i = state.tests.length - 1; i >= 0; i--) {
-    const v = state.tests[i][key];
+  const tests = getActivePool().tests;
+  if (tests.length === 0) return null;
+  for (let i = tests.length - 1; i >= 0; i--) {
+    const v = tests[i][key];
     if (v !== null && v !== undefined && v !== '') return v;
   }
   return null;
 }
 
 function getLatestTest() {
-  return state.tests.length ? state.tests[state.tests.length - 1] : null;
+  const tests = getActivePool().tests;
+  return tests.length ? tests[tests.length - 1] : null;
 }
 
 // ============================================================
@@ -1862,40 +3466,70 @@ function calculateLSI(t) {
   let temp = t.temp || 80;
   if (!ph || !ta || !ch || !temp) return null;
 
-  // Temperature factor (°F based)
+  // Temperature factor (°F). Orenda uses linear interpolation between anchors
+  // rather than step bins — yields smoother LSI over a season's temp swings.
   const TF_TABLE = [
     [32, 0.0], [37, 0.1], [46, 0.2], [53, 0.3], [60, 0.4],
     [66, 0.5], [76, 0.6], [84, 0.7], [94, 0.8], [105, 0.9]
   ];
-  let TF = 0;
-  for (let i = TF_TABLE.length - 1; i >= 0; i--) {
-    if (temp >= TF_TABLE[i][0]) { TF = TF_TABLE[i][1]; break; }
+  let TF;
+  if (temp <= TF_TABLE[0][0]) TF = TF_TABLE[0][1];
+  else if (temp >= TF_TABLE[TF_TABLE.length - 1][0]) TF = TF_TABLE[TF_TABLE.length - 1][1];
+  else {
+    for (let i = 0; i < TF_TABLE.length - 1; i++) {
+      const [t0, f0] = TF_TABLE[i], [t1, f1] = TF_TABLE[i + 1];
+      if (temp >= t0 && temp <= t1) { TF = f0 + (f1 - f0) * (temp - t0) / (t1 - t0); break; }
+    }
   }
 
   // Calcium hardness factor
   const CF = Math.log10(ch) - 0.4;
 
-  // Alkalinity factor — subtract borate contribution (~1/3 of borate ppm)
+  // Carbonate alkalinity: subtract borate's contribution (~1/3) only.
+  // Pool Math and Orenda's LSI calc use raw TA (no CYA correction) — that
+  // belongs to TFP's separate CSI calc, not Langelier's LSI.
   const borateContribution = (t.borate || 0) / 3;
-  const correctedTA = Math.max(0, ta - borateContribution);
+  const correctedTA = Math.max(1, ta - borateContribution);
   const AF = Math.log10(correctedTA);
 
-  // TDS factor — approximated from salt; default TDS ~1000 gives 12.19
-  const tds = (t.salt || 0) + 1000;
-  let TDSF = 12.19;
-  if (tds > 800 && tds < 5000) TDSF = 12.27 - Math.log10(tds) * 0.1;
+  // TDS factor (Taylor Technologies pool table, log-fit).
+  // Salt pools: TDS ≈ salt + 700. Non-salt pools: default 1000.
+  const tds = (t.salt && t.salt > 0) ? (t.salt + 700) : 1000;
+  const TDSF = 12.10 + (Math.log10(tds) - 3) * 0.31;
 
   const lsi = ph + TF + CF + AF - TDSF;
   return Number(lsi.toFixed(2));
 }
 
 function lsiStatus(lsi) {
-  if (lsi === null) return { cls: '', label: 'No Data', desc: 'Enter pH, TA, CH, and temperature to calculate.' };
-  if (lsi < -0.6) return { cls: 'bad', label: 'Corrosive', desc: 'Water is aggressive. Risk of etching, staining, and equipment damage.' };
-  if (lsi < -0.3) return { cls: 'warn', label: 'Under-saturated', desc: 'Slightly aggressive. Adjust pH or calcium upward.' };
-  if (lsi <= 0.3) return { cls: 'good', label: 'Balanced', desc: 'Water is in ideal saturation range. Protect your surface and equipment.' };
-  if (lsi <= 0.6) return { cls: 'warn', label: 'Over-saturated', desc: 'Scale formation possible. Lower pH or TA.' };
-  return { cls: 'bad', label: 'Scaling', desc: 'Water will deposit calcium scale on surfaces and equipment.' };
+  if (lsi === null) return { cls: '', label: tr('lsi.noData.label'), desc: tr('lsi.noData.desc') };
+  if (lsi < -0.6) return { cls: 'bad', label: tr('lsi.corrosive.label'), desc: tr('lsi.corrosive.desc') };
+  if (lsi < -0.3) return { cls: 'warn', label: tr('lsi.under.label'), desc: tr('lsi.under.desc') };
+  if (lsi <= 0.3) return { cls: 'good', label: tr('lsi.balanced.label'), desc: tr('lsi.balanced.desc') };
+  if (lsi <= 0.6) return { cls: 'warn', label: tr('lsi.over.label'), desc: tr('lsi.over.desc') };
+  return { cls: 'bad', label: tr('lsi.scaling.label'), desc: tr('lsi.scaling.desc') };
+}
+
+// Single highest-impact recommendation to bring LSI back to balanced (0).
+// pH has 1:1 LSI leverage, so it's almost always the answer; CH is a fallback
+// when pH would need to leave its safe range.
+function lsiAction(lsi, t) {
+  if (lsi === null || !t || t.ph == null) return null;
+  if (lsi >= -0.3 && lsi <= 0.3) return null; // balanced — no action
+  const delta = -lsi; // amount LSI needs to move to reach 0
+  const targetPh = +(t.ph + delta).toFixed(1);
+  if (lsi < -0.3) {
+    // Corrosive — raise pH unless it would exceed safe upper bound
+    if (targetPh <= 7.8) return tr('lsi.action.raisePh', targetPh.toFixed(1));
+    if (t.ch) {
+      const newCh = Math.round((t.ch * Math.pow(10, delta)) / 50) * 50;
+      return tr('lsi.action.raiseCh', newCh);
+    }
+    return tr('lsi.action.raisePh', '7.8');
+  }
+  // Scaling — lower pH unless it would drop below safe lower bound
+  if (targetPh >= 7.2) return tr('lsi.action.lowerPh', targetPh.toFixed(1));
+  return tr('lsi.action.lowerPh', '7.2');
 }
 
 // ============================================================
@@ -1905,21 +3539,22 @@ function lsiStatus(lsi) {
 // Sources: TFP wiki, Orenda dosing guides.
 const DOSE_PER_10K = {
   // Each entry: how many units of chemical raise the target by "perUnit" ppm in 10k gal
-  liquidChlorine:    { name: '12.5% Liquid Chlorine', unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 10.7 },  // 10.7 oz raises FC by 1
-  calHypo:           { name: 'Cal-Hypo (65%)',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.1 },
-  dichlor:           { name: 'Dichlor (56%)',         unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.4 },
-  muriaticAcid:      { name: '31% Muriatic Acid',     unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'pH', perUnit: 0.2,  qty: 10 },   // 10 oz lowers pH ~0.2 with 80 TA
-  sodaAsh:           { name: 'Soda Ash',              unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 6 },
-  borax:             { name: 'Borax (20 Mule)',       unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 12 },
-  bakingSoda:        { name: 'Baking Soda',           unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ta', perUnit: 10,   qty: 14 },   // 14 oz raises TA 10 ppm
-  calciumChloride:   { name: 'Calcium Chloride',      unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ch', perUnit: 10,   qty: 12.5 }, // 77%
-  cyanuricAcid:      { name: 'Cyanuric Acid',         unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'cya', perUnit: 10,  qty: 13.4 },
-  salt:              { name: 'Pool Salt',             unit: 'lb',     unitMetric: 'kg', conv: 0.453592,raise: 'salt',perUnit: 100, qty: 8.35 }, // 8.35 lb raises salt 100 ppm in 10k
-  acidForTA:         { name: '31% Muriatic Acid',     unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'ta', perUnit: 10,   qty: 25 },   // lowers TA 10 ppm
+  // nameKey is the i18n key; resolve via tr(nameKey) at display time so it follows language.
+  liquidChlorine:    { nameKey: 'chem.liquidChlorine', unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 10.7 },
+  calHypo:           { nameKey: 'chem.calHypo',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.1 },
+  dichlor:           { nameKey: 'chem.dichlor',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.4 },
+  muriaticAcid:      { nameKey: 'chem.muriaticAcid',   unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'pH', perUnit: 0.2,  qty: 10 },
+  sodaAsh:           { nameKey: 'chem.sodaAsh',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 6 },
+  borax:             { nameKey: 'chem.borax',          unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 12 },
+  bakingSoda:        { nameKey: 'chem.bakingSoda',     unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ta', perUnit: 10,   qty: 14 },
+  calciumChloride:   { nameKey: 'chem.calciumChloride',unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ch', perUnit: 10,   qty: 12.5 },
+  cyanuricAcid:      { nameKey: 'chem.cyanuricAcid',   unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'cya', perUnit: 10,  qty: 13.4 },
+  salt:              { nameKey: 'chem.salt',           unit: 'lb',     unitMetric: 'kg', conv: 0.453592,raise: 'salt',perUnit: 100, qty: 8.35 },
+  acidForTA:         { nameKey: 'chem.muriaticAcid',   unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'ta', perUnit: 10,   qty: 25 },
 };
 
 function scaleForVolume(qty) {
-  return qty * (state.config.volume / 10000);
+  return qty * (getActivePool().volume / 10000);
 }
 
 function formatDose(qty, dose) {
@@ -1946,7 +3581,7 @@ function formatDose(qty, dose) {
 function computeDoses(t) {
   const targets = getTargets();
   const doses = [];
-  const c = state.config;
+  const c = getActivePool();
 
   // --- Chlorine (if low) ---
   if (t.fc !== null && t.fc < targets.fcTarget - 0.5) {
@@ -1958,8 +3593,8 @@ function computeDoses(t) {
     const f = formatDose(qty, dose);
     doses.push({
       type: 'Cl',
-      title: `Raise FC by ${needed.toFixed(1)} ppm`,
-      sub: `Add ${dose.name} → FC to ${targets.fcTarget}`,
+      title: tr('dose.fc.up.title', needed.toFixed(1)),
+      sub: tr('dose.fc.up.sub', tr(dose.nameKey), targets.fcTarget),
       amount: f.value,
       unit: f.unit,
       priority: t.fc < targets.fc[0] ? 1 : 3,
@@ -1975,8 +3610,8 @@ function computeDoses(t) {
       const f = formatDose(qty, dose);
       doses.push({
         type: 'pH↓',
-        title: `Lower pH to ${targets.phTarget.toFixed(1)}`,
-        sub: `Add ${dose.name} (add slowly)`,
+        title: tr('dose.ph.down.title', targets.phTarget.toFixed(1)),
+        sub: tr('dose.ph.down.sub', tr(dose.nameKey)),
         amount: f.value,
         unit: f.unit,
         priority: 2,
@@ -1990,8 +3625,8 @@ function computeDoses(t) {
       const f = formatDose(qty, dose);
       doses.push({
         type: 'pH↑',
-        title: `Raise pH to ${targets.phTarget.toFixed(1)}`,
-        sub: `Add ${dose.name}`,
+        title: tr('dose.ph.up.title', targets.phTarget.toFixed(1)),
+        sub: tr('dose.ph.up.sub', tr(dose.nameKey)),
         amount: f.value,
         unit: f.unit,
         priority: 2,
@@ -2008,8 +3643,8 @@ function computeDoses(t) {
       const f = formatDose(qty, dose);
       doses.push({
         type: 'TA↑',
-        title: `Raise TA by ${needed} ppm`,
-        sub: `Add ${dose.name}`,
+        title: tr('dose.ta.up.title', needed),
+        sub: tr('dose.ta.up.sub', tr(dose.nameKey)),
         amount: f.value,
         unit: f.unit,
         priority: 4,
@@ -2017,10 +3652,10 @@ function computeDoses(t) {
     } else if (t.ta > targets.ta[1] + 20) {
       doses.push({
         type: 'TA↓',
-        title: `Lower TA (${t.ta} → ${targets.taTarget})`,
-        sub: 'Aerate with low pH; add muriatic acid gradually',
+        title: tr('dose.ta.down.title', t.ta, targets.taTarget),
+        sub: tr('dose.ta.down.sub'),
         amount: '—',
-        unit: 'gradual',
+        unit: tr('dose.unit.gradual'),
         priority: 5,
       });
     }
@@ -2034,8 +3669,8 @@ function computeDoses(t) {
     const f = formatDose(qty, dose);
     doses.push({
       type: 'CH↑',
-      title: `Raise Calcium by ${needed} ppm`,
-      sub: `Add ${dose.name}`,
+      title: tr('dose.ch.up.title', needed),
+      sub: tr('dose.ch.up.sub', tr(dose.nameKey)),
       amount: f.value,
       unit: f.unit,
       priority: 4,
@@ -2050,8 +3685,8 @@ function computeDoses(t) {
     const f = formatDose(qty, dose);
     doses.push({
       type: 'CYA↑',
-      title: `Raise CYA by ${needed} ppm`,
-      sub: `Add ${dose.name} (slow to dissolve)`,
+      title: tr('dose.cya.up.title', needed),
+      sub: tr('dose.cya.up.sub', tr(dose.nameKey)),
       amount: f.value,
       unit: f.unit,
       priority: 5,
@@ -2059,10 +3694,10 @@ function computeDoses(t) {
   } else if (t.cya !== null && t.cya > targets.cya[1] + 20) {
     doses.push({
       type: 'CYA↓',
-      title: `CYA too high (${t.cya})`,
-      sub: 'Only way to reduce: partial drain and refill',
+      title: tr('dose.cya.down.title', t.cya),
+      sub: tr('dose.cya.down.sub'),
       amount: '—',
-      unit: 'drain',
+      unit: tr('dose.unit.drain'),
       priority: 5,
     });
   }
@@ -2075,8 +3710,8 @@ function computeDoses(t) {
     const f = formatDose(qty, dose);
     doses.push({
       type: 'Salt',
-      title: `Raise Salt by ${needed} ppm`,
-      sub: `Add ${dose.name}`,
+      title: tr('dose.salt.up.title', needed),
+      sub: tr('dose.salt.up.sub', tr(dose.nameKey)),
       amount: f.value,
       unit: f.unit,
       priority: 4,
@@ -2091,7 +3726,7 @@ function computeDoses(t) {
 // CHEMISTRY: OVERALL STATUS
 // ============================================================
 function evaluateStatus(t) {
-  if (!t) return { cls: '', label: 'New' };
+  if (!t) return { cls: '', label: tr('dash.statusNew') };
   const targets = getTargets();
   const issues = [];
 
@@ -2108,16 +3743,16 @@ function evaluateStatus(t) {
   check(t.ta, targets.ta, 'TA', false);
   check(t.ch, targets.ch, 'CH', false);
   check(t.cya, targets.cya, 'CYA', false);
-  if (state.config.sanitizer === 'swg') check(t.salt, targets.salt, 'Salt', true);
+  if (getActivePool().sanitizer === 'swg') check(t.salt, targets.salt, 'Salt', true);
 
   const lsi = calculateLSI(t);
   if (lsi !== null && (lsi < -0.3 || lsi > 0.3)) {
     issues.push({ name: 'LSI', critical: lsi < -0.6 || lsi > 0.6 });
   }
 
-  if (issues.length === 0) return { cls: 'good', label: 'Balanced' };
-  if (issues.some(i => i.critical)) return { cls: 'bad', label: 'Needs Care' };
-  return { cls: 'warn', label: 'Adjust' };
+  if (issues.length === 0) return { cls: 'good', label: tr('dash.statusBalanced') };
+  if (issues.some(i => i.critical)) return { cls: 'bad', label: tr('dash.statusNeedsCare') };
+  return { cls: 'warn', label: tr('dash.statusAdjust') };
 }
 
 // ============================================================
@@ -2129,33 +3764,51 @@ function renderDashboard() {
   const subEl = document.getElementById('pool-sub');
   const orb = document.getElementById('status-orb');
   const statusLabel = document.getElementById('status-label');
+  const customerEl = document.getElementById('pool-customer');
+  const pool = getActivePool();
+  const isComm = isCommercial();
 
-  // Pool title
-  const name = state.config.name || 'My Pool';
-  const words = name.trim().split(/\s+/);
-  if (words.length > 1) {
-    titleEl.innerHTML = words.slice(0, -1).join(' ') + ' <em>' + words.slice(-1).join(' ') + '</em>';
-  } else {
-    titleEl.innerHTML = '<em>' + name + '</em>';
+  // Customer label (Commercial only, shown when set)
+  if (customerEl) {
+    if (isComm && pool.customer && pool.customer.name) {
+      customerEl.textContent = pool.customer.name;
+      customerEl.style.display = '';
+    } else {
+      customerEl.style.display = 'none';
+    }
   }
+
+  // Pool title — clickable when Commercial (opens pool switcher)
+  const name = pool.name || 'My Pool';
+  const words = name.trim().split(/\s+/);
+  let titleHtml;
+  if (words.length > 1) {
+    titleHtml = words.slice(0, -1).join(' ') + ' <em>' + words.slice(-1).join(' ') + '</em>';
+  } else {
+    titleHtml = '<em>' + name + '</em>';
+  }
+  if (isComm) titleHtml += '<span class="pool-title-caret">▼</span>';
+  titleEl.innerHTML = titleHtml;
+  titleEl.classList.toggle('pool-title-switchable', isComm);
+  titleEl.onclick = isComm ? openPoolSwitcher : null;
 
   const latest = getLatestTest();
   if (!latest) {
-    const vol = volumeDisplay(state.config.volume);
-    subEl.textContent = `${vol.value.toLocaleString()} ${vol.unit} · ${sanitizerName(state.config.sanitizer)}`;
+    const vol = volumeDisplay(pool.volume);
+    subEl.textContent = `${vol.value.toLocaleString()} ${vol.unit} · ${sanitizerName(pool.sanitizer)}`;
     // Keep empty state if tests haven't been logged — but still show pool info
     body.innerHTML = `
       <div class="empty">
         <div class="empty-art">~</div>
-        <div class="empty-title">No tests yet</div>
-        <div class="empty-sub">Log your first water test to get dosing recommendations and saturation balance.</div>
+        <div class="empty-title">${tr('dash.empty.title')}</div>
+        <div class="empty-sub">${tr('dash.empty.sub')}</div>
         <div class="btn-row" style="margin-top: 24px; max-width: 280px; margin-left: auto; margin-right: auto;">
-          <button class="btn primary" onclick="showView('test')">Log First Test</button>
+          <button class="btn primary" onclick="showView('test')">${tr('btn.logFirstTest')}</button>
         </div>
       </div>
     `;
     orb.className = 'status-orb';
-    statusLabel.textContent = 'New';
+    statusLabel.textContent = tr('dash.statusNew');
     return;
   }
 
@@ -2165,58 +3818,70 @@ function renderDashboard() {
   statusLabel.textContent = status.label;
 
   // Subline: last tested + volume
-  const vol = volumeDisplay(state.config.volume);
+  const vol = volumeDisplay(pool.volume);
   const testDate = new Date(latest.date);
   const ago = timeAgo(testDate);
-  subEl.textContent = `Last tested ${ago} · ${vol.value.toLocaleString()} ${vol.unit}`;
+  subEl.textContent = tr('dash.lastTested', ago, vol.value.toLocaleString(), vol.unit);
 
   const targets = getTargets();
   const lsi = calculateLSI(latest);
   const lsiInfo = lsiStatus(lsi);
 
-  // LSI card position on scale: -1.5 to +1.5 maps to 0% to 100%
+  // LSI position: piecewise linear so the labels (-1.5, -0.3, 0, +0.3, +1.5)
+  // sit at evenly-spaced 0/25/50/75/100% — matching the gradient bands.
   let lsiPos = 50;
   if (lsi !== null) {
-    lsiPos = Math.max(0, Math.min(100, ((lsi + 1.5) / 3) * 100));
+    const v = Math.max(-1.5, Math.min(1.5, lsi));
+    if (v < -0.3)      lsiPos = ((v + 1.5) / 1.2) * 25;
+    else if (v < 0)    lsiPos = 25 + ((v + 0.3) / 0.3) * 25;
+    else if (v < 0.3)  lsiPos = 50 + (v / 0.3) * 25;
+    else               lsiPos = 75 + ((v - 0.3) / 1.2) * 25;
   }
 
   // CC is optional — only show if user actually logged a value
   const hasCC = latest.cc !== null && latest.cc !== undefined && latest.cc !== '';
-  const extrasCard = state.config.sanitizer === 'swg'
+  const extrasCard = pool.sanitizer === 'swg'
     ? metricCard('Salt', latest.salt, 'ppm', targets.salt, 0)
     : (hasCC ? metricCard('CC', latest.cc, 'ppm', targets.cc, 1) : '');
 
   body.innerHTML = `
-    <div class="section-label" style="margin-top: 0;">
-      <span>Recommended Actions</span>
-      ${lsi !== null ? `<span style="color: var(--text-mute); font-size: 10px;">TFP × LSI</span>` : ''}
-    </div>
-    ${renderDoses(latest)}
+    <div class="dash-cols">
+      <div class="dash-left">
+        <div class="section-label" style="margin-top: 0;">
+          <span>${tr('dash.actions')}</span>
+          ${lsi !== null ? `<span style="color: var(--text-mute); font-size: 10px;">TFP × LSI</span>` : ''}
+        </div>
+        ${renderDoses(latest)}
 
-    <div class="lsi-card ${lsiInfo.cls}">
-      <div class="lsi-label">Saturation Index (LSI)</div>
-      <div class="lsi-value ${lsiInfo.cls}">${lsi !== null ? (lsi > 0 ? '+' : '') + lsi.toFixed(2) : '—'}</div>
-      <div class="lsi-desc">${lsiInfo.desc}</div>
-      <div class="lsi-scale" style="--lsi-pos: ${lsiPos}%"></div>
-      <div class="lsi-scale-labels">
-        <span>-1.5</span><span>-0.3</span><span>0</span><span>+0.3</span><span>+1.5</span>
+        <div class="lsi-card ${lsiInfo.cls}">
+          <div class="lsi-label metric-name-clickable" onclick="openGlossary('lsi')">${tr('dash.lsi')}<span class="metric-info">?</span></div>
+          <div class="lsi-value ${lsiInfo.cls}">${lsi !== null ? (lsi > 0 ? '+' : '') + lsi.toFixed(2) : '—'}</div>
+          <div class="lsi-desc">${lsiInfo.desc}</div>
+          ${(() => { const a = lsiAction(lsi, latest); return a ? `<div class="lsi-action">${a}</div>` : ''; })()}
+          <div class="lsi-scale" style="--lsi-pos: ${lsiPos}%"></div>
+          <div class="lsi-scale-labels">
+            <span>-1.5</span><span>-0.3</span><span>0</span><span>+0.3</span><span>+1.5</span>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="section-label">Current Readings</div>
-    <div class="metrics">
-      ${metricCard('FC', latest.fc, 'ppm', targets.fc, 1)}
-      ${metricCard('pH', latest.ph, '', targets.ph, 1)}
-      ${metricCard('TA', latest.ta, 'ppm', targets.ta, 0)}
-      ${metricCard('CH', latest.ch, 'ppm', targets.ch, 0)}
-      ${metricCard('CYA', latest.cya, 'ppm', targets.cya, 0)}
-      ${extrasCard}
+      <div class="dash-right">
+        <div class="section-label" style="margin-top: 0;">${tr('dash.readings')}</div>
+        <div class="metrics">
+          ${metricCard('FC', latest.fc, 'ppm', targets.fc, 1)}
+          ${metricCard('pH', latest.ph, '', targets.ph, 1)}
+          ${metricCard('TA', latest.ta, 'ppm', targets.ta, 0)}
+          ${metricCard('CH', latest.ch, 'ppm', targets.ch, 0)}
+          ${metricCard('CYA', latest.cya, 'ppm', targets.cya, 0)}
+          ${extrasCard}
+        </div>
+      </div>
     </div>
 
     ${renderChecklist(latest, targets)}
 
     <div class="btn-row" style="margin-top: 20px;">
-      <button class="btn primary" onclick="showView('test')">Log New Test</button>
+      <button class="btn primary" onclick="showView('test')">${tr('btn.logNewTest')}</button>
     </div>
   `;
 }
@@ -2232,10 +3897,11 @@ function metricCard(name, val, unit, range, decimals) {
   const display = empty ? '—' : Number(val).toFixed(decimals);
   const rangeText = `${range[0]}–${range[1]}${unit ? ' ' + unit : ''}`;
   const key = name.toLowerCase();
+  const glossaryKey = key === 'salt' ? 'salt' : key;
   return `
     <div class="metric metric-${key} ${empty ? 'empty' : ''}">
       <div class="metric-head">
-        <div class="metric-name">${name}</div>
+        <div class="metric-name metric-name-clickable" onclick="openGlossary('${glossaryKey}')">${name}<span class="metric-info">?</span></div>
         <div class="metric-dot ${dotCls}"></div>
       </div>
       <div class="metric-value">${display}${unit && !empty ? `<span class="unit"> ${unit}</span>` : ''}</div>
@@ -2249,8 +3915,8 @@ function renderDoses(t) {
   if (doses.length === 0) {
     return `
       <div class="dose-empty">
-        <em>Nothing to do.</em>
-        Your chemistry is in range. Keep testing regularly.
+        <em>${tr('dash.doseEmpty.em')}</em>
+        ${tr('dash.doseEmpty.text')}
       </div>
     `;
   }
@@ -2279,34 +3945,36 @@ function renderChecklist(t, targets) {
   // FC/CYA ratio check
   if (t.fc !== null && t.cya !== null && t.cya > 0) {
     const ratio = t.fc / t.cya;
-    const min = state.config.sanitizer === 'swg' ? 0.045 : 0.075;
+    const min = getActivePool().sanitizer === 'swg' ? 0.045 : 0.075;
+    const ratioPct = (ratio * 100).toFixed(1);
+    const minPct = (min * 100).toFixed(1);
     if (ratio < min) {
-      items.push({ cls: 'bad', text: `FC/CYA ratio is ${(ratio * 100).toFixed(1)}% — below the ${(min * 100).toFixed(1)}% minimum. Algae risk.` });
+      items.push({ cls: 'bad', text: tr('check.fcCyaRatio.bad', ratioPct, minPct) });
     } else if (ratio < min * 1.5) {
-      items.push({ cls: 'warn', text: `FC/CYA ratio is ${(ratio * 100).toFixed(1)}% — above the minimum but below ideal target.` });
+      items.push({ cls: 'warn', text: tr('check.fcCyaRatio.warn', ratioPct) });
     } else {
-      items.push({ cls: 'good', text: `FC/CYA ratio ${(ratio * 100).toFixed(1)}% is healthy.` });
+      items.push({ cls: 'good', text: tr('check.fcCyaRatio.good', ratioPct) });
     }
   }
 
   // CC check
   if (t.cc !== null && t.cc > 0.5) {
-    items.push({ cls: 'warn', text: `Combined chlorine at ${t.cc} ppm suggests chloramines. Consider a SLAM process if >1.0.` });
+    items.push({ cls: 'warn', text: tr('check.combinedChlorine', t.cc) });
   }
 
   // High pH with high calcium warning
   if (t.ph !== null && t.ch !== null && t.ph > 7.8 && t.ch > 400) {
-    items.push({ cls: 'warn', text: 'High pH + high calcium increases scaling risk.' });
+    items.push({ cls: 'warn', text: tr('check.highPhCalcium') });
   }
 
   // Temperature note for LSI context
   if (t.temp !== null && t.temp > 88) {
-    items.push({ cls: 'warn', text: 'Warm water (>88°F) drives pH up faster — test more often.' });
+    items.push({ cls: 'warn', text: tr('check.warmWater') });
   }
 
   if (items.length === 0) return '';
   return `
-    <div class="section-label" style="margin-top: 24px;">Notes</div>
+    <div class="section-label" style="margin-top: 24px;">${tr('dash.notes')}</div>
     <div>
       ${items.map(i => `
         <div class="check-item">
@@ -2320,20 +3988,21 @@ function renderChecklist(t, targets) {
 
 function timeAgo(date) {
   const s = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (s < 60) return 'just now';
-  if (s < 3600) return Math.floor(s / 60) + ' min ago';
-  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
-  if (s < 86400 * 7) return Math.floor(s / 86400) + 'd ago';
+  if (s < 60) return tr('time.justNow');
+  if (s < 3600) return tr('time.minAgo', Math.floor(s / 60));
+  if (s < 86400) return tr('time.hAgo', Math.floor(s / 3600));
+  if (s < 86400 * 7) return tr('time.dAgo', Math.floor(s / 86400));
   return date.toLocaleDateString();
 }
 
 function sanitizerName(s) {
-  return {
-    'liquid': 'Liquid Cl',
-    'swg': 'Salt / SWG',
-    'tabs': 'Trichlor tabs',
-    'cal-hypo': 'Cal-Hypo',
-  }[s] || s;
+  const key = {
+    'liquid': 'sanitizer.short.liquid',
+    'swg': 'sanitizer.short.swg',
+    'tabs': 'sanitizer.short.tabs',
+    'cal-hypo': 'sanitizer.short.calHypo',
+  }[s];
+  return key ? tr(key) : s;
 }
 
 // ============================================================
@@ -2408,15 +4077,15 @@ function saveTest() {
   // Require at least one measurement
   const hasAny = ['fc','ph','ta','ch','cya','salt'].some(k => test[k] !== null);
   if (!hasAny) {
-    toast('Enter at least one measurement');
+    toast(tr('test.required'));
     return;
   }
 
-  state.tests.push(test);
+  getActivePool().tests.push(test);
   saveState();
   Native.haptic('MEDIUM');
   refreshReminder();
-  toast('Test saved');
+  toast(tr('toast.testSaved'));
   showView('dashboard');
 }
 
@@ -2431,7 +4100,8 @@ function renderHistory() {
   const chartSelect = document.getElementById('chart-select');
   const chartPaywall = document.getElementById('chart-paywall');
 
-  sub.textContent = state.tests.length === 0 ? 'No tests yet' : `${state.tests.length} test${state.tests.length === 1 ? '' : 's'} logged`;
+  const tests = getActivePool().tests;
+  sub.textContent = tests.length === 0 ? tr('history.noTests') : (tests.length === 1 ? tr('history.testLogged') : tr('history.testsLogged', tests.length));
   footer.innerHTML = '';
 
   // Gate: chart is Pro-only
@@ -2446,8 +4116,8 @@ function renderHistory() {
     chartPaywall.style.display = 'none';
   }
 
-  if (state.tests.length === 0) {
-    list.innerHTML = '<div class="dose-empty"><em>Empty log</em>Your tests will appear here once logged.</div>';
+  if (tests.length === 0) {
+    list.innerHTML = `<div class="dose-empty"><em>${tr('history.empty')}</em>${tr('history.emptySub')}</div>`;
     document.getElementById('chart-empty').style.display = 'grid';
     if (chart) { chart.destroy(); chart = null; }
     return;
@@ -2458,7 +4128,7 @@ function renderHistory() {
     renderChart();
   }
 
-  const sorted = [...state.tests].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sorted = [...tests].sort((a, b) => new Date(b.date) - new Date(a.date));
   const visible = isPro() ? sorted : sorted.slice(0, FREE_HISTORY_LIMIT);
   const hidden = sorted.length - visible.length;
 
@@ -2486,14 +4156,15 @@ function renderHistory() {
   }).join('');
 
   if (hidden > 0) {
+    const hiddenTitle = hidden === 1 ? tr('history.olderHiddenOne.title') : tr('history.olderHidden.title', hidden);
     footer.innerHTML = `
       <div class="pro-locked" style="margin-top: 16px;">
         <div class="pro-locked-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
-        <div class="pro-locked-title">${hidden} older test${hidden === 1 ? '' : 's'} hidden</div>
-        <div class="pro-locked-sub">Free shows the most recent ${FREE_HISTORY_LIMIT}. Upgrade to Pro to see your full history.</div>
-        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+        <div class="pro-locked-title">${hiddenTitle}</div>
+        <div class="pro-locked-sub">${tr('history.olderHidden.sub', FREE_HISTORY_LIMIT)}</div>
+        <button class="btn primary" onclick="showPaywall()">${tr('btn.unlockPro')}</button>
       </div>
     `;
   }
@@ -2510,9 +4181,10 @@ document.querySelectorAll('#chart-select .chip').forEach(c => {
 
 function renderChart() {
   const canvas = document.getElementById('trend-chart');
-  if (!canvas || state.tests.length === 0) return;
+  const tests = getActivePool().tests;
+  if (!canvas || tests.length === 0) return;
 
-  const sorted = [...state.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sorted = [...tests].sort((a, b) => new Date(a.date) - new Date(b.date));
   const data = sorted.map(t => ({
     x: new Date(t.date),
     y: chartMetric === 'lsi' ? calculateLSI(t) : t[chartMetric],
@@ -2586,9 +4258,10 @@ function renderChart() {
 // Rebuild chart config with category scale to avoid adapter requirement.
 function renderChart() {
   const canvas = document.getElementById('trend-chart');
-  if (!canvas || state.tests.length === 0) return;
+  const tests = getActivePool().tests;
+  if (!canvas || tests.length === 0) return;
 
-  const sorted = [...state.tests].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const sorted = [...tests].sort((a, b) => new Date(a.date) - new Date(b.date));
   const points = sorted.map(t => ({
     label: new Date(t.date).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }),
     value: chartMetric === 'lsi' ? calculateLSI(t) : t[chartMetric],
@@ -2667,7 +4340,7 @@ function renderChart() {
 // UI: TEST DETAIL MODAL
 // ============================================================
 function openDetail(id) {
-  const t = state.tests.find(x => x.id === id);
+  const t = getActivePool().tests.find(x => x.id === id);
   if (!t) return;
   currentDetailId = id;
   document.getElementById('detail-date').textContent = new Date(t.date).toLocaleString(undefined, {
@@ -2704,22 +4377,24 @@ function closeModal() {
 
 function deleteTest() {
   if (!currentDetailId) return;
-  if (!confirm('Delete this test?')) return;
-  state.tests = state.tests.filter(t => t.id !== currentDetailId);
+  if (!confirm(tr('confirm.deleteTest'))) return;
+  const pool = getActivePool();
+  pool.tests = pool.tests.filter(t => t.id !== currentDetailId);
   saveState();
   closeModal();
   renderHistory();
-  toast('Test deleted');
+  toast(tr('toast.testDeleted'));
 }
 
 async function shareTest() {
   if (!currentDetailId) return;
-  const t = state.tests.find(x => x.id === currentDetailId);
+  const pool = getActivePool();
+  const t = pool.tests.find(x => x.id === currentDetailId);
   if (!t) return;
   const lsi = calculateLSI(t);
   const tempD = t.temp ? tempDisplay(t.temp) : null;
   const lines = [
-    `Hydrolab — ${state.config.name || 'Pool'} test`,
+    `Hydrolab — ${pool.name || 'Pool'} test`,
     new Date(t.date).toLocaleString(),
     '',
   ];
@@ -2747,21 +4422,69 @@ document.getElementById('paywall-modal').addEventListener('click', (e) => {
   if (e.target.id === 'paywall-modal') closePaywall();
 });
 
+document.getElementById('pool-switcher-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'pool-switcher-modal') closePoolSwitcher();
+});
+
+document.getElementById('glossary-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'glossary-modal') closeGlossary();
+});
+
 // ============================================================
 // UI: SETTINGS
 // ============================================================
 function loadConfigUI() {
   const c = state.config;
-  document.getElementById('cfg-name').value = c.name;
-  const vol = volumeDisplay(c.volume);
+  const pool = getActivePool();
+  document.getElementById('cfg-name').value = pool.name;
+  const vol = volumeDisplay(pool.volume);
   document.getElementById('cfg-volume').value = vol.value;
   document.getElementById('vol-unit').textContent = vol.unit;
-  document.getElementById('cfg-surface').value = c.surface;
-  document.getElementById('cfg-sanitizer').value = c.sanitizer;
-  document.getElementById('cfg-climate').value = c.climate;
+  document.getElementById('cfg-surface').value = pool.surface;
+  document.getElementById('cfg-sanitizer').value = pool.sanitizer;
+  document.getElementById('cfg-climate').value = pool.climate;
   const toggle = document.getElementById('toggle-units');
   toggle.classList.toggle('on', c.units === 'metric');
-  document.getElementById('units-desc').textContent = c.units === 'metric' ? 'Metric (L, °C)' : 'US (gal, °F)';
+  document.getElementById('units-desc').textContent = c.units === 'metric' ? tr('setup.unitsMetric') : tr('setup.unitsUS');
+
+  // Customer fields (Commercial only)
+  const customerSection = document.getElementById('customer-section');
+  if (customerSection) {
+    if (isCommercial()) {
+      customerSection.style.display = '';
+      const cust = pool.customer || {};
+      document.getElementById('cfg-customer-name').value = cust.name || '';
+      document.getElementById('cfg-customer-address').value = cust.address || '';
+      document.getElementById('cfg-customer-phone').value = cust.phone || '';
+    } else {
+      customerSection.style.display = 'none';
+    }
+  }
+
+  // Pools section (Commercial only) — primary entrypoint to the pool switcher
+  const poolsSection = document.getElementById('pools-section');
+  if (poolsSection) {
+    if (isCommercial()) {
+      poolsSection.style.display = '';
+      const sub = document.getElementById('pools-section-sub');
+      if (sub) {
+        const count = state.pools.length;
+        const activeName = pool.name || 'Pool';
+        sub.textContent = count === 1
+          ? tr('pools.summaryOne', activeName)
+          : tr('pools.summary', count, activeName);
+      }
+    } else {
+      poolsSection.style.display = 'none';
+    }
+  }
+  // Sync language select + label to current state
+  const langSelect = document.getElementById('lang-select');
+  if (langSelect) langSelect.value = currentLang();
+  const langLabel = document.getElementById('lang-label');
+  if (langLabel) langLabel.textContent = tr('settings.language');
+  const langDesc = document.getElementById('lang-desc');
+  if (langDesc) langDesc.textContent = tr('lang.name');
   renderTargetsUI();
   renderRemindersUI();
 }
@@ -2776,9 +4499,9 @@ function renderRemindersUI() {
         <div class="pro-locked-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         </div>
-        <div class="pro-locked-title">Test reminders are a Pro feature</div>
-        <div class="pro-locked-sub">Get a friendly nudge when it's time to test the water — only fires if you go too long between tests.</div>
-        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+        <div class="pro-locked-title">${tr('reminders.locked.title')}</div>
+        <div class="pro-locked-sub">${tr('reminders.locked.sub')}</div>
+        <button class="btn primary" onclick="showPaywall()">${tr('btn.unlockPro')}</button>
       </div>
     `;
     return;
@@ -2789,20 +4512,20 @@ function renderRemindersUI() {
   section.innerHTML = `
     <div class="settings-row">
       <div>
-        <div class="settings-label">Test Reminders</div>
-        <div class="settings-sub">Notify me ${days} days after my last test</div>
+        <div class="settings-label">${tr('reminders.label')}</div>
+        <div class="settings-sub">${tr('reminders.sub', days)}</div>
       </div>
       <div class="toggle ${enabled ? 'on' : ''}" id="toggle-reminders" onclick="toggleReminder()"></div>
     </div>
     <div class="settings-row" style="${enabled ? '' : 'display: none;'}" id="reminder-frequency-row">
       <div>
-        <div class="settings-label">Frequency</div>
-        <div class="settings-sub">How long between reminders</div>
+        <div class="settings-label">${tr('reminders.frequency')}</div>
+        <div class="settings-sub">${tr('reminders.frequencySub')}</div>
       </div>
-      <select id="reminder-days" onchange="changeReminderDays(this.value)" style="background: var(--bg-card); color: var(--text); border: 1px solid var(--border-strong); border-radius: 10px; padding: 8px 12px; font-family: var(--font-body); font-size: 14px;">
-        <option value="3" ${days === 3 ? 'selected' : ''}>Every 3 days</option>
-        <option value="7" ${days === 7 ? 'selected' : ''}>Weekly</option>
-        <option value="14" ${days === 14 ? 'selected' : ''}>Every 2 weeks</option>
+      <select id="reminder-days" class="settings-select" onchange="changeReminderDays(this.value)">
+        <option value="3" ${days === 3 ? 'selected' : ''}>${tr('reminders.every3')}</option>
+        <option value="7" ${days === 7 ? 'selected' : ''}>${tr('reminders.weekly')}</option>
+        <option value="14" ${days === 14 ? 'selected' : ''}>${tr('reminders.every2w')}</option>
       </select>
     </div>
   `;
@@ -2815,7 +4538,7 @@ async function toggleReminder() {
     if (Native.isNative()) {
       const granted = await Native.requestNotificationPermission();
       if (!granted) {
-        toast('Enable notifications in Settings to use reminders');
+        toast(tr('reminders.permissionDenied'));
         return;
       }
     }
@@ -2824,7 +4547,7 @@ async function toggleReminder() {
   saveState();
   renderRemindersUI();
   refreshReminder();
-  toast(enabling ? 'Reminders on' : 'Reminders off');
+  toast(enabling ? tr('reminders.on') : tr('reminders.off'));
 }
 
 function changeReminderDays(value) {
@@ -2835,7 +4558,7 @@ function changeReminderDays(value) {
   refreshReminder();
   // Update sub-text
   const sub = document.querySelector('#reminders-section .settings-sub');
-  if (sub) sub.textContent = `Notify me ${n} days after my last test`;
+  if (sub) sub.textContent = tr('reminders.sub', n);
 }
 
 function renderTargetsUI() {
@@ -2852,9 +4575,9 @@ function renderTargetsUI() {
         <div class="pro-locked-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         </div>
-        <div class="pro-locked-title">Custom target ranges are a Pro feature</div>
-        <div class="pro-locked-sub">Override the auto-calculated targets to dial in your specific pool. Auto targets stay active for free.</div>
-        <button class="btn primary" onclick="showPaywall()">Unlock Pro — $9.99</button>
+        <div class="pro-locked-title">${tr('targets.locked.title')}</div>
+        <div class="pro-locked-sub">${tr('targets.locked.sub')}</div>
+        <button class="btn primary" onclick="showPaywall()">${tr('btn.unlockPro')}</button>
       </div>
     `;
     return;
@@ -2864,15 +4587,15 @@ function renderTargetsUI() {
   if (resetRow) resetRow.style.display = '';
 
   const auto = computeAutoTargets();
-  const o = state.config.targets || {};
+  const o = getActivePool().targets || {};
   const val = v => (typeof v === 'number' && !isNaN(v)) ? String(v) : '';
 
   let html = `
     <div class="target-row head">
       <div></div>
-      <div class="tgt-head">Min</div>
-      <div class="tgt-head">Target</div>
-      <div class="tgt-head">Max</div>
+      <div class="tgt-head">${tr('targets.min')}</div>
+      <div class="tgt-head">${tr('targets.target')}</div>
+      <div class="tgt-head">${tr('targets.max')}</div>
     </div>`;
 
   for (const m of TARGET_METRICS) {
@@ -2923,28 +4646,33 @@ function collectTargetOverrides() {
 function saveConfig() {
   const volInput = Number(document.getElementById('cfg-volume').value) || 0;
   const volGal = state.config.units === 'metric' ? literToGal(volInput) : volInput;
+  const pool = getActivePool();
 
-  state.config = {
-    ...state.config,
-    name: document.getElementById('cfg-name').value.trim() || 'My Pool',
-    volume: Math.round(volGal),
-    surface: document.getElementById('cfg-surface').value,
-    sanitizer: document.getElementById('cfg-sanitizer').value,
-    climate: document.getElementById('cfg-climate').value,
-    // Only update target overrides when Pro — otherwise the inputs don't exist
-    // and we'd wipe any saved overrides
-    targets: isPro() ? collectTargetOverrides() : (state.config.targets || {}),
-  };
+  pool.name = document.getElementById('cfg-name').value.trim() || 'My Pool';
+  pool.volume = Math.round(volGal);
+  pool.surface = document.getElementById('cfg-surface').value;
+  pool.sanitizer = document.getElementById('cfg-sanitizer').value;
+  pool.climate = document.getElementById('cfg-climate').value;
+  // Only update target overrides when Pro — otherwise the inputs don't exist
+  // and we'd wipe any saved overrides
+  if (isPro()) pool.targets = collectTargetOverrides();
+  // Customer info (Commercial only — preserve when not Commercial)
+  if (isCommercial()) {
+    const name = document.getElementById('cfg-customer-name').value.trim();
+    const address = document.getElementById('cfg-customer-address').value.trim();
+    const phone = document.getElementById('cfg-customer-phone').value.trim();
+    pool.customer = (name || address || phone) ? { name, address, phone } : null;
+  }
   saveState();
-  toast('Pool settings saved');
+  toast(tr('toast.settingsSaved'));
   showView('dashboard');
 }
 
 function resetTargets() {
-  state.config.targets = {};
+  getActivePool().targets = {};
   saveState();
   renderTargetsUI();
-  toast('Targets reset to defaults');
+  toast(tr('toast.targetsReset'));
 }
 
 function toggleUnits() {
@@ -2963,15 +4691,16 @@ function exportData() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  toast('Data exported');
+  toast(tr('toast.exported'));
 }
 
 function confirmReset() {
-  if (!confirm('This will permanently delete all your tests and settings. Continue?')) return;
-  if (!confirm('Really delete everything? This cannot be undone.')) return;
+  if (!confirm(tr('confirm.resetAll1'))) return;
+  if (!confirm(tr('confirm.resetAll2'))) return;
   localStorage.removeItem(LS_KEY);
-  state = { config: { ...DEFAULT_CONFIG }, tests: [] };
-  toast('All data cleared');
+  const pool = makeDefaultPool();
+  state = { config: { ...DEFAULT_CONFIG }, pools: [pool], activePoolId: pool.id };
+  toast(tr('toast.allCleared'));
   showView('dashboard');
 }
 
@@ -3023,10 +4752,20 @@ if ('serviceWorker' in navigator) {
 // ============================================================
 // INIT
 // ============================================================
+// Default to English on first launch. Auto-detect is intentionally not used —
+// most users want English; Spanish is opt-in via the Setup → Language toggle.
+if (!state.config.language) {
+  state.config.language = 'en';
+  saveState();
+}
 renderProBadge();
 renderDashboard();
+applyLanguage();
 Native.setStatusBar();
 refreshReminder();
+
+// First-launch onboarding wizard — only fires for genuinely fresh installs
+if (shouldShowOnboarding()) startOnboarding();
 </script>
 </body>
 </html>
