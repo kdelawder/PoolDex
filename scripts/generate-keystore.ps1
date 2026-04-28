@@ -1,4 +1,4 @@
-# Generates the PoolDose release keystore.
+# Generates the PoolDex release keystore.
 # keytool will prompt for passwords. Type them directly into this terminal.
 # Do not paste passwords into the Claude Code chat.
 # Save the password to your password manager immediately after.
@@ -14,7 +14,7 @@ if (Test-Path $keystore) {
 & $keytool -genkeypair -v `
   -keystore $keystore `
   -alias hydrolab -keyalg RSA -keysize 2048 -validity 10000 `
-  -dname "CN=Kevin Delawder, O=PoolDose, L=Unknown, ST=Unknown, C=US"
+  -dname "CN=Kevin Delawder, O=PoolDex, L=Unknown, ST=Unknown, C=US"
 
 if (Test-Path $keystore) {
   Write-Host ""

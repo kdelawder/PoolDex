@@ -1,5 +1,5 @@
 {
-  "name": "pooldose",
+  "name": "pooldex",
   "version": "1.0.0",
   "description": "Pool Calculator for Balancing (works for SWG and Chlorine)",
   "main": "index.js",
