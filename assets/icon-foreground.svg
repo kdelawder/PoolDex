@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="drop" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#90e0ef"/>
+      <stop offset="55%" stop-color="#48cae4"/>
+      <stop offset="100%" stop-color="#0096c7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Foreground only — sits in the adaptive-icon safe zone (~66% center).
+       Kept smaller than icon-only.svg so the launcher's circular/rounded
+       mask doesn't crop the drop. -->
+  <g transform="translate(512 540) scale(20) translate(-12 -12)">
+    <path d="M12 2c-2 4-5 7-5 11a5 5 0 0 0 10 0c0-4-3-7-5-11z" fill="url(#drop)"/>
+    <ellipse cx="9.8" cy="11.5" rx="1.4" ry="2.2" fill="#ffffff" fill-opacity="0.35"/>
+  </g>
+</svg>

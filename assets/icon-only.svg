@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a2540"/>
+      <stop offset="100%" stop-color="#061a2e"/>
+    </linearGradient>
+    <linearGradient id="drop" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#90e0ef"/>
+      <stop offset="55%" stop-color="#48cae4"/>
+      <stop offset="100%" stop-color="#0096c7"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.65" r="0.5">
+      <stop offset="0%" stop-color="#48cae4" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#48cae4" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#48cae4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Soft ambient glow behind the drop -->
+  <circle cx="512" cy="600" r="380" fill="url(#glow)"/>
+
+  <!-- Concentric rings (ripples) -->
+  <circle cx="512" cy="780" rx="180" r="180" fill="none" stroke="#48cae4" stroke-opacity="0.18" stroke-width="3"/>
+  <circle cx="512" cy="780" rx="240" r="240" fill="none" stroke="#48cae4" stroke-opacity="0.12" stroke-width="3"/>
+  <circle cx="512" cy="780" rx="300" r="300" fill="none" stroke="#48cae4" stroke-opacity="0.07" stroke-width="3"/>
+
+  <!-- Water drop (scaled from in-app brand mark, viewBox 0 0 24 24) -->
+  <g transform="translate(512 530) scale(28) translate(-12 -12)">
+    <path d="M12 2c-2 4-5 7-5 11a5 5 0 0 0 10 0c0-4-3-7-5-11z" fill="url(#drop)"/>
+    <!-- highlight on drop -->
+    <ellipse cx="9.8" cy="11.5" rx="1.4" ry="2.2" fill="#ffffff" fill-opacity="0.35"/>
+  </g>
+</svg>
