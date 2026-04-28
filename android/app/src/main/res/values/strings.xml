@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Hydrolab</string>
-    <string name="title_activity_main">Hydrolab</string>
+    <string name="app_name">PoolDose</string>
+    <string name="title_activity_main">PoolDose</string>
     <string name="package_name">com.kdelawder.hydrolab</string>
     <string name="custom_url_scheme">com.kdelawder.hydrolab</string>
 </resources>
