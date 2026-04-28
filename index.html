@@ -617,6 +617,19 @@ body {
 .dose-body { flex: 1; min-width: 0; }
 .dose-title { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
 .dose-sub { font-size: 12px; color: var(--text-mute); }
+.dose-why {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 4px;
+  font-style: italic;
+  line-height: 1.35;
+}
+.dose-order-intro {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
 .dose-amount {
   font-family: var(--font-mono);
   font-weight: 500;
@@ -2859,6 +2872,15 @@ const I18N = {
     'setup.dosingStyle.conservative': 'Conservative',
     'dose.ph.retest': 'Retest in 4–6 hrs, add more if needed',
 
+    // Two-rule reminder — shown only when ordering matters (pH or Cl present + 2+ doses)
+    'dose.order.intro': 'Two rules: do TA before pH, and add chlorine last (never mix acid + chlorine).',
+    'dose.why.cya':  'Stabilizes chlorine against UV and sets your FC target.',
+    'dose.why.salt': 'Your salt cell needs it to generate chlorine.',
+    'dose.why.ch':   'Calcium protects plaster and keeps LSI in balance.',
+    'dose.why.ta':   'Add before pH — alkalinity buffers pH so it stays where you put it.',
+    'dose.why.ph':   'Add after TA, before chlorine. Wait 30 min after acid before chlorinating.',
+    'dose.why.cl':   'Always last — acid + chlorine produces toxic gas. Add hours after pH.',
+
     // Test detail
     'detail.title': 'Test Detail',
 
@@ -3205,6 +3227,15 @@ const I18N = {
     'setup.dosingStyle.aggressive': 'Agresivo',
     'setup.dosingStyle.conservative': 'Conservador',
     'dose.ph.retest': 'Volver a probar en 4–6 hrs, agregar más si es necesario',
+
+    // Recordatorio de dos reglas — solo cuando el orden importa (pH o Cl presente + 2+ dosis)
+    'dose.order.intro': 'Dos reglas: TA antes que pH, y el cloro al final (nunca mezcles ácido + cloro).',
+    'dose.why.cya':  'Estabiliza el cloro frente al UV y define tu objetivo de FC.',
+    'dose.why.salt': 'Tu celda de sal lo necesita para generar cloro.',
+    'dose.why.ch':   'El calcio protege el yeso y mantiene el LSI en equilibrio.',
+    'dose.why.ta':   'Agrega antes del pH — la alcalinidad estabiliza el pH para que se mantenga.',
+    'dose.why.ph':   'Agrega después de la TA, antes del cloro. Espera 30 min tras el ácido antes de clorar.',
+    'dose.why.cl':   'Siempre al final — ácido + cloro produce gas tóxico. Agrega horas después del pH.',
 
     // Test detail
     'detail.title': 'Detalle de prueba',
@@ -3709,6 +3740,21 @@ function formatDose(qty, dose) {
   return { value: qty < 10 ? qty.toFixed(1) : Math.round(qty * 10) / 10, unit: dose.unit };
 }
 
+// Two hard ordering rules:
+//   1. Chlorine LAST — acid + chlorine in the same water = chlorine gas (toxic).
+//   2. TA before pH — alkalinity buffers pH, so pH adjustments stick after TA is in range.
+// Within those two constraints, doses sort by urgency (the existing `priority` field).
+// Tiers: 1 = anything that's not pH or Cl, 2 = pH (after TA), 3 = Cl (always last).
+const ADDITION_TIER = { CYA: 1, Salt: 1, CH: 1, TA: 1, pH: 2, Cl: 3 };
+const ADDITION_WHY  = {
+  CYA:  'dose.why.cya',
+  Salt: 'dose.why.salt',
+  CH:   'dose.why.ch',
+  TA:   'dose.why.ta',
+  pH:   'dose.why.ph',
+  Cl:   'dose.why.cl',
+};
+
 function computeDoses(t) {
   const targets = getTargets();
   const doses = [];
@@ -3730,6 +3776,8 @@ function computeDoses(t) {
       amount: f.value,
       unit: f.unit,
       priority: t.fc < targets.fc[0] ? 1 : 3,
+      tier: ADDITION_TIER.Cl,
+      whyKey: ADDITION_WHY.Cl,
     });
   }
 
@@ -3760,6 +3808,8 @@ function computeDoses(t) {
         amount: f.value,
         unit: f.unit,
         priority: 2,
+        tier: ADDITION_TIER.pH,
+        whyKey: ADDITION_WHY.pH,
       });
     } else if (t.ph < targets.phTarget - 0.2) {
       const rise = targets.phTarget - t.ph;
@@ -3782,6 +3832,8 @@ function computeDoses(t) {
         amount: f.value,
         unit: f.unit,
         priority: 2,
+        tier: ADDITION_TIER.pH,
+        whyKey: ADDITION_WHY.pH,
       });
     }
   }
@@ -3800,6 +3852,8 @@ function computeDoses(t) {
         amount: f.value,
         unit: f.unit,
         priority: 4,
+        tier: ADDITION_TIER.TA,
+        whyKey: ADDITION_WHY.TA,
       });
     } else if (t.ta > targets.ta[1] + 20) {
       doses.push({
@@ -3809,6 +3863,8 @@ function computeDoses(t) {
         amount: '—',
         unit: tr('dose.unit.gradual'),
         priority: 5,
+        tier: ADDITION_TIER.TA,
+        whyKey: ADDITION_WHY.TA,
       });
     }
   }
@@ -3826,6 +3882,8 @@ function computeDoses(t) {
       amount: f.value,
       unit: f.unit,
       priority: 4,
+      tier: ADDITION_TIER.CH,
+      whyKey: ADDITION_WHY.CH,
     });
   }
 
@@ -3842,6 +3900,8 @@ function computeDoses(t) {
       amount: f.value,
       unit: f.unit,
       priority: 5,
+      tier: ADDITION_TIER.CYA,
+      whyKey: ADDITION_WHY.CYA,
     });
   } else if (t.cya !== null && t.cya > targets.cya[1] + 20) {
     doses.push({
@@ -3851,6 +3911,8 @@ function computeDoses(t) {
       amount: '—',
       unit: tr('dose.unit.drain'),
       priority: 5,
+      tier: ADDITION_TIER.CYA,
+      whyKey: ADDITION_WHY.CYA,
     });
   }
 
@@ -3867,10 +3929,14 @@ function computeDoses(t) {
       amount: f.value,
       unit: f.unit,
       priority: 4,
+      tier: ADDITION_TIER.Salt,
+      whyKey: ADDITION_WHY.Salt,
     });
   }
 
-  doses.sort((a, b) => a.priority - b.priority);
+  // Tier first (TA-before-pH and chlorine-last are the only hard rules),
+  // then urgency. Within a tier, lower priority number = more urgent.
+  doses.sort((a, b) => (a.tier - b.tier) || (a.priority - b.priority));
   return doses;
 }
 
@@ -4072,7 +4138,14 @@ function renderDoses(t) {
       </div>
     `;
   }
+  // Show the rule reminder when the order actually matters: 2+ doses where at
+  // least one of pH or Cl is present (those are the only ordering-critical types).
+  const hasOrderRule = doses.length > 1 && doses.some(d => d.type === 'Cl' || d.type.startsWith('pH'));
+  const intro = hasOrderRule
+    ? `<div class="dose-order-intro">${tr('dose.order.intro')}</div>`
+    : '';
   return `
+    ${intro}
     <div class="dose-list">
       ${doses.map(d => `
         <div class="dose dose-p${d.priority}" data-type="${d.type}">
@@ -4080,6 +4153,7 @@ function renderDoses(t) {
           <div class="dose-body">
             <div class="dose-title">${d.title}</div>
             <div class="dose-sub">${d.sub}</div>
+            ${d.whyKey ? `<div class="dose-why">${tr(d.whyKey)}</div>` : ''}
           </div>
           <div class="dose-amount">
             ${d.amount}
