@@ -1835,6 +1835,10 @@ body {
         </div>
       </div>
 
+      <div class="section-label" data-i18n="setup.chemicals">Chemicals</div>
+      <div class="target-hint" data-i18n="setup.chemicals.sub">Pick the products you actually use. Doses scale to match.</div>
+      <div class="form-grid" id="chem-prefs-grid"></div>
+
       <div id="customer-section" style="display:none;">
         <div class="section-label" data-i18n="setup.customer">Customer</div>
         <div class="target-hint" data-i18n="setup.customerSub">Optional — for pool service techs managing multiple customers.</div>
@@ -2827,15 +2831,26 @@ const I18N = {
 
     // Chemical names
     'chem.liquidChlorine': '12.5% Liquid Chlorine',
+    'chem.liquidChlorine10': '10% Liquid Chlorine',
+    'chem.liquidChlorine825': '8.25% Bleach (Clorox)',
+    'chem.liquidChlorine6': '6% Bleach (regular)',
     'chem.calHypo': 'Cal-Hypo (65%)',
     'chem.dichlor': 'Dichlor (56%)',
     'chem.muriaticAcid': '31% Muriatic Acid',
+    'chem.muriaticAcid14': '14.5% Muriatic Acid',
+    'chem.dryAcid': 'Dry Acid (Sodium Bisulfate)',
     'chem.sodaAsh': 'Soda Ash',
     'chem.borax': 'Borax (20 Mule)',
     'chem.bakingSoda': 'Baking Soda',
     'chem.calciumChloride': 'Calcium Chloride',
     'chem.cyanuricAcid': 'Cyanuric Acid',
     'chem.salt': 'Pool Salt',
+    // Chemical category labels (Setup → Chemicals)
+    'setup.chemicals': 'Chemicals',
+    'setup.chemicals.sub': 'Pick the products you actually use. Doses scale to match.',
+    'setup.chem.acid': 'Acid (pH down)',
+    'setup.chem.phUp': 'pH up',
+    'setup.chem.chlorine': 'Chlorine',
 
     // Dose recommendation titles & subs
     'dose.fc.up.title': 'Raise FC by {0} ppm',
@@ -3152,15 +3167,26 @@ const I18N = {
 
     // Chemical names
     'chem.liquidChlorine': 'Cloro líquido 12.5%',
+    'chem.liquidChlorine10': 'Cloro líquido 10%',
+    'chem.liquidChlorine825': 'Lejía 8.25% (Clorox)',
+    'chem.liquidChlorine6': 'Lejía 6% (regular)',
     'chem.calHypo': 'Cal-Hipo (65%)',
     'chem.dichlor': 'Diclor (56%)',
     'chem.muriaticAcid': 'Ácido muriático 31%',
+    'chem.muriaticAcid14': 'Ácido muriático 14.5%',
+    'chem.dryAcid': 'Ácido seco (bisulfato de sodio)',
     'chem.sodaAsh': 'Carbonato de sodio',
     'chem.borax': 'Bórax (20 Mule)',
     'chem.bakingSoda': 'Bicarbonato de sodio',
     'chem.calciumChloride': 'Cloruro de calcio',
     'chem.cyanuricAcid': 'Ácido cianúrico',
     'chem.salt': 'Sal para piscina',
+    // Chemical category labels (Setup → Chemicals)
+    'setup.chemicals': 'Productos químicos',
+    'setup.chemicals.sub': 'Elige los productos que realmente usas. Las dosis se ajustan.',
+    'setup.chem.acid': 'Ácido (bajar pH)',
+    'setup.chem.phUp': 'Subir pH',
+    'setup.chem.chlorine': 'Cloro',
 
     // Dose recommendation titles & subs
     'dose.fc.up.title': 'Subir FC en {0} ppm',
@@ -3548,20 +3574,58 @@ function lsiAction(lsi, t) {
 // Doses calibrated for 10,000 gallons; scaled by actual volume.
 // Sources: TFP wiki, Orenda dosing guides.
 const DOSE_PER_10K = {
-  // Each entry: how many units of chemical raise the target by "perUnit" ppm in 10k gal
+  // Each entry: how many units of chemical raise the target by "perUnit" ppm in 10k gal.
   // nameKey is the i18n key; resolve via tr(nameKey) at display time so it follows language.
-  liquidChlorine:    { nameKey: 'chem.liquidChlorine', unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 10.7 },
-  calHypo:           { nameKey: 'chem.calHypo',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.1 },
-  dichlor:           { nameKey: 'chem.dichlor',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.4 },
-  muriaticAcid:      { nameKey: 'chem.muriaticAcid',   unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'pH', perUnit: 0.2,  qty: 10 },
-  sodaAsh:           { nameKey: 'chem.sodaAsh',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 6 },
-  borax:             { nameKey: 'chem.borax',          unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 12 },
-  bakingSoda:        { nameKey: 'chem.bakingSoda',     unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ta', perUnit: 10,   qty: 14 },
-  calciumChloride:   { nameKey: 'chem.calciumChloride',unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ch', perUnit: 10,   qty: 12.5 },
-  cyanuricAcid:      { nameKey: 'chem.cyanuricAcid',   unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'cya', perUnit: 10,  qty: 13.4 },
-  salt:              { nameKey: 'chem.salt',           unit: 'lb',     unitMetric: 'kg', conv: 0.453592,raise: 'salt',perUnit: 100, qty: 8.35 },
-  acidForTA:         { nameKey: 'chem.muriaticAcid',   unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'ta', perUnit: 10,   qty: 25 },
+  // Liquid chlorine baselines scale linearly with concentration: 10.7 fl oz of 12.5%
+  // raises FC by 1 ppm in 10k gal; weaker products need proportionally more volume.
+  liquidChlorine:    { nameKey: 'chem.liquidChlorine',    unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 10.7 }, // 12.5% (legacy default key)
+  liquidChlorine125: { nameKey: 'chem.liquidChlorine',    unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 10.7 },
+  liquidChlorine10:  { nameKey: 'chem.liquidChlorine10',  unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 13.4 },
+  liquidChlorine825: { nameKey: 'chem.liquidChlorine825', unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 16.2 },
+  liquidChlorine6:   { nameKey: 'chem.liquidChlorine6',   unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'fc', perUnit: 1,    qty: 22.3 },
+  calHypo:           { nameKey: 'chem.calHypo',           unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.1 },
+  dichlor:           { nameKey: 'chem.dichlor',           unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'fc', perUnit: 1,    qty: 2.4 },
+  muriaticAcid:      { nameKey: 'chem.muriaticAcid',      unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'pH', perUnit: 0.2,  qty: 10 },   // 31.45% (default)
+  muriaticAcid14:    { nameKey: 'chem.muriaticAcid14',    unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'pH', perUnit: 0.2,  qty: 22 },   // 14.5% pool-store grade
+  dryAcid:           { nameKey: 'chem.dryAcid',           unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 12 },   // sodium bisulfate
+  sodaAsh:           { nameKey: 'chem.sodaAsh',           unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 6 },
+  borax:             { nameKey: 'chem.borax',             unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'pH', perUnit: 0.2,  qty: 12 },
+  bakingSoda:        { nameKey: 'chem.bakingSoda',        unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ta', perUnit: 10,   qty: 14 },
+  calciumChloride:   { nameKey: 'chem.calciumChloride',   unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'ch', perUnit: 10,   qty: 12.5 },
+  cyanuricAcid:      { nameKey: 'chem.cyanuricAcid',      unit: 'oz wt',  unitMetric: 'g',  conv: 28.3495, raise: 'cya', perUnit: 10,  qty: 13.4 },
+  salt:              { nameKey: 'chem.salt',              unit: 'lb',     unitMetric: 'kg', conv: 0.453592,raise: 'salt',perUnit: 100, qty: 8.35 },
+  acidForTA:         { nameKey: 'chem.muriaticAcid',      unit: 'fl oz',  unitMetric: 'mL', conv: 29.5735, raise: 'ta', perUnit: 10,   qty: 25 },
 };
+
+// User-selectable chemical options per category. Defaults are listed first.
+const CHEMICAL_OPTIONS = {
+  acid: [
+    { key: 'muriaticAcid',    labelKey: 'chem.muriaticAcid' },     // 31.45% — default
+    { key: 'muriaticAcid14',  labelKey: 'chem.muriaticAcid14' },   // 14.5%
+    { key: 'dryAcid',         labelKey: 'chem.dryAcid' },          // sodium bisulfate
+  ],
+  phUp: [
+    { key: 'borax',           labelKey: 'chem.borax' },            // default
+    { key: 'sodaAsh',         labelKey: 'chem.sodaAsh' },
+  ],
+  chlorine: [
+    { key: 'liquidChlorine',  labelKey: 'chem.liquidChlorine' },   // 12.5% — default
+    { key: 'liquidChlorine10',labelKey: 'chem.liquidChlorine10' },
+    { key: 'liquidChlorine825',labelKey: 'chem.liquidChlorine825' },
+    { key: 'liquidChlorine6', labelKey: 'chem.liquidChlorine6' },
+    { key: 'calHypo',         labelKey: 'chem.calHypo' },
+    { key: 'dichlor',         labelKey: 'chem.dichlor' },
+  ],
+};
+
+// Resolve which chemical to use for a category, honoring pool.chemPrefs override.
+function getChemKey(category, fallback) {
+  const pool = getActivePool();
+  const prefs = pool.chemPrefs || {};
+  const chosen = prefs[category];
+  if (chosen && DOSE_PER_10K[chosen]) return chosen;
+  return fallback || CHEMICAL_OPTIONS[category][0].key;
+}
 
 function scaleForVolume(qty) {
   return qty * (getActivePool().volume / 10000);
@@ -3596,9 +3660,10 @@ function computeDoses(t) {
   // --- Chlorine (if low) ---
   if (t.fc !== null && t.fc < targets.fcTarget - 0.5) {
     const needed = targets.fcTarget - t.fc;
-    let key = 'liquidChlorine';
-    if (c.sanitizer === 'cal-hypo') key = 'calHypo';
-    const dose = DOSE_PER_10K[key];
+    // Default to cal-hypo for cal-hypo pools, liquid chlorine 12.5% otherwise.
+    // User can override via Setup → Chemicals.
+    const sanitizerDefault = c.sanitizer === 'cal-hypo' ? 'calHypo' : 'liquidChlorine';
+    const dose = DOSE_PER_10K[getChemKey('chlorine', sanitizerDefault)];
     const qty = scaleForVolume(dose.qty * needed);
     const f = formatDose(qty, dose);
     doses.push({
@@ -3622,7 +3687,7 @@ function computeDoses(t) {
   if (t.ph !== null) {
     if (t.ph > targets.phTarget + 0.2 && t.ph > 7.6) {
       const drop = Math.min(t.ph - targets.phTarget, 0.6);
-      const dose = DOSE_PER_10K.muriaticAcid;
+      const dose = DOSE_PER_10K[getChemKey('acid', 'muriaticAcid')];
       const qty = scaleForVolume(dose.qty * (drop / 0.2) * taBuffer);
       const f = formatDose(qty, dose);
       doses.push({
@@ -3635,9 +3700,16 @@ function computeDoses(t) {
       });
     } else if (t.ph < targets.phTarget - 0.2) {
       const rise = targets.phTarget - t.ph;
-      // Prefer borax if TA is already OK, soda ash if TA low
-      const useSodaAsh = t.ta !== null && t.ta < targets.ta[0];
-      const dose = useSodaAsh ? DOSE_PER_10K.sodaAsh : DOSE_PER_10K.borax;
+      // If user picked a phUp chemical, honor it. Otherwise auto-select:
+      // borax when TA is already OK, soda ash when TA is low (kills two birds).
+      const userPhUp = (getActivePool().chemPrefs || {}).phUp;
+      let key;
+      if (userPhUp && DOSE_PER_10K[userPhUp]) {
+        key = userPhUp;
+      } else {
+        key = (t.ta !== null && t.ta < targets.ta[0]) ? 'sodaAsh' : 'borax';
+      }
+      const dose = DOSE_PER_10K[key];
       const qty = scaleForVolume(dose.qty * (rise / 0.2) * taBuffer);
       const f = formatDose(qty, dose);
       doses.push({
@@ -4502,6 +4574,41 @@ function loadConfigUI() {
   if (langDesc) langDesc.textContent = tr('lang.name');
   renderTargetsUI();
   renderRemindersUI();
+  renderChemPrefsUI();
+}
+
+function renderChemPrefsUI() {
+  const grid = document.getElementById('chem-prefs-grid');
+  if (!grid) return;
+  const pool = getActivePool();
+  const prefs = pool.chemPrefs || {};
+  const sanitizerDefault = pool.sanitizer === 'cal-hypo' ? 'calHypo' : 'liquidChlorine';
+  const defaults = { acid: 'muriaticAcid', phUp: 'borax', chlorine: sanitizerDefault };
+  const labelKeys = { acid: 'setup.chem.acid', phUp: 'setup.chem.phUp', chlorine: 'setup.chem.chlorine' };
+
+  let html = '';
+  for (const cat of ['acid', 'phUp', 'chlorine']) {
+    const opts = CHEMICAL_OPTIONS[cat];
+    const current = prefs[cat] || defaults[cat];
+    const optionsHtml = opts.map(o =>
+      `<option value="${o.key}"${o.key === current ? ' selected' : ''}>${tr(o.labelKey)}</option>`
+    ).join('');
+    html += `
+      <div class="field full">
+        <div class="field-label"><span>${tr(labelKeys[cat])}</span></div>
+        <select id="cfg-chem-${cat}">${optionsHtml}</select>
+      </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function collectChemPrefs() {
+  const out = {};
+  for (const cat of ['acid', 'phUp', 'chlorine']) {
+    const el = document.getElementById(`cfg-chem-${cat}`);
+    if (el && el.value) out[cat] = el.value;
+  }
+  return out;
 }
 
 function renderRemindersUI() {
@@ -4679,6 +4786,7 @@ function saveConfig() {
   // Only update target overrides when Pro — otherwise the inputs don't exist
   // and we'd wipe any saved overrides
   if (isPro()) pool.targets = collectTargetOverrides();
+  pool.chemPrefs = collectChemPrefs();
   // Customer info (Commercial only — preserve when not Commercial)
   if (isCommercial()) {
     const name = document.getElementById('cfg-customer-name').value.trim();
