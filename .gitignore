@@ -13,6 +13,13 @@ android/.idea/
 android/*.iml
 android/app/*.iml
 
+# Signing — NEVER commit these
+android/keystore.properties
+android/app/*.keystore
+android/app/*.jks
+*.keystore
+*.jks
+
 # OS / editor
 .DS_Store
 Thumbs.db
