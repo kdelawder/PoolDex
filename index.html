@@ -1718,10 +1718,6 @@ body {
           <div class="field-label"><span data-i18n="test.temp.label">Water Temp</span><span class="unit" id="temp-unit">°F</span></div>
           <input type="number" step="1" id="in-temp" placeholder="80" inputmode="decimal">
         </div>
-        <div class="field full">
-          <div class="field-label"><span class="metric-name-clickable" onclick="openGlossary('borate')"><span data-i18n="test.borate.label">Borate (optional)</span><span class="metric-info">?</span></span><span class="unit">ppm</span></div>
-          <input type="number" step="5" id="in-borate" placeholder="0" inputmode="decimal">
-        </div>
       </div>
 
       <div class="btn-row">
@@ -2405,7 +2401,7 @@ function closeWizard() {
 // ============================================================
 // GLOSSARY (chemistry term explanations)
 // ============================================================
-const GLOSSARY_KEYS = ['fc','cc','ph','ta','ch','cya','salt','borate','lsi'];
+const GLOSSARY_KEYS = ['fc','cc','ph','ta','ch','cya','salt','lsi'];
 
 function openGlossary(key) {
   if (!GLOSSARY_KEYS.includes(key)) return;
@@ -2421,13 +2417,26 @@ function closeGlossary() {
 // ============================================================
 // TIERS / PAYWALL
 // ============================================================
-function currentTier() { return state.config.tier || 'free'; }
+// Launch posture. 'soft-launch' = ship truly free: paywalls hidden,
+// all premium features unlocked, no Pro/Commercial UI shown. Flip to
+// 'paid' once Google Play Billing is wired and we want to monetize.
+// 'commercial' additionally exposes the Commercial tier in the paywall.
+const LAUNCH_MODE = 'soft-launch';
+
+function currentTier() {
+  if (LAUNCH_MODE === 'soft-launch') return 'pro'; // unlock premium features for everyone
+  return state.config.tier || 'free';
+}
 function isPro() { return currentTier() === 'pro' || currentTier() === 'commercial'; }
-function isCommercial() { return currentTier() === 'commercial'; }
+function isCommercial() {
+  // Commercial UI stays hidden until LAUNCH_MODE = 'commercial' AND user has unlocked it.
+  if (LAUNCH_MODE !== 'commercial') return false;
+  return currentTier() === 'commercial';
+}
 
 function showPaywall() {
-  // Pro→Commercial upgrade is gated until Commercial billing ships,
-  // so the modal is only useful for free users converting to Pro.
+  // No paywall during soft-launch — features are already unlocked.
+  if (LAUNCH_MODE === 'soft-launch') return;
   document.getElementById('paywall-modal').classList.add('open');
 }
 
@@ -2479,9 +2488,13 @@ function afterUnlock(toastMsg) {
 
 function renderProBadge() {
   const tier = currentTier();
+  const softLaunch = LAUNCH_MODE === 'soft-launch';
   const el = document.getElementById('pro-badge');
   if (el) {
-    if (tier === 'commercial') {
+    // No "Pro" badge in soft-launch — there's no paid tier to distinguish from.
+    if (softLaunch) {
+      el.style.display = 'none';
+    } else if (tier === 'commercial') {
       el.style.display = 'inline-flex';
       el.textContent = tr('badge.commercial');
       el.classList.add('badge-commercial');
@@ -2495,8 +2508,8 @@ function renderProBadge() {
   }
   const upgradeBtn = document.getElementById('upgrade-row');
   if (upgradeBtn) {
-    // Free → show "Unlock Hydrolab"; Pro/Commercial → hide (Pro→Commercial upgrade gated until Commercial ships)
-    if (tier !== 'free') {
+    // Soft-launch: never show the upgrade card (no Pro tier exists).
+    if (softLaunch || tier !== 'free') {
       upgradeBtn.style.display = 'none';
     } else {
       upgradeBtn.style.display = 'flex';
@@ -2514,7 +2527,8 @@ function renderProBadge() {
   }
   const proStatus = document.getElementById('pro-status-row');
   if (proStatus) {
-    proStatus.style.display = tier !== 'free' ? 'flex' : 'none';
+    // Soft-launch: hide "You're on Pro" status (would confuse users — no Pro tier exists).
+    proStatus.style.display = (!softLaunch && tier !== 'free') ? 'flex' : 'none';
     const text = proStatus.querySelector('div[data-i18n]');
     if (text) {
       text.dataset.i18n = tier === 'commercial' ? 'upgrade.commercialStatus' : 'upgrade.proStatus';
@@ -2523,7 +2537,8 @@ function renderProBadge() {
   }
   const devReset = document.getElementById('dev-reset-tier-row');
   if (devReset) {
-    devReset.style.display = tier !== 'free' ? 'flex' : 'none';
+    // Hide dev reset in soft-launch (no tier to reset to).
+    devReset.style.display = (!softLaunch && tier !== 'free') ? 'flex' : 'none';
   }
 }
 
@@ -2609,7 +2624,6 @@ const I18N = {
     'test.cya.label': 'Cyanuric Acid',
     'test.salt.label': 'Salt',
     'test.temp.label': 'Water Temp',
-    'test.borate.label': 'Borate (optional)',
 
     // Welcome / first-launch dashboard state
     'dash.welcome.title': 'Welcome to Hydrolab',
@@ -2741,8 +2755,6 @@ const I18N = {
     'glossary.cya.desc': 'Chlorine stabilizer that protects FC from sun. Higher CYA needs higher FC. Only way to lower CYA is partial drain and refill.',
     'glossary.salt.title': 'Salt',
     'glossary.salt.desc': 'Sodium chloride that your salt cell electrolyzes into chlorine. Most cells run best around 3000–3400 ppm.',
-    'glossary.borate.title': 'Borate',
-    'glossary.borate.desc': 'Optional additive (typically 30–50 ppm) that buffers pH, reduces chlorine demand, and gives water a softer feel. Added once with borax + acid; lasts until significant water replacement.',
     'glossary.lsi.title': 'Saturation Index (LSI)',
     'glossary.lsi.desc': 'Combined balance score from pH, TA, CH, and temperature. Between -0.3 and +0.3 is balanced. Negative = corrosive water; positive = scaling.',
 
@@ -2937,7 +2949,6 @@ const I18N = {
     'test.cya.label': 'Ácido cianúrico',
     'test.salt.label': 'Sal',
     'test.temp.label': 'Temp. del agua',
-    'test.borate.label': 'Boratos (opcional)',
 
     // Welcome / first-launch dashboard state
     'dash.welcome.title': 'Bienvenido a Hydrolab',
@@ -3069,8 +3080,6 @@ const I18N = {
     'glossary.cya.desc': 'Estabilizador de cloro que protege el FC del sol. Más CYA requiere más FC. La única forma de bajar el CYA es vaciado parcial y rellenado.',
     'glossary.salt.title': 'Sal',
     'glossary.salt.desc': 'Cloruro de sodio que tu celda de sal convierte en cloro. La mayoría funciona mejor entre 3000–3400 ppm.',
-    'glossary.borate.title': 'Borato',
-    'glossary.borate.desc': 'Aditivo opcional (típicamente 30–50 ppm) que estabiliza el pH, reduce la demanda de cloro y suaviza el agua. Se agrega una vez con bórax + ácido; dura hasta que se reemplace una parte significativa del agua.',
     'glossary.lsi.title': 'Índice de saturación (LSI)',
     'glossary.lsi.desc': 'Puntuación combinada de pH, TA, CH y temperatura. Entre -0.3 y +0.3 está equilibrada. Negativo = agua corrosiva; positivo = incrustaciones.',
 
@@ -3407,7 +3416,6 @@ function computeAutoTargets() {
     cyaTarget: isSWG ? 75 : 40,
     salt: isSWG ? [2800, 3400] : [0, 500],
     saltTarget: isSWG ? 3200 : 0,
-    borate: [0, 80],
   };
 }
 
@@ -3420,7 +3428,6 @@ const TARGET_METRICS = [
   { key: 'ch',     label: 'CH',     unit: 'ppm', hasTarget: true  },
   { key: 'cya',    label: 'CYA',    unit: 'ppm', hasTarget: true  },
   { key: 'salt',   label: 'Salt',   unit: 'ppm', hasTarget: true  },
-  { key: 'borate', label: 'Borate', unit: 'ppm', hasTarget: false },
 ];
 
 function getTargets() {
@@ -3485,12 +3492,9 @@ function calculateLSI(t) {
   // Calcium hardness factor
   const CF = Math.log10(ch) - 0.4;
 
-  // Carbonate alkalinity: subtract borate's contribution (~1/3) only.
-  // Pool Math and Orenda's LSI calc use raw TA (no CYA correction) — that
-  // belongs to TFP's separate CSI calc, not Langelier's LSI.
-  const borateContribution = (t.borate || 0) / 3;
-  const correctedTA = Math.max(1, ta - borateContribution);
-  const AF = Math.log10(correctedTA);
+  // Alkalinity factor — Pool Math and Orenda's LSI use raw TA.
+  // (CYA correction belongs to TFP's separate CSI calc, not Langelier's LSI.)
+  const AF = Math.log10(Math.max(1, ta));
 
   // TDS factor (Taylor Technologies pool table, log-fit).
   // Salt pools: TDS ≈ salt + 700. Non-salt pools: default 1000.
@@ -4034,13 +4038,13 @@ function loadTestUI() {
   // Update temperature unit label
   document.getElementById('temp-unit').textContent = state.config.units === 'metric' ? '°C' : '°F';
   // Clear form
-  ['fc','cc','ph','ta','ch','cya','salt','temp','borate'].forEach(k => {
+  ['fc','cc','ph','ta','ch','cya','salt','temp'].forEach(k => {
     document.getElementById('in-' + k).value = '';
   });
   // Pre-fill last known values as placeholders for convenience
   const last = getLatestTest();
   if (last) {
-    Object.entries({ fc: 'in-fc', cc: 'in-cc', ph: 'in-ph', ta: 'in-ta', ch: 'in-ch', cya: 'in-cya', salt: 'in-salt', temp: 'in-temp', borate: 'in-borate' }).forEach(([k, id]) => {
+    Object.entries({ fc: 'in-fc', cc: 'in-cc', ph: 'in-ph', ta: 'in-ta', ch: 'in-ch', cya: 'in-cya', salt: 'in-salt', temp: 'in-temp' }).forEach(([k, id]) => {
       const el = document.getElementById(id);
       if (last[k] !== null && last[k] !== undefined && last[k] !== '') {
         let val = last[k];
@@ -4071,7 +4075,6 @@ function saveTest() {
     cya: parse('in-cya'),
     salt: parse('in-salt'),
     temp,
-    borate: parse('in-borate') || 0,
   };
 
   // Require at least one measurement
@@ -4357,7 +4360,6 @@ function openDetail(id) {
     ['CYA', t.cya, 'ppm'],
     ['Salt', t.salt, 'ppm'],
     ['Temp', tempD ? tempD.value : null, tempD ? tempD.unit : ''],
-    ['Borate', t.borate, 'ppm'],
     ['LSI', lsi, ''],
   ].filter(r => r[1] !== null && r[1] !== undefined);
 
